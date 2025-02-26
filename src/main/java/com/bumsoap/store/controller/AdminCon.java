@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bs_users")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminCon {
     private final AdminServ adminServ;
 
-    @PostMapping
+    @PostMapping("/add")
     public void add(@RequestBody Admin admin) {
         adminServ.add(admin);
     }
