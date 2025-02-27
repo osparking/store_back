@@ -30,12 +30,12 @@ public class UserCon {
     private final UserServ userServ;
 
     @GetMapping("/{id}")
-    public ResponseEntity<BsUser> getUser(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
        BsUser user = userServ.getUserById(id);
        if (user == null) {
            return ResponseEntity.notFound().build();
        } else {
-           return ResponseEntity.ok(user);
+           return ResponseEntity.ok(new ApiResp("유저 발견됨", user));
        }
     }
 
