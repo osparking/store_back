@@ -23,5 +23,5 @@ public class BsUser {
     private String mbPhone; // Mobile Phone
     private String email;
     private String password;
-    boolean usable;
+    private boolean usable;
 }
