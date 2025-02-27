@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WorkerServ {
     private final WorkerRepoI workerRepo;
-    public void add(Worker worker) {
-        workerRepo.save(worker);
+    public Worker add(Worker worker) {
+        return workerRepo.save(worker);
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AdminServ {
     private final AdminRepoI adminRepo;
-    public void add(Admin admin) {
-        adminRepo.save(admin);
+    public Admin add(Admin admin) {
+        return adminRepo.save(admin);
     }
 }

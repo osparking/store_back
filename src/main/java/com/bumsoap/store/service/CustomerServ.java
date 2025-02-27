@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomerServ {
     private final CustomerRepoI customerRepo;
-    public void add(Customer customer) {
-        customerRepo.save(customer);
+    public Customer add(Customer customer) {
+        return customerRepo.save(customer);
     }
 }
