@@ -43,25 +43,31 @@ public class UserCon {
         String email = request.getEmail();
         BsUser user = null;
 
-        if (userRepo.existsByEmail(email)) {
-            throw new ExistingEmailEx("오류 - 선점된 이메일: " + email);
+        try {
+            if (userRepo.existsByEmail(email)) {
+                throw new ExistingEmailEx("오류 - 선점된 이메일: " + email);
+            }
+            switch (request.getUserType().toUpperCase()) {
+                case "ADMIN":
+                    var admin = objMapper.mapToDto(request, Admin.class);
+                    user = adminServ.add(admin);
+                    break;
+                case "CUSTOMER":
+                    var customer = objMapper.mapToDto(request, Customer.class);
+                    user = customerServ.add(customer);
+                    break;
+                case "WORKER":
+                    var worker = objMapper.mapToDto(request, Worker.class);
+                    user = workerServ.add(worker);
+                    break;
+                default:
+                    throw new IllegalArgumentException("존재하지 않는 유저 유형");
+            }
+            return ResponseEntity.ok(new ApiResp("유저 등록 성공", user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ApiResp(e.getMessage(), null));
         }
-        switch (request.getUserType().toUpperCase()) {
-            case "ADMIN":
-                var admin = objMapper.mapToDto(request, Admin.class);
-                user = adminServ.add(admin);
-                break;
-            case "CUSTOMER":
-                var customer = objMapper.mapToDto(request, Customer.class);
-                user = customerServ.add(customer);
-                break;
-            case "WORKER":
-                var worker = objMapper.mapToDto(request, Worker.class);
-                user = workerServ.add(worker);
-                break;
-            default:
-                throw new IllegalArgumentException("존재하지 않는 유저 유형");
-        }
-        return ResponseEntity.ok(new ApiResp("유저 등록 성공", user));
+
     }
 }
