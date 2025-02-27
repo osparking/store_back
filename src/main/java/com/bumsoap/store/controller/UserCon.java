@@ -14,6 +14,7 @@ import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.UserServ;
 import com.bumsoap.store.service.WorkerServ;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,9 @@ public class UserCon {
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
        BsUser user = userServ.getUserById(id);
        if (user == null) {
-           return ResponseEntity.notFound().build();
+           String msg = "존재하지 않는 아이디: " + id;
+           return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
+                   .body(new ApiResp(msg, null));
        } else {
            return ResponseEntity.ok(new ApiResp("유저 발견됨", user));
        }
