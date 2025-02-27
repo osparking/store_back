@@ -8,6 +8,7 @@ import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.UserRegisterReq;
+import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.UserServ;
@@ -38,7 +39,7 @@ public class UserCon {
     }
 
     @PostMapping("/add")
-    public BsUser add(@RequestBody UserRegisterReq request) {
+    public ResponseEntity<ApiResp> add(@RequestBody UserRegisterReq request) {
         String email = request.getEmail();
         BsUser user = null;
 
@@ -61,6 +62,6 @@ public class UserCon {
             default:
                 throw new IllegalArgumentException("존재하지 않는 유저 유형");
         }
-        return user;
+        return ResponseEntity.ok(new ApiResp("유저 등록 성공", user));
     }
 }
