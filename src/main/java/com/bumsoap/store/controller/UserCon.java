@@ -1,6 +1,7 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
+import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.model.Admin;
 import com.bumsoap.store.model.BsUser;
@@ -63,7 +64,8 @@ public class UserCon {
                 default:
                     throw new IllegalArgumentException("존재하지 않는 유저 유형");
             }
-            return ResponseEntity.ok(new ApiResp("유저 등록 성공", user));
+            var userDto = objMapper.mapToDto(user, UserDto.class);
+            return ResponseEntity.ok(new ApiResp("유저 등록 성공", userDto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     new ApiResp(e.getMessage(), null));
