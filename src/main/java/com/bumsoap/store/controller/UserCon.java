@@ -3,6 +3,7 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.model.Admin;
+import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.UserRepoI;
@@ -27,8 +28,9 @@ public class UserCon {
     private final UserRepoI userRepo;
 
     @PostMapping("/add")
-    public void add(@RequestBody UserRegisterReq request) {
+    public BsUser add(@RequestBody UserRegisterReq request) {
         String email = request.getEmail();
+        BsUser user = null;
 
         if (userRepo.existsByEmail(email)) {
             throw new ExistingEmailEx("오류 - 선점된 이메일: " + email);
@@ -36,18 +38,19 @@ public class UserCon {
         switch (request.getUserType().toUpperCase()) {
             case "ADMIN":
                 var admin = objMapper.mapToDto(request, Admin.class);
-                adminServ.add(admin);
+                user = adminServ.add(admin);
                 break;
             case "CUSTOMER":
                 var customer = objMapper.mapToDto(request, Customer.class);
-                customerServ.add(customer);
+                user = customerServ.add(customer);
                 break;
             case "WORKER":
                 var worker = objMapper.mapToDto(request, Worker.class);
-                workerServ.add(worker);
+                user = workerServ.add(worker);
                 break;
             default:
                 throw new IllegalArgumentException("존재하지 않는 유저 유형");
         }
+        return user;
     }
 }
