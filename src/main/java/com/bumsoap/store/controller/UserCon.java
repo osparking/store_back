@@ -10,12 +10,11 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.UserRegisterReq;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
+import com.bumsoap.store.service.UserServ;
 import com.bumsoap.store.service.WorkerServ;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -26,6 +25,17 @@ public class UserCon {
     private final CustomerServ customerServ;
     private final WorkerServ workerServ;
     private final UserRepoI userRepo;
+    private final UserServ userServ;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BsUser> getUser(@PathVariable("id") Long id) {
+       BsUser user = userServ.getUserById(id);
+       if (user == null) {
+           return ResponseEntity.notFound().build();
+       } else {
+           return ResponseEntity.ok(user);
+       }
+    }
 
     @PostMapping("/add")
     public BsUser add(@RequestBody UserRegisterReq request) {
