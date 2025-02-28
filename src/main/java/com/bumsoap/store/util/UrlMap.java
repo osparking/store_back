@@ -6,6 +6,7 @@ public class UrlMap {
     /*== Common / 공통 시작 ==================================================*/
     public static final String ADD = "/add";
     public static final String GET_BY_ID = "/{id}/get";
+    public static final String UPDATE = "/{id}/update";
     /*== Common / 공통 끝 ===============================*/
 
     /*== USER / 유저 시작 ====================================================*/
