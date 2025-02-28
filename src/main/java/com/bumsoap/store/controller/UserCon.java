@@ -15,6 +15,7 @@ import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.UserServ;
 import com.bumsoap.store.service.WorkerServ;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.UrlMap;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(UrlMap.USER)
 @RequiredArgsConstructor
 public class UserCon {
     private final ObjMapper objMapper;
@@ -32,7 +33,7 @@ public class UserCon {
     private final UserRepoI userRepo;
     private final UserServ userServ;
 
-    @GetMapping("/{id}")
+    @GetMapping(UrlMap.GET_BY_ID)
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
        try {
            BsUser user = userServ.getUserById(id);
@@ -49,7 +50,7 @@ public class UserCon {
        }
     }
 
-    @PostMapping("/add")
+    @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> add(@RequestBody UserRegisterReq request) {
         String email = request.getEmail();
         BsUser user = null;
