@@ -14,6 +14,7 @@ import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.UserServ;
 import com.bumsoap.store.service.WorkerServ;
+import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +32,7 @@ public class UserCon {
     private final CustomerServ customerServ;
     private final WorkerServ workerServ;
     private final UserRepoI userRepo;
-    private final UserServ userServ;
+    private final UserServInt userServ;
 
     @GetMapping(UrlMap.GET_BY_ID)
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
