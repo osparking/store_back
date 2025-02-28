@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(UrlMap.USER)
@@ -35,6 +36,18 @@ public class UserCon {
     private final WorkerServ workerServ;
     private final UserRepoI userRepo;
     private final UserServInt userServ;
+
+    @DeleteMapping(UrlMap.DELETE_BY_ID)
+    public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
+        try {
+            userServ.deleteById(id);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.USER_DELETE_SUCCESS, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @GetMapping(UrlMap.GET_BY_ID)
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
