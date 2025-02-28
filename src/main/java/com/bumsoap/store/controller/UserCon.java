@@ -67,6 +67,13 @@ public class UserCon {
                     var customer = objMapper.mapToDto(user, Customer.class);
                     user = customerServ.add(customer);
                     break;
+
+                case "WORKER":
+                    var worker = objMapper.mapToDto(user, Worker.class);
+                    worker.setDept(request.getDept());
+                    user = workerServ.add(worker);
+                    break;
+
                 default:
                     throw new IllegalArgumentException(Feedback.USER_TYPE_WRONG);
             }
