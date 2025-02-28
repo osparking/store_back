@@ -14,6 +14,7 @@ import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.UserServ;
 import com.bumsoap.store.service.WorkerServ;
+import com.bumsoap.store.util.Feedback;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class UserCon {
 
         try {
             if (userRepo.existsByEmail(email)) {
-                throw new ExistingEmailEx("오류 - 선점된 이메일: " + email);
+                throw new ExistingEmailEx(Feedback.USER_TAKEN_EMAIL + email);
             }
             switch (request.getUserType().toUpperCase()) {
                 case "ADMIN":
@@ -71,10 +72,11 @@ public class UserCon {
                     user = workerServ.add(worker);
                     break;
                 default:
-                    throw new IllegalArgumentException("존재하지 않는 유저 유형");
+                    throw new IllegalArgumentException(Feedback.USER_TYPE_WRONG);
             }
             var userDto = objMapper.mapToDto(user, UserDto.class);
-            return ResponseEntity.ok(new ApiResp("유저 등록 성공", userDto));
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.USER_ADD_SUCCESS, userDto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     new ApiResp(e.getMessage(), null));
