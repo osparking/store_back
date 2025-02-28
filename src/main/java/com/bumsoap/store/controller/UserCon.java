@@ -9,6 +9,7 @@ import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.UserRegisterReq;
+import com.bumsoap.store.request.UserUpdateReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
@@ -19,6 +20,7 @@ import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -49,6 +51,32 @@ public class UserCon {
            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                    .body(new ApiResp(e.getMessage(), null));
        }
+    }
+
+    @PutMapping(UrlMap.UPDATE)
+    public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
+                                           @RequestBody UserUpdateReq request) {
+        try {
+            BsUser user = userServ.getUserById(id);
+
+            user.setFullName(request.getFullName());
+            user.setMbPhone(request.getMbPhone());
+
+            switch (request.getUserType().toUpperCase()) {
+                case "CUSTOMER":
+                    var customer = objMapper.mapToDto(user, Customer.class);
+                    user = customerServ.add(customer);
+                    break;
+                default:
+                    throw new IllegalArgumentException(Feedback.USER_TYPE_WRONG);
+            }
+            var userDto = objMapper.mapToDto(user, UserDto.class);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.USER_UPDATE_SUCCESS, userDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ApiResp(e.getMessage(), null));
+        }
     }
 
     @PostMapping(UrlMap.ADD)
