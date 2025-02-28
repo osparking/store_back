@@ -16,9 +16,19 @@ public class UserServ implements UserServInt {
     private final UserRepoI userRepo;
 
     @Override
+    public void deleteById(Long id) {
+        Optional<BsUser> user = userRepo.findById(id);
+        if (user.isPresent()) {
+            userRepo.deleteById(id);
+        } else {
+            throw new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id);
+        }
+    }
+
+    @Override
     public BsUser findById(Long id) {
         return userRepo.findById(id).orElseThrow(() ->
-                new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + ":" + id));
+                new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
     }
 
     @Override
