@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping("/user")
@@ -32,13 +33,18 @@ public class UserCon {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
-       BsUser user = userServ.getUserById(id);
-       if (user == null) {
-           String msg = "존재하지 않는 아이디: " + id;
-           return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-                   .body(new ApiResp(msg, null));
-       } else {
-           return ResponseEntity.ok(new ApiResp("유저 발견됨", user));
+       try {
+           BsUser user = userServ.getUserById(id);
+           if (user == null) {
+               String msg = "존재하지 않는 아이디: " + id;
+               return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
+                       .body(new ApiResp(msg, null));
+           } else {
+               return ResponseEntity.ok(new ApiResp("유저 발견됨", user));
+           }
+       } catch (Exception e) {
+           return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                   .body(new ApiResp(e.getMessage(), null));
        }
     }
 
