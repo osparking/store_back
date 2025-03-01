@@ -1,11 +1,10 @@
-package com.bumsoap.store.service;
+package com.bumsoap.store.service.user;
 
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
-import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
