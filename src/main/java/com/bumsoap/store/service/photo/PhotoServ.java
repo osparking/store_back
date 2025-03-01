@@ -8,7 +8,6 @@ import com.bumsoap.store.repository.PhotoRepoI;
 import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -41,8 +40,9 @@ public class PhotoServ implements PhotoServInt {
     }
 
     @Override
-    public Optional<Photo> findById(Long id) {
-        return Optional.empty();
+    public Photo findById(Long id) {
+        return photoRepo.findById(id).orElseThrow(
+                () -> new IdNotFoundEx(Feedback.PHOTO_ID_NOT_FOUND + id));
     }
 
     @Override
