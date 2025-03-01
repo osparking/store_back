@@ -8,10 +8,7 @@ import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,6 +19,21 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public class PhotoCon {
     private final PhotoServInt photoServ;
+
+    @GetMapping(UrlMap.GET_BY_ID)
+    public ResponseEntity<ApiResp> findById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(new ApiResp(Feedback.PHOTO_FOUND,
+                    photoServ.findById(id)));
+        } catch (IdNotFoundEx e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(Feedback.PHOTO_ERROR + e.getMessage(),
+                            null));
+        }
+    }
 
     @PostMapping(UrlMap.UPLOAD)
     public ResponseEntity<ApiResp> upload(@RequestParam MultipartFile file,
