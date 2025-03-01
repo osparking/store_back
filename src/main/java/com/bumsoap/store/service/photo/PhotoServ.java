@@ -31,7 +31,7 @@ public class PhotoServ implements PhotoServInt {
         if (file != null && !file.isEmpty()) {
             photo.setImage(new SerialBlob(file.getBytes()));
             photo.setFileType(file.getContentType());
-            photo.setFileName(file.getName());
+            photo.setFileName(file.getOriginalFilename());
         }
         Photo savedPhoto = photoRepo.save(photo);
         employee.ifPresentOrElse(emp -> {emp.setPhoto(savedPhoto);},
