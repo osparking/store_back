@@ -14,4 +14,9 @@ public class UrlMap {
     /*== USER / 유저 시작 ====================================================*/
     public static final String USER = API + "/user";
     /*== USER / 유저 끝 ==================================*/
+
+    /*== PHOTO / 사진 시작 ====================================================*/
+    public static final String PHOTO = API + "/photo";
+    public static final String UPLOAD = "/upload";
+    /*== PHOTO / 사진 끝 ==================================*/
 }
