@@ -1,11 +1,14 @@
 package com.bumsoap.store.service.photo;
 
+import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.Employee;
 import com.bumsoap.store.model.Photo;
 import com.bumsoap.store.repository.EmployeeRepoI;
 import com.bumsoap.store.repository.PhotoRepoI;
+import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -31,7 +34,9 @@ public class PhotoServ implements PhotoServInt {
             photo.setFileName(file.getName());
         }
         Photo savedPhoto = photoRepo.save(photo);
-
+        employee.ifPresentOrElse(emp -> {emp.setPhoto(savedPhoto);},
+                () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + empId));
+        employeeRepo.save(employee.get());
         return savedPhoto;
     }
 
