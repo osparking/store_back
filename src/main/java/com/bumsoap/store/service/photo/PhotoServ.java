@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.photo;
 
+import com.bumsoap.store.model.Employee;
 import com.bumsoap.store.model.Photo;
 import com.bumsoap.store.repository.EmployeeRepoI;
 import com.bumsoap.store.repository.PhotoRepoI;
@@ -7,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
@@ -16,8 +20,19 @@ public class PhotoServ implements PhotoServInt {
     private final PhotoRepoI photoRepo;
 
     @Override
-    public Photo save(Long userId, MultipartFile photo) {
-        return null;
+    public Photo save(Long empId, MultipartFile file) throws
+            IOException, SQLException {
+        Optional<Employee> employee = employeeRepo.findById(empId);
+        Photo photo = new Photo();
+
+        if (file != null && !file.isEmpty()) {
+            photo.setImage(new SerialBlob(file.getBytes()));
+            photo.setFileType(file.getContentType());
+            photo.setFileName(file.getName());
+        }
+        Photo savedPhoto = photoRepo.save(photo);
+
+        return savedPhoto;
     }
 
     @Override
