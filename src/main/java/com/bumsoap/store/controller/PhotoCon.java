@@ -1,6 +1,7 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.model.Photo;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.photo.PhotoServInt;
 import com.bumsoap.store.util.Feedback;
@@ -23,8 +24,11 @@ public class PhotoCon {
     @GetMapping(UrlMap.GET_BY_ID)
     public ResponseEntity<ApiResp> findById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(new ApiResp(Feedback.PHOTO_FOUND,
-                    photoServ.findById(id)));
+            Photo photo = photoServ.findById(id);
+            return ResponseEntity.ok(new ApiResp(
+                    Feedback.PHOTO_FOUND,
+                    photo.getImage()
+                            .getBytes(1, (int) photo.getImage().length())));
         } catch (IdNotFoundEx e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));
