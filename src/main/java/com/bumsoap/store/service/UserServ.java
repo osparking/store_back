@@ -1,5 +1,7 @@
 package com.bumsoap.store.service;
 
+import com.bumsoap.store.dto.ObjMapper;
+import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
@@ -8,12 +10,22 @@ import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServ implements UserServInt {
     private final UserRepoI userRepo;
+    private final ObjMapper mapper;
+
+    @Override
+    public List<UserDto> getUserDtoList() {
+        return userRepo.findAll().stream()
+                .map(user -> mapper.mapToDto(user, UserDto.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void deleteById(Long id) {
