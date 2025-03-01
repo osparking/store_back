@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
-public interface PhotoInt {
+public interface PhotoServInt {
     Photo save(Long userId, MultipartFile photo);
     Optional<Photo> findById(Long id);
     void deleteById(Long id);
