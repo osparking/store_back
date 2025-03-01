@@ -19,8 +19,7 @@ public class UserServ implements UserServInt {
     public void deleteById(Long id) {
         userRepo.findById(id).ifPresentOrElse(
                 userRepo::delete,
-                () -> { throw new IdNotFoundEx(
-                        Feedback.USER_ID_NOT_FOUND + id); }
+                () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id)
         );
     }
 
