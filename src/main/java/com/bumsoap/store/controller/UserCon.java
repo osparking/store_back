@@ -23,8 +23,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(UrlMap.USER)
@@ -36,6 +36,17 @@ public class UserCon {
     private final WorkerServ workerServ;
     private final UserRepoI userRepo;
     private final UserServInt userServ;
+
+    @GetMapping(UrlMap.GET_ALL)
+    public ResponseEntity<ApiResp> getAllUser() {
+        try {
+            return ResponseEntity.ok().body(
+                    new ApiResp("유저 전체 목록", userServ.getUserDtoList()));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                   .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @DeleteMapping(UrlMap.DELETE_BY_ID)
     public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
