@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * BumSoap(범이비누) 사용자
@@ -28,5 +29,5 @@ public class BsUser {
     private String password;
     private boolean usable;
     @CreationTimestamp
-    private LocalDate addDate; // 유저 생성(=추가) 날짜
+    private LocalDateTime addDate; // 유저 생성(=추가) 날짜
 }

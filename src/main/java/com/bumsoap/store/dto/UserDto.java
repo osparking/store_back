@@ -3,6 +3,7 @@ package com.bumsoap.store.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class UserDto {
@@ -12,5 +13,5 @@ public class UserDto {
     private String email;
     private boolean usable;
     private String dept;
-    private LocalDate addDate;
+    private LocalDateTime addDate;
 }
