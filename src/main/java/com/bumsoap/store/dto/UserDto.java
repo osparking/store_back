@@ -2,7 +2,7 @@ package com.bumsoap.store.dto;
 
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,4 +14,20 @@ public class UserDto {
     private boolean usable;
     private String dept;
     private LocalDateTime addDate;
+    private long photoId;
+    private byte[] photoBytes;
+
+    public UserDto(long id, String fullName, String mbPhone, String email,
+                   boolean usable, String dept, Timestamp addDate,
+                   long photoId, byte[] photoBytes) {
+        this.id = id;
+        this.fullName = fullName;
+        this.mbPhone = mbPhone;
+        this.email = email;
+        this.usable = usable;
+        this.dept = dept;
+        this.addDate = addDate.toLocalDateTime();
+        this.photoId = photoId;
+        this.photoBytes = photoBytes;
+    }
 }
