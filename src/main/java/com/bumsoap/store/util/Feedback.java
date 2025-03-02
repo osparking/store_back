@@ -8,8 +8,11 @@ public class Feedback {
     public static final String USER_ID_NOT_FOUND = "발견되지 않은 유저 아이디:";
     public static final String USER_UPDATE_SUCCESS = "유저 갱신 성공";
     public static final String USER_DELETE_SUCCESS = "유저 삭제 성공";
+
+    /********************** 사진 처리 관련 메시지 ********************/
     public static final String PHOTO_UPLOAD_OK = "사진 올리기 성공";
     public static final String PHOTO_ID_NOT_FOUND = "발견되지 않은 사진 아이디:";
     public static final String PHOTO_FOUND = "사진 ID로 찾기 성공";
-    public static final String PHOTO_ERROR = "사진 찾기 오류:";
+    public static final String PHOTO_ERROR = "사진 처리 오류:";
+    public static final String PHOTO_DELETE_SUCCESS = "사진 삭제 성공";
 }
