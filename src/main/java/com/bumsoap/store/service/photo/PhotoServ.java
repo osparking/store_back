@@ -47,7 +47,9 @@ public class PhotoServ implements PhotoServInt {
 
     @Override
     public void deleteById(Long id) {
-
+        // 존재를 확인하고, 있으면 삭제, 아니면, 예외 생성
+        photoRepo.findById(id).ifPresentOrElse(photoRepo::delete,
+                () -> new IdNotFoundEx(Feedback.PHOTO_ID_NOT_FOUND + id));
     }
 
     @Override
