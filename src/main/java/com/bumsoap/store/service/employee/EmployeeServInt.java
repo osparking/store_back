@@ -4,4 +4,5 @@ import com.bumsoap.store.model.Employee;
 
 public interface EmployeeServInt {
     Employee findById(Long empId);
+    Employee save(Employee employee);
 }

@@ -32,11 +32,12 @@ public class PhotoCon {
             Photo photo = employee.getPhoto();
             if (photo == null) {
                 throw new DataNotFoundException(Feedback.PHOTO_NOT_FOUND);
+            } else {
+                employee.setPhoto(null);
+                employeeServ.save(employee);
+                return ResponseEntity
+                        .ok(new ApiResp(Feedback.PHOTO_DELETE_SUCCESS, null));
             }
-            employee.setPhoto(null);
-            photoServ.deleteById(photo.getId());
-            return ResponseEntity
-                    .ok(new ApiResp(Feedback.PHOTO_DELETE_SUCCESS, null));
         } catch (IdNotFoundEx | DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));

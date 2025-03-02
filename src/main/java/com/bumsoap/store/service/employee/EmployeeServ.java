@@ -17,4 +17,9 @@ public class EmployeeServ implements EmployeeServInt{
         return employeeRepo.findById(empId).orElseThrow(
                 () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + empId));
     }
+
+    @Override
+    public Employee save(Employee employee) {
+        return employeeRepo.save(employee);
+    }
 }
