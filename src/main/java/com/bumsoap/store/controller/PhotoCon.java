@@ -25,6 +25,23 @@ public class PhotoCon {
     private final PhotoServInt photoServ;
     private final EmployeeServInt employeeServ;
 
+    @PutMapping(UrlMap.UPDATE)
+    public ResponseEntity<ApiResp> update(
+            @PathVariable Long id, @RequestBody MultipartFile file) {
+        try {
+            photoServ.update(id, file);
+            return ResponseEntity.ok()
+                    .body(new ApiResp(Feedback.PHOTO_UPDATE_SUCCESS, null));
+        } catch (IdNotFoundEx e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (SQLException | IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(Feedback.PHOTO_ERROR + e.getMessage(),
+                            null));
+        }
+    }
+
     @DeleteMapping(UrlMap.DELETE_BY_EMP_ID)
     public ResponseEntity<ApiResp> deleteById(@PathVariable Long id) {
         try {

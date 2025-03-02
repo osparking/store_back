@@ -16,4 +16,5 @@ public class Feedback {
     public static final String PHOTO_ERROR = "사진 처리 오류:";
     public static final String PHOTO_DELETE_SUCCESS = "사진 삭제 성공";
     public static final String PHOTO_NOT_FOUND = "사진 발견되지 않음";
+    public static final String PHOTO_UPDATE_SUCCESS = "사진 갱신 성공";
 }
