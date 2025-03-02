@@ -13,4 +13,6 @@ public interface UserServInt {
     BsUser findById(Long id);
 
     BsUser getUserById(Long id);
+
+    UserDto getUserDtoById(Long id);
 }

@@ -49,4 +49,16 @@ public class UserServ implements UserServInt {
             return null;
         }
     }
+
+    @Override
+    public UserDto getUserDtoById(Long id) {
+        Optional<UserDto> userOptional = userRepo.findUserDtoById(id);
+
+        if (userOptional.isPresent()) {
+            UserDto userDto = userOptional.get();
+            return userDto;
+        } else {
+            throw new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id);
+        }
+    }
 }
