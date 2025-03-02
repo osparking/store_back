@@ -10,6 +10,8 @@ public interface PhotoServInt {
     Photo save(Long userId, MultipartFile photo) throws IOException, SQLException;
     Photo findById(Long id);
     void deleteById(Long id);
-    Photo update(Long id, byte[] imageData);
+    Photo update(Long id, MultipartFile file) throws SQLException, IOException;
+
     byte[] getImageData(Long id);
+
 }

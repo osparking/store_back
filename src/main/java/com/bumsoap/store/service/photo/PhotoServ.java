@@ -33,7 +33,9 @@ public class PhotoServ implements PhotoServInt {
             photo.setFileName(file.getOriginalFilename());
         }
         Photo savedPhoto = photoRepo.save(photo);
-        employee.ifPresentOrElse(emp -> {emp.setPhoto(savedPhoto);},
+        employee.ifPresentOrElse(emp -> {
+                    emp.setPhoto(savedPhoto);
+                },
                 () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + empId));
         employeeRepo.save(employee.get());
         return savedPhoto;
@@ -51,8 +53,17 @@ public class PhotoServ implements PhotoServInt {
     }
 
     @Override
-    public Photo update(Long id, byte[] imageData) {
-        return null;
+    public Photo update(Long id, MultipartFile file) throws
+            SQLException, IOException {
+        Photo photo = findById(id);
+
+        if (file != null && !file.isEmpty()) {
+            photo.setFileType(file.getContentType());
+            photo.setFileName(file.getOriginalFilename());
+            photo.setImage(new SerialBlob(file.getBytes()));
+            photoRepo.save(photo);
+        }
+        return photo;
     }
 
     @Override
