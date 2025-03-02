@@ -1,8 +1,11 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.model.Employee;
 import com.bumsoap.store.model.Photo;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.service.employee.EmployeeServInt;
 import com.bumsoap.store.service.photo.PhotoServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
@@ -20,14 +23,21 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public class PhotoCon {
     private final PhotoServInt photoServ;
+    private final EmployeeServInt employeeServ;
 
-    @DeleteMapping(UrlMap.DELETE_BY_ID)
+    @DeleteMapping(UrlMap.DELETE_BY_EMP_ID)
     public ResponseEntity<ApiResp> deleteById(@PathVariable Long id) {
         try {
-            photoServ.deleteById(id);
+            Employee employee = employeeServ.findById(id);
+            Photo photo = employee.getPhoto();
+            if (photo == null) {
+                throw new DataNotFoundException(Feedback.PHOTO_NOT_FOUND);
+            }
+            employee.setPhoto(null);
+            photoServ.deleteById(photo.getId());
             return ResponseEntity
                     .ok(new ApiResp(Feedback.PHOTO_DELETE_SUCCESS, null));
-        } catch (IdNotFoundEx e) {
+        } catch (IdNotFoundEx | DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));
         } catch (Exception e) {

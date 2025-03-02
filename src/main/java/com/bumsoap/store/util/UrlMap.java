@@ -18,5 +18,6 @@ public class UrlMap {
     /*== PHOTO / 사진 시작 ====================================================*/
     public static final String PHOTO = API + "/photo";
     public static final String UPLOAD = "/upload";
+    public static final String DELETE_BY_EMP_ID = "/{id}/del_emp_id";
     /*== PHOTO / 사진 끝 ==================================*/
 }
