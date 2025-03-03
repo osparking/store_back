@@ -9,19 +9,19 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class UserDto {
-    private long id;
+    private Long id;
     private String fullName;
     private String mbPhone; // Mobile Phone
     private String email;
     private boolean usable;
     private String dept;
     private LocalDateTime addDate;
-    private long photoId;
+    private Long photoId;
     private byte[] photoBytes;
 
-    public UserDto(long id, String fullName, String mbPhone, String email,
+    public UserDto(Long id, String fullName, String mbPhone, String email,
                    boolean usable, String dept, Timestamp addDate,
-                   long photoId, byte[] photoBytes) {
+                   Long photoId, byte[] photoBytes) {
         this.id = id;
         this.fullName = fullName;
         this.mbPhone = mbPhone;
@@ -32,4 +32,5 @@ public class UserDto {
         this.photoId = photoId;
         this.photoBytes = photoBytes;
     }
+
 }
