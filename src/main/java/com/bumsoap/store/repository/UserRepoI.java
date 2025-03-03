@@ -4,6 +4,7 @@ import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -18,6 +19,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                    "from bs_user u " +
                    "left join employee e on e.employee_id = u.id " +
                    "left join worker w on w.worker_id = e.employee_id " +
-                   "left join photo p on p.id = e.photo_id ")
-    Optional<UserDto> findUserDtoById(long id);
+                   "left join photo p on p.id = e.photo_id " +
+                   "where u.id = :id")
+    Optional<UserDto> findUserDtoById(@Param("id")long id);
 }
