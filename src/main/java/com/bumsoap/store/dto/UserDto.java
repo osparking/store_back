@@ -1,11 +1,13 @@
 package com.bumsoap.store.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class UserDto {
     private long id;
     private String fullName;
