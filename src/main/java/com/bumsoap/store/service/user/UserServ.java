@@ -21,9 +21,7 @@ public class UserServ implements UserServInt {
 
     @Override
     public List<UserDto> getUserDtoList() {
-        return userRepo.findAll().stream()
-                .map(user -> mapper.mapToDto(user, UserDto.class))
-                .collect(Collectors.toList());
+        return userRepo.findAllUserDto();
     }
 
     @Override
