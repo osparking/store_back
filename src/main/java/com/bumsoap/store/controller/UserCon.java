@@ -3,6 +3,7 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.exception.ExistingEmailEx;
+import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.Admin;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.Customer;
@@ -23,7 +24,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(UrlMap.USER)
@@ -36,6 +38,20 @@ public class UserCon {
     private final UserRepoI userRepo;
     private final UserServInt userServ;
 
+    @GetMapping(UrlMap.GET_USER_DTO_BY_ID)
+    public ResponseEntity<ApiResp> getUserDtoById(@PathVariable("id") Long id) {
+        try {
+            UserDto userDto = userServ.getUserDtoById(id);
+            return ResponseEntity.ok(new ApiResp(Feedback.USER_DTO_BY_ID, userDto));
+        } catch (IdNotFoundEx e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @GetMapping(UrlMap.GET_ALL)
     public ResponseEntity<ApiResp> getAllUser() {
         try {
@@ -43,7 +59,7 @@ public class UserCon {
                     new ApiResp("유저 전체 목록", userServ.getUserDtoList()));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-                   .body(new ApiResp(e.getMessage(), null));
+                    .body(new ApiResp(e.getMessage(), null));
         }
     }
 
@@ -61,24 +77,24 @@ public class UserCon {
 
     @GetMapping(UrlMap.GET_BY_ID)
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
-       try {
-           BsUser user = userServ.getUserById(id);
-           if (user == null) {
-               String msg = "존재하지 않는 아이디: " + id;
-               return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-                       .body(new ApiResp(msg, null));
-           } else {
-               return ResponseEntity.ok(new ApiResp("유저 발견됨", user));
-           }
-       } catch (Exception e) {
-           return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-                   .body(new ApiResp(e.getMessage(), null));
-       }
+        try {
+            BsUser user = userServ.getUserById(id);
+            if (user == null) {
+                String msg = "존재하지 않는 아이디: " + id;
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
+                        .body(new ApiResp(msg, null));
+            } else {
+                return ResponseEntity.ok(new ApiResp("유저 발견됨", user));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
 
     @PutMapping(UrlMap.UPDATE)
     public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
-                                           @RequestBody UserUpdateReq request) {
+                                          @RequestBody UserUpdateReq request) {
         try {
             BsUser user = userServ.getUserById(id);
 

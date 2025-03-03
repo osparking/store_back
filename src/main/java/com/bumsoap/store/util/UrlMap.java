@@ -13,6 +13,7 @@ public class UrlMap {
 
     /*== USER / 유저 시작 ====================================================*/
     public static final String USER = API + "/user";
+    public static final String GET_USER_DTO_BY_ID = "/{id}/get_dto";
     /*== USER / 유저 끝 ==================================*/
 
     /*== PHOTO / 사진 시작 ====================================================*/
