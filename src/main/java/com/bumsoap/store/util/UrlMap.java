@@ -21,4 +21,10 @@ public class UrlMap {
     public static final String UPLOAD = "/upload";
     public static final String DELETE_BY_EMP_ID = "/{id}/del_emp_id";
     /*== PHOTO / 사진 끝 ==================================*/
+
+    /*== Worker / 노동자 시작 =================================================*/
+    public static final String WORKER = API + "/worker";
+    public static final String GET_ALL_DEPT = "/get_all_dept";
+    /*== WORKER / 노동자 끝 ================================*/
+
 }
