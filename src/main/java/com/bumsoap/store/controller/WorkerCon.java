@@ -9,11 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(UrlMap.WORKER)
 @RequiredArgsConstructor
+//@CrossOrigin("http://localhost:5173/")
 public class WorkerCon {
     private final WorkerServInt workerServ;
 
@@ -24,7 +23,12 @@ public class WorkerCon {
 
     @GetMapping(UrlMap.GET_ALL_DEPT)
     public ResponseEntity<ApiResp> findAllDept() {
-        var depts = workerServ.findAllDept();
-        return ResponseEntity.ok(new ApiResp(Feedback.DEPTS_FOUND, depts));
+        try {
+            var depts = workerServ.findAllDept();
+            return ResponseEntity.ok(new ApiResp(Feedback.DEPTS_FOUND, depts));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.DEPTS_READ_FAILURE, e.getMessage()));
+        }
     }
 }
