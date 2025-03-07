@@ -28,7 +28,7 @@ public class WorkerCon {
             return ResponseEntity.ok(new ApiResp(Feedback.DEPTS_FOUND, depts));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.DEPTS_READ_FAILURE, e.getMessage()));
+                    new ApiResp(Feedback.DEPTS_READ_FAILURE, null ));
         }
     }
 }
