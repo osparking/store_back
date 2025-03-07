@@ -30,6 +30,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestController
 @RequestMapping(UrlMap.USER)
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:5173/")
 public class UserCon {
     private final ObjMapper objMapper;
     private final AdminServ adminServ;
