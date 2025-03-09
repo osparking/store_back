@@ -15,8 +15,8 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
     boolean existsByEmail(String email);
 
     @Query(nativeQuery = true,
-           value = "select u.id, u.full_name, u.mb_phone, u.email, " +
-                   "u.usable, w.dept, u.add_date, e.photo_id, p.image " +
+           value = "select u.id, u.full_name, u.mb_phone, u.email, u.usable, " +
+                   "w.dept, u.user_type, u.add_date, e.photo_id, p.image " +
                    "from bs_user u " +
                    "left join employee e on e.employee_id = u.id " +
                    "left join worker w on w.worker_id = e.employee_id " +
@@ -25,8 +25,8 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
     Optional<UserDto> findUserDtoById(@Param("id")long id);
 
     @Query(nativeQuery = true,
-           value = "select u.id, u.full_name, u.mb_phone, u.email, " +
-                   "u.usable, w.dept, u.add_date, e.photo_id, p.image " +
+           value = "select u.id, u.full_name, u.mb_phone, u.email, u.usable, " +
+                   "w.dept, u.user_type, u.add_date, e.photo_id, p.image " +
                    "from bs_user u " +
                    "left join employee e on e.employee_id = u.id " +
                    "left join worker w on w.worker_id = e.employee_id " +
