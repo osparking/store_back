@@ -18,6 +18,7 @@ import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
+import com.bumsoap.store.util.UserType;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -135,16 +136,16 @@ public class UserCon {
             if (userRepo.existsByEmail(email)) {
                 throw new ExistingEmailEx(Feedback.USER_TAKEN_EMAIL + email);
             }
-            switch (request.getUserType().toUpperCase()) {
-                case "ADMIN":
+            switch (request.getUserType()) {
+                case ADMIN:
                     var admin = objMapper.mapToDto(request, Admin.class);
                     user = adminServ.add(admin);
                     break;
-                case "CUSTOMER":
+                case CUSTOMER:
                     var customer = objMapper.mapToDto(request, Customer.class);
                     user = customerServ.add(customer);
                     break;
-                case "WORKER":
+                case WORKER:
                     var worker = objMapper.mapToDto(request, Worker.class);
                     user = workerServ.add(worker);
                     break;
