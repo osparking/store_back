@@ -1,5 +1,6 @@
 package com.bumsoap.store.dto;
 
+import com.bumsoap.store.util.UserType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,19 +16,21 @@ public class UserDto {
     private String email;
     private boolean usable;
     private String dept;
+    private String userType;
     private LocalDateTime addDate;
     private Long photoId;
     private byte[] photoBytes;
 
     public UserDto(Long id, String fullName, String mbPhone, String email,
-                   boolean usable, String dept, Timestamp addDate,
-                   Long photoId, byte[] photoBytes) {
+                   boolean usable, String dept, byte userType,
+                   Timestamp addDate, Long photoId, byte[] photoBytes) {
         this.id = id;
         this.fullName = fullName;
         this.mbPhone = mbPhone;
         this.email = email;
         this.usable = usable;
         this.dept = dept;
+        this.userType = UserType.values()[userType].label;
         this.addDate = addDate.toLocalDateTime();
         this.photoId = photoId;
         this.photoBytes = photoBytes;
