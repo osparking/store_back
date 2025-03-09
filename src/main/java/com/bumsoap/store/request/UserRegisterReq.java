@@ -1,14 +1,15 @@
 package com.bumsoap.store.request;
 
+import com.bumsoap.store.util.UserType;
 import lombok.Data;
 
 @Data
 public class UserRegisterReq {
-    private String userType;
+    private UserType userType;
     private String fullName;
     private String mbPhone; // Mobile Phone
     private String email;
     private String password;
-    boolean usable;
+    private boolean usable;
     private String dept;
 }
