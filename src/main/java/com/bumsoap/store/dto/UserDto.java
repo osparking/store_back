@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +19,7 @@ public class UserDto {
     private boolean usable;
     private String dept;
     private String userType;
-    private LocalDateTime addDate;
+    private String regDateTime;
     private Long photoId;
     private byte[] photoBytes;
 
@@ -31,7 +33,9 @@ public class UserDto {
         this.usable = usable;
         this.dept = dept;
         this.userType = UserType.values()[userType].label;
-        this.addDate = addDate.toLocalDateTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                "yyyy년 MM월 dd일 HH시 mm분 ss초", Locale.KOREAN);
+        this.regDateTime = addDate.toLocalDateTime().format(formatter);
         this.photoId = photoId;
         this.photoBytes = photoBytes;
     }
