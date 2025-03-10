@@ -9,16 +9,17 @@ import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.request.PasswordChangeReq;
 import com.bumsoap.store.request.UserRegisterReq;
 import com.bumsoap.store.request.UserUpdateReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
+import com.bumsoap.store.service.password.PasswordChangeServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
-import com.bumsoap.store.util.UserType;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,14 @@ public class UserCon {
     private final WorkerServInt workerServ;
     private final UserRepoI userRepo;
     private final UserServInt userServ;
+    private final PasswordChangeServInt passwordChangeServ;
+
+    @PutMapping(UrlMap.CHANGE_PASSWORD)
+    public ResponseEntity<ApiResp> changePassword(
+            @PathVariable("id") Long id, @RequestBody PasswordChangeReq request) {
+        passwordChangeServ.changePwd(id, request);
+        return ResponseEntity.ok(new ApiResp(Feedback.PASSWORD_CHANGED, null));
+    }
 
     @GetMapping(UrlMap.GET_USER_DTO_BY_ID)
     public ResponseEntity<ApiResp> getUserDtoById(@PathVariable("id") Long id) {

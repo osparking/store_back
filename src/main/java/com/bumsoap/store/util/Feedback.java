@@ -13,6 +13,7 @@ public class Feedback {
     public static final String DEPTS_READ_FAILURE = "소속 목록 채취 오류";
     public static final String SOME_FIELD_MISSING = "제출 정보 부족 오류";
     public static final String CUR_PASSWORD_WRONG = "기존 비밀번호 불일치";
+    public static final String PASSWORD_CHANGED = "비밀번호 변경 완료";
 
     /********************** 사진 처리 관련 메시지 ********************/
     public static final String PHOTO_UPLOAD_OK = "사진 올리기 성공";

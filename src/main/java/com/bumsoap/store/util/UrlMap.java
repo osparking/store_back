@@ -14,6 +14,7 @@ public class UrlMap {
     /*== USER / 유저 시작 ====================================================*/
     public static final String USER = API + "/user";
     public static final String GET_USER_DTO_BY_ID = "/{id}/get_dto";
+    public static final String CHANGE_PASSWORD = "/{id}/change_pwd";
     /*== USER / 유저 끝 ==================================*/
 
     /*== PHOTO / 사진 시작 ====================================================*/
