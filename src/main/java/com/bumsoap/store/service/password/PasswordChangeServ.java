@@ -6,9 +6,11 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.PasswordChangeReq;
 import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Service
 @RequiredArgsConstructor
 public class PasswordChangeServ implements PasswordChangeServInt {
     private final UserRepoI userRepo;
