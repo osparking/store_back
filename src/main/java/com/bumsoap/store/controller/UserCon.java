@@ -45,8 +45,19 @@ public class UserCon {
     @PutMapping(UrlMap.CHANGE_PASSWORD)
     public ResponseEntity<ApiResp> changePassword(
             @PathVariable("id") Long id, @RequestBody PasswordChangeReq request) {
-        passwordChangeServ.changePwd(id, request);
-        return ResponseEntity.ok(new ApiResp(Feedback.PASSWORD_CHANGED, null));
+        try {
+            passwordChangeServ.changePwd(id, request);
+            return ResponseEntity.ok(new ApiResp(Feedback.PASSWORD_CHANGED, null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (IdNotFoundEx e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
 
     @GetMapping(UrlMap.GET_USER_DTO_BY_ID)
