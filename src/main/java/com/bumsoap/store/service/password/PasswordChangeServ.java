@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Objects;
 
 @RequiredArgsConstructor
-public class PasswordChangeServ implements PasswordChangeServInf{
+public class PasswordChangeServ implements PasswordChangeServInt {
     private final UserRepoI userRepo;
 
     @Override
