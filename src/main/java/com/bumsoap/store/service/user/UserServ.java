@@ -2,6 +2,7 @@ package com.bumsoap.store.service.user;
 
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.UserDto;
+import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
@@ -58,5 +59,12 @@ public class UserServ implements UserServInt {
         } else {
             throw new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id);
         }
+    }
+
+    @Override
+    public BsUser getByEmail(String email) {
+        Optional<BsUser> user = userRepo.findByEmail(email);
+        return user.orElseThrow(() -> new DataNotFoundException(
+                Feedback.NOT_FOUND_EMAIL + email));
     }
 }

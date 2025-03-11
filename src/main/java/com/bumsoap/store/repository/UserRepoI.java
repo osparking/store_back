@@ -30,4 +30,6 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     @Query(nativeQuery = true, value = selectUserDto)
     List<UserDto> findAllUserDto();
+
+    Optional<BsUser> findByEmail(String email);
 }
