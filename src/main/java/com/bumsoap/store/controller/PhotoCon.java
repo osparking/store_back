@@ -26,11 +26,11 @@ public class PhotoCon {
     private final PhotoServInt photoServ;
     private final EmployeeServInt employeeServ;
 
-    @PutMapping(UrlMap.UPDATE)
+    @PutMapping(UrlMap.PHOTO_UPDATE)
     public ResponseEntity<ApiResp> update(
-            @PathVariable Long id, @RequestBody MultipartFile file) {
+            @PathVariable Long photoId, @RequestParam MultipartFile file) {
         try {
-            photoServ.update(id, file);
+            photoServ.update(photoId, file);
             return ResponseEntity.ok()
                     .body(new ApiResp(Feedback.PHOTO_UPDATE_SUCCESS, null));
         } catch (IdNotFoundEx e) {
