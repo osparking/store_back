@@ -24,21 +24,24 @@ public class PhotoServ implements PhotoServInt {
     @Override
     public Photo save(Long empId, MultipartFile file) throws
             IOException, SQLException {
-        Optional<Employee> employee = employeeRepo.findById(empId);
-        Photo photo = new Photo();
 
-        if (file != null && !file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException(Feedback.NO_PHOTO_SUBMITTED);
+        } else {
+            Photo photo = new Photo();
+
             photo.setImage(new SerialBlob(file.getBytes()));
             photo.setFileType(file.getContentType());
             photo.setFileName(file.getOriginalFilename());
+            Photo savedPhoto = photoRepo.save(photo);
+            Optional<Employee> employee = employeeRepo.findById(empId);
+            employee.ifPresentOrElse(emp -> {
+                        emp.setPhoto(savedPhoto);
+                    },
+                    () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + empId));
+            employeeRepo.save(employee.get());
+            return savedPhoto;
         }
-        Photo savedPhoto = photoRepo.save(photo);
-        employee.ifPresentOrElse(emp -> {
-                    emp.setPhoto(savedPhoto);
-                },
-                () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + empId));
-        employeeRepo.save(employee.get());
-        return savedPhoto;
     }
 
     @Override
