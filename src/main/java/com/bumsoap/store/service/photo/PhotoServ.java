@@ -58,15 +58,18 @@ public class PhotoServ implements PhotoServInt {
     @Override
     public Photo update(Long id, MultipartFile file) throws
             SQLException, IOException {
-        Photo photo = findById(id);
 
-        if (file != null && !file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException(Feedback.NO_PHOTO_SUBMITTED);
+        } else {
+            Photo photo = findById(id);
+
+            photo.setImage(new SerialBlob(file.getBytes()));
             photo.setFileType(file.getContentType());
             photo.setFileName(file.getOriginalFilename());
-            photo.setImage(new SerialBlob(file.getBytes()));
-            photoRepo.save(photo);
+            Photo savedPhoto = photoRepo.save(photo);
+            return savedPhoto;
         }
-        return photo;
     }
 
     @Override
