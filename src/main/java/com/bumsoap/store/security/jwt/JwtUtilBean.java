@@ -19,6 +19,11 @@ public class JwtUtilBean {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
+    public String getUsernameFrom(String token) {
+        return Jwts.parser().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody().getSubject();
+    }
+
     public String generateTokenForUser(Authentication authentication) {
         var userDetails = (BsUserDetails) authentication.getPrincipal();
 
