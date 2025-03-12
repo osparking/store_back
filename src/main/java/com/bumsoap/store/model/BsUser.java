@@ -34,5 +34,13 @@ public class BsUser {
     private LocalDateTime addDate; // 유저 생성(=추가) 날짜
     private UserType userType;
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @JoinTable(name = "user_roles",
+            joinColumns
+                    = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns
+                    = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+uniqueConstraints
+        = @UniqueConstraint(name = "unique_user_role",
+        columnNames = {"user_id", "role_id"}))
     private Collection<Role> roles = new HashSet<>();
 }
