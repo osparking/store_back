@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.data.annotation.Id;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 @Entity
@@ -20,7 +21,17 @@ public class Role {
     private Long id;
     @NaturalId
     private String name;
+    @ManyToMany(mappedBy = "roles")
+    private Collection<BsUser> users = new HashSet<>();
+
     public Role(String name) {
         this.name = name;
+    }
+    public String getName() {
+        return name == null ? "" : name;
+    }
+    @Override
+    public String toString() {
+        return name;
     }
 }
