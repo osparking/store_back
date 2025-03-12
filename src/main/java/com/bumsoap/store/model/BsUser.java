@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * BumSoap(범이비누) 사용자
@@ -31,4 +33,6 @@ public class BsUser {
     @CreationTimestamp
     private LocalDateTime addDate; // 유저 생성(=추가) 날짜
     private UserType userType;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    private Collection<Role> roles = new HashSet<>();
 }
