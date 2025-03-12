@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -27,6 +28,7 @@ public class BsUser {
     private long id;
     private String fullName;
     private String mbPhone; // Mobile Phone
+    @NaturalId
     private String email;
     private String password;
     private boolean usable;
