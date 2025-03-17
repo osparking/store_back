@@ -24,4 +24,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
     }
+
+    private String getJwtFromRequest(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            return null;
+        }
+        return header.substring(7);
+    }
 }
