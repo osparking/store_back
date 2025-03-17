@@ -22,7 +22,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-
+        try {
+            String jwt = getJwtFromRequest(request);
+            if (jwt != null && jwtUtilBean.validateToken(jwt)) {
+                String email = jwtUtilBean.getUsernameFrom(jwt);
+            }
+        } catch (Exception e) { }
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
