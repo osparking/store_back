@@ -54,11 +54,15 @@ public class AppSecurityConfig {
                         -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth
-                        ->auth.requestMatchers("")
+                        ->auth.requestMatchers(URLS)
                         .authenticated().anyRequest().permitAll());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(
                 authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+    private static  String[] URLS = {
+            "/api/s1/user/**/change_pwd",
+            "/api/s1/photo/**"
+    };
 }

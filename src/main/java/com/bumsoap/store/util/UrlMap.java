@@ -29,9 +29,9 @@ public class UrlMap {
     public static final String GET_ALL_DEPT = "/get_all_dept";
     /*== WORKER / 노동자 끝 ================================*/
 
-    /*== AHTHO / 인증 시작 =================================================*/
+    /*== Authentication / 인증 시작 =========================================*/
     public static final String AUTHO = API + "/autho";
     public static final String LOGIN = "/login";
-    /*== AHTHO / 인증 끝 ================================*/
+    /*== Authentication / 인증 끝 ================================*/
 
 }
