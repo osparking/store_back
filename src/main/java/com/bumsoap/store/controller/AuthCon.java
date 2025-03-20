@@ -15,10 +15,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -31,7 +28,7 @@ public class AuthCon {
     private JwtUtilBean jwtUtilBean;
 
     @PostMapping(UrlMap.LOGIN)
-    public ResponseEntity<ApiResp> login (@Valid LoginRequest request) {
+    public ResponseEntity<ApiResp> login (@Valid @RequestBody LoginRequest request) {
         try {
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
