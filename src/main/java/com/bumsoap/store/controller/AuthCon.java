@@ -2,6 +2,9 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.request.LoginRequest;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.response.JwtResponse;
+import com.bumsoap.store.security.jwt.JwtUtilBean;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.validation.Valid;
@@ -23,6 +26,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 @CrossOrigin("http://localhost:5173/")
 public class AuthCon {
     private final AuthenticationManager authenticationManager;
+    private JwtUtilBean jwtUtilBean;
 
     @PostMapping(UrlMap.LOGIN)
     public ResponseEntity<ApiResp> login (@Valid LoginRequest request) {
@@ -32,6 +36,10 @@ public class AuthCon {
                             request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(
                     authentication);
+            String jwt = jwtUtilBean.generateTokenForUser(authentication);
+            BsUserDetails userDetails =
+                    (BsUserDetails) authentication.getPrincipal();
+            JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
         } catch (Exception e) {
             e.printStackTrace();
         }
