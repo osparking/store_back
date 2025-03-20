@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,9 +41,11 @@ public class AuthCon {
             BsUserDetails userDetails =
                     (BsUserDetails) authentication.getPrincipal();
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
+        } catch (DisabledException e) {
+            return ResponseEntity.status(UNAUTHORIZED).body(
+                    new ApiResp(Feedback.DISABLED_ACCOUNT, null));
         }
-        return null;
     }
 }

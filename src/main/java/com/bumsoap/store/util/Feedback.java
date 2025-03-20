@@ -31,4 +31,6 @@ public class Feedback {
     public static final String LOGIN_SUCCESS = "로그인 인증 성공";
     public static final String BAD_CREDENTIAL = "자격정보 불일치";
     public static final String LOGIN_FAILURE = "로그인 인증 예외:";
+    public static final String AUTHEN_SUCCESS = "계정 인증에 성공하였습니다.";
+    public static final String DISABLED_ACCOUNT = "사용 중지된 계정입니다.";
 }
