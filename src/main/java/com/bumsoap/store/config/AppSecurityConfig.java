@@ -62,7 +62,7 @@ public class AppSecurityConfig {
         return http.build();
     }
     private static  String[] URLS = {
-            "/api/s1/user/**/change_pwd",
+            "/api/s1/user/change_pwd/*",
             "/api/s1/photo/**"
     };
 }
