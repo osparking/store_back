@@ -24,6 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -41,6 +42,7 @@ public class UserCon {
     private final UserRepoI userRepo;
     private final UserServInt userServ;
     private final PasswordChangeServInt passwordChangeServ;
+    private final PasswordEncoder passwordEncoder;
 
     @PutMapping(UrlMap.CHANGE_PASSWORD)
     public ResponseEntity<ApiResp> changePassword(
@@ -149,6 +151,8 @@ public class UserCon {
 
     @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> add(@RequestBody UserRegisterReq request) {
+        String encodedPwd = passwordEncoder.encode(request.getPassword());
+        request.setPassword(encodedPwd);
         String email = request.getEmail();
         BsUser user = null;
 
