@@ -10,8 +10,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * BumSoap(범이비누) 사용자
@@ -41,8 +43,10 @@ public class BsUser {
                     = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns
                     = @JoinColumn(name = "role_id", referencedColumnName = "id"),
-uniqueConstraints
-        = @UniqueConstraint(name = "unique_user_role",
-        columnNames = {"user_id", "role_id"}))
+            uniqueConstraints
+                    = @UniqueConstraint(name = "unique_user_role",
+                    columnNames = {"user_id", "role_id"}))
     private Collection<Role> roles = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<VerifinToken> verifinTokens = new ArrayList<>();
 }
