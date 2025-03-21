@@ -19,7 +19,7 @@ public class BsUserDetails implements UserDetails {
     private Long id;
     private String email;
     private String password;
-    private boolean usable;
+    private boolean enabled;
 
     private Collection<GrantedAuthority> authorities;
 
