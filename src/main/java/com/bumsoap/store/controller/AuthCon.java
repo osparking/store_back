@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 @CrossOrigin("http://localhost:5173/")
 public class AuthCon {
     private final AuthenticationManager authenticationManager;
-    private JwtUtilBean jwtUtilBean;
+    private final JwtUtilBean jwtUtilBean;
 
     @PostMapping(UrlMap.LOGIN)
     public ResponseEntity<ApiResp> login (@Valid @RequestBody LoginRequest request) {
