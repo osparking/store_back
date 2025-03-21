@@ -1,5 +1,6 @@
 package com.bumsoap.store.model;
 
+import com.bumsoap.store.util.BsUtils;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,10 @@ public class VerifinToken {
     @ManyToOne
     @JoinColumn(name="user_id")
     private BsUser user;
+
+    public VerifinToken(String token, BsUser user) {
+        this.token = token;
+        this.expireDate = BsUtils.getExpireTime();
+        this.user = user;
+    }
 }
