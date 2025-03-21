@@ -29,7 +29,7 @@ public class BsUserDetails implements UserDetails {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
         return new BsUserDetails(user.getId(), user.getEmail(),
-                user.getPassword(), user.isUsable(), authorities);
+                user.getPassword(), user.isEnabled(), authorities);
     }
 
     @Override

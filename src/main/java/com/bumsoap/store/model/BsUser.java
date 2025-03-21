@@ -31,7 +31,7 @@ public class BsUser {
     @NaturalId
     private String email;
     private String password;
-    private boolean usable;
+    private boolean enabled;
     @CreationTimestamp
     private LocalDateTime addDate; // 유저 생성(=추가) 날짜
     private UserType userType;
