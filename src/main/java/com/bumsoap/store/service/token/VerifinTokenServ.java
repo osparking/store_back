@@ -42,6 +42,13 @@ public class VerifinTokenServ implements VerifinTokenServInt{
 
     @Override
     public boolean hasTokenExpired(String token) {
-        return false;
+        var verifinToken = verifinTokenRepo.findByToken(token);
+
+        if (verifinToken.isEmpty()) {
+            return true;
+        } else {
+            var expireDate = verifinToken.get().getExpireDate();
+            return System.currentTimeMillis() > expireDate.getTime();
+        }
     }
 }
