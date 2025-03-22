@@ -17,7 +17,21 @@ public class VerifinTokenServ implements VerifinTokenServInt{
 
     @Override
     public String varifyToken(String token) {
-        return "";
+        Optional<VerifinToken> optionalVeriTok = findByToken(token);
+        if (optionalVeriTok.isEmpty()) {
+            return "INVALID";
+        }
+        BsUser user = optionalVeriTok.get().getUser();
+        if (user.isEnabled()) {
+            return "VERIFIED";
+        }
+        if (hasTokenExpired(token)) {
+            return "EXPIRED";
+        }
+        user.setEnabled(true);
+        userRepo.save(user);
+
+        return "VALID";
     }
 
     @Override
