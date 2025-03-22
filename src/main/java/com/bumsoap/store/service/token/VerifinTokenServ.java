@@ -3,6 +3,7 @@ package com.bumsoap.store.service.token;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.VerifinToken;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.repository.VerifinTokenRepoI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class VerifinTokenServ implements VerifinTokenServInt{
     private final UserRepoI userRepo;
+    private final VerifinTokenRepoI verifinTokenRepo;
 
     @Override
     public String varifyToken(String token) {
@@ -30,7 +32,7 @@ public class VerifinTokenServ implements VerifinTokenServInt{
 
     @Override
     public Optional<VerifinToken> findByToken(String token) {
-        return Optional.empty();
+        return verifinTokenRepo.findByToken(token);
     }
 
     @Override
