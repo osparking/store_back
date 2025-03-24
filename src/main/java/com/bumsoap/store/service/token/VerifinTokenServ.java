@@ -4,10 +4,13 @@ import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.VerifinToken;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.repository.VerifinTokenRepoI;
+import com.bumsoap.store.util.BsUtils;
+import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +45,16 @@ public class VerifinTokenServ implements VerifinTokenServInt{
 
     @Override
     public VerifinToken makeNewToken(String oldToken) {
-        return null;
+        Optional<VerifinToken> optionalToken = findByToken(oldToken);
+
+        if (optionalToken.isPresent()) {
+            VerifinToken verifToken = optionalToken.get();
+            verifToken.setToken(UUID.randomUUID().toString());
+            verifToken.setExpireDate(BsUtils.getExpireTime());
+
+            return verifinTokenRepo.save(verifToken);
+        }
+        throw new IllegalStateException(Feedback.JWT_WRONG + oldToken);
     }
 
     @Override
