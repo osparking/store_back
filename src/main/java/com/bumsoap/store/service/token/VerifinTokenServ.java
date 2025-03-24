@@ -36,7 +36,8 @@ public class VerifinTokenServ implements VerifinTokenServInt{
 
     @Override
     public void saveTokenForUser(String token, BsUser user) {
-
+        var verifinToken = new VerifinToken(token, user);
+        verifinTokenRepo.save(verifinToken);
     }
 
     @Override
