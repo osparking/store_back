@@ -6,11 +6,14 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.repository.VerifinTokenRepoI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.TokenResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.bumsoap.store.util.TokenResult.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,22 +22,22 @@ public class VerifinTokenServ implements VerifinTokenServInt{
     private final VerifinTokenRepoI verifinTokenRepo;
 
     @Override
-    public String varifyToken(String token) {
+    public TokenResult varifyToken(String token) {
         Optional<VerifinToken> optionalVeriTok = findByToken(token);
         if (optionalVeriTok.isEmpty()) {
-            return "INVALID";
+            return INVALID;
         }
         BsUser user = optionalVeriTok.get().getUser();
         if (user.isEnabled()) {
-            return "VERIFIED";
+            return VERIFIED;
         }
         if (hasTokenExpired(token)) {
-            return "EXPIRED";
+            return EXPIRED;
         }
         user.setEnabled(true);
         userRepo.save(user);
 
-        return "VALID";
+        return VALIDATED;
     }
 
     @Override
