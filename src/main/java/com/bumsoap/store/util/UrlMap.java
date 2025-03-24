@@ -34,4 +34,8 @@ public class UrlMap {
     public static final String LOGIN = "/login";
     /*== Authentication / 인증 끝 ================================*/
 
+    /*== JWT Token / 토큰 검증 시작 ===========================================*/
+    public static final String VERIFY = API + "/verify";
+    /*== JWT Token / 토큰 검증 끝 ==================================*/
+
 }
