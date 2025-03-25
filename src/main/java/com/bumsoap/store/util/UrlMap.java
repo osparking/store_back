@@ -38,6 +38,7 @@ public class UrlMap {
     public static final String VERIFY = API + "/verify";
     public static final String TOKEN = "/token";
     public static final String IS_EXPIRED = "/is_expired";
+    public static final String SAVE_TOKEN = "/save_token";
     /*== JWT Token / 토큰 검증 끝 ==================================*/
 
 }
