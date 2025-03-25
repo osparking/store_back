@@ -22,7 +22,7 @@ public class VerifinTokenServ implements VerifinTokenServInt{
     private final VerifinTokenRepoI verifinTokenRepo;
 
     @Override
-    public TokenResult varifyToken(String token) {
+    public TokenResult verifyToken(String token) {
         Optional<VerifinToken> optionalVeriTok = findByToken(token);
         if (optionalVeriTok.isEmpty()) {
             return INVALID;

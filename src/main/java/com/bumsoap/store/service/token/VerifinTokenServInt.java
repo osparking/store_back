@@ -7,7 +7,7 @@ import com.bumsoap.store.util.TokenResult;
 import java.util.Optional;
 
 public interface VerifinTokenServInt {
-    TokenResult varifyToken(String token);
+    TokenResult verifyToken(String token);
     void saveTokenForUser(String token, BsUser user);
     VerifinToken makeNewToken(String oldToken);
     Optional<VerifinToken> findByToken(String token);

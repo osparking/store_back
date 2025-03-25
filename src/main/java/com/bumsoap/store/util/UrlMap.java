@@ -36,6 +36,7 @@ public class UrlMap {
 
     /*== JWT Token / 토큰 검증 시작 ===========================================*/
     public static final String VERIFY = API + "/verify";
+    public static final String TOKEN = "/token";
     /*== JWT Token / 토큰 검증 끝 ==================================*/
 
 }
