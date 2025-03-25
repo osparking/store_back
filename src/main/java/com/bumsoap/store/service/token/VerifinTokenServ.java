@@ -66,8 +66,8 @@ public class VerifinTokenServ implements VerifinTokenServInt{
     }
 
     @Override
-    public void deleteTokenById(Long id) {
-        verifinTokenRepo.deleteById(id);
+    public void deleteTokenByUserId(Long tokenId, Long userId) {
+        verifinTokenRepo.deleteByUserId(tokenId, userId);
     }
 
     @Override

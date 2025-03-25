@@ -11,6 +11,6 @@ public interface VerifinTokenServInt {
     void saveTokenForUser(String token, BsUser user);
     VerifinToken makeNewToken(String oldToken);
     Optional<VerifinToken> findByToken(String token);
-    void deleteTokenById(Long id);
+    void deleteTokenByUserId(Long tokenId, Long userId);
     boolean hasTokenExpired(String token);
 }
