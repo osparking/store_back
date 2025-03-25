@@ -22,6 +22,14 @@ public class VerifinTokenCon {
     private final VerifinTokenServInt verifinTokenServ;
     private final UserRepoI userRepo;
 
+    @DeleteMapping(UrlMap.DELETE_TOKEN)
+    public ResponseEntity<ApiResp> deleteUserToken(
+            @RequestParam Long tokenId, @RequestParam Long userId) {
+        verifinTokenServ.deleteTokenByUserId(tokenId, userId);
+        return ResponseEntity.ok(
+                new ApiResp(Feedback.TOKEN_DELETED, null));
+    }
+
     @PutMapping(UrlMap.GENERATE_NEW_TOKEN)
     public ResponseEntity<ApiResp> generateNewVerifToken(
             @RequestParam String oldToken) {

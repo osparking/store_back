@@ -40,6 +40,7 @@ public class UrlMap {
     public static final String IS_EXPIRED = "/is_expired";
     public static final String SAVE_TOKEN = "/save_token";
     public static final String GENERATE_NEW_TOKEN = "/new_token";
+    public static final String DELETE_TOKEN = "/delete_token";
     /*== JWT Token / 토큰 검증 끝 ==================================*/
 
 }
