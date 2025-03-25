@@ -1,5 +1,6 @@
 package com.bumsoap.store.email;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -36,5 +37,10 @@ public class EmailManager {
         props.put("mail.smtp.auth", EmailProperties.DEFAULT_AUTH);
         props.put("mail.smtp.starttls.enable", EmailProperties.DEFAULT_STARTTLS);
         return mailSenderImpl;
+    }
+
+    @PostConstruct
+    private void init() {
+        sender = createMailSender();
     }
 }
