@@ -1,6 +1,7 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.model.VerifinToken;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.TokenVerifinReq;
 import com.bumsoap.store.response.ApiResp;
@@ -12,12 +13,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(UrlMap.VERIFY)
 public class VerifinTokenCon {
     private final VerifinTokenServInt verifinTokenServ;
     private final UserRepoI userRepo;
+
+    @PutMapping(UrlMap.GENERATE_NEW_TOKEN)
+    public ResponseEntity<ApiResp> generateNewVerifToken(
+            @RequestParam String oldToken) {
+        try {
+            VerifinToken newToken = verifinTokenServ.makeNewToken(oldToken);
+            return ResponseEntity.ok(new ApiResp("", newToken));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @PostMapping(UrlMap.SAVE_TOKEN)
     public ResponseEntity<ApiResp> saveUserVerifToken(
