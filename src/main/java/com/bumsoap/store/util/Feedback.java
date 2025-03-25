@@ -24,7 +24,7 @@ public class Feedback {
     public static final String PHOTO_NOT_FOUND = "사진 발견되지 않음";
     public static final String PHOTO_UPDATE_SUCCESS = "사진 갱신 성공";
 
-    /*************** 보안 관련 메시지 ********************************/
+    /*************** 계정 관련 메시지 ********************************/
     public static final String CNF_PASSWORD_WRONG = "새 비밀번호 확인 불일치";
     public static final String NO_PHOTO_SUBMITTED = "사진 제출 누락 오류";
     public static final String NOT_FOUND_EMAIL = "존재하지 않는 이메일:";
@@ -33,5 +33,10 @@ public class Feedback {
     public static final String LOGIN_FAILURE = "로그인 인증 예외:";
     public static final String AUTHEN_SUCCESS = "계정 인증에 성공하였습니다.";
     public static final String DISABLED_ACCOUNT = "사용 중지된 계정입니다.";
+
+    /*************** 토큰 관련 메시지 ********************************/
     public static final String JWT_WRONG = "잘못된 토큰:";
+    public static final String TOKEN_EXPIRED = "만료된 토큰:";
+    public static final String TOKEN_IS_VALID = "합법적인 토큰:";
+
 }
