@@ -2,6 +2,7 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.UserDto;
+import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.Admin;
@@ -22,6 +23,7 @@ import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +45,7 @@ public class UserCon {
     private final UserServInt userServ;
     private final PasswordChangeServInt passwordChangeServ;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher publisher;
 
     @PutMapping(UrlMap.CHANGE_PASSWORD)
     public ResponseEntity<ApiResp> changePassword(
@@ -176,6 +179,8 @@ public class UserCon {
                 default:
                     throw new IllegalArgumentException(Feedback.USER_TYPE_WRONG);
             }
+            publisher.publishEvent(new UserRegisterEvent(user));
+
             var userDto = objMapper.mapToDto(user, UserDto.class);
             return ResponseEntity.ok(
                     new ApiResp(Feedback.USER_ADD_SUCCESS, userDto));
