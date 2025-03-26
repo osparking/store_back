@@ -1,6 +1,7 @@
 package com.bumsoap.store.event.listener;
 
 import com.bumsoap.store.email.EmailManager;
+import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import jakarta.mail.MessagingException;
@@ -11,6 +12,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +25,19 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
 
+    }
+
+    private void handleUserRegisterEvent(UserRegisterEvent event) {
+        BsUser user = event.getUser();
+        String vToken = UUID.randomUUID().toString();
+        tokenService.saveTokenForUser(vToken, user);
+
+        String verifUrl = frontendBaseUrl + "/email_verifin?token=" + vToken;
+        try {
+            sendVerifEmail(user, verifUrl);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void sendVerifEmail(BsUser user, String verifUrl)
