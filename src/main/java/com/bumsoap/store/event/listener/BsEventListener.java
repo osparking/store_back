@@ -33,6 +33,11 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
         }
     }
 
+    /**
+     * 유저 등록 사건을 수신하면, 유저에게 36자리 난수를 할당하고, 난수를 DB 에 저장하며,
+     * 난수를 포함하는 메일을 유저에게 발송하여 유저가 등록한 이메일 주소의 실 소유주인지 증명하게 한다.
+     * @param event 유저등록 사건
+     */
     private void handleUserRegisterEvent(UserRegisterEvent event) {
         BsUser user = event.getUser();
         String vToken = UUID.randomUUID().toString();
