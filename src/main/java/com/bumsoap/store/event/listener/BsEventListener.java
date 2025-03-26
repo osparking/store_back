@@ -24,7 +24,13 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-
+        switch (event) {
+            case UserRegisterEvent registerE -> {
+                handleUserRegisterEvent(registerE);
+            }
+            default ->  {
+            }
+        }
     }
 
     private void handleUserRegisterEvent(UserRegisterEvent event) {
