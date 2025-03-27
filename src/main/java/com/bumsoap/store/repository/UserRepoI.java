@@ -16,7 +16,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
     boolean existsByEmail(String email);
 
     String selectUserDto =
-            "select u.id, u.full_name, u.mb_phone, u.email, u.usable," +
+            "select u.id, u.full_name, u.mb_phone, u.email, u.enabled," +
             " w.dept, u.user_type, u.add_date, e.photo_id, p.image " +
             "from bs_user u" +
             " left join employee e on e.employee_id = u.id" +
