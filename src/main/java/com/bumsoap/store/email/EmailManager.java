@@ -33,6 +33,7 @@ public class EmailManager {
         mailSenderImpl.setPort(EmailProperties.DEFAULT_PORT);
         mailSenderImpl.setUsername(EmailProperties.DEFAULT_USERNAME);
         mailSenderImpl.setPassword(EmailProperties.DEFAULT_PASSWORD);
+        mailSenderImpl.setDefaultEncoding("UTF-8");
         Properties props = mailSenderImpl.getJavaMailProperties();
         props.put("mail.smtp.auth", EmailProperties.DEFAULT_AUTH);
         props.put("mail.smtp.starttls.enable", EmailProperties.DEFAULT_STARTTLS);
