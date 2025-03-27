@@ -40,4 +40,5 @@ public class Feedback {
     public static final String TOKEN_IS_VALID = "합법적인 토큰:";
     public static final String TOKEN_SAVED = "유저 토큰 저장됨";
     public static final String TOKEN_DELETED = "유저 토큰 삭제됨";
+    public static final String TOKEN_VALI_ERROR = "토큰 검증 오류";
 }
