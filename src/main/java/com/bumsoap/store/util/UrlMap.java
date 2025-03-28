@@ -46,6 +46,7 @@ public class UrlMap {
 
     /*== 롤/Role 시작 =======================================================*/
     public static final String ROLE = API + "/role";
+    public static final String BY_NAME = "/{name}/by_name";
     /*== 롤/Role 끝 ======================================*/
 
 }

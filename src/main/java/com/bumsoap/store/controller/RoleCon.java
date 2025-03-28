@@ -25,4 +25,9 @@ public class RoleCon {
     public Role getRoleById(Long id) {
         return roleServ.findById(id);
     }
+
+    @GetMapping(UrlMap.BY_NAME)
+    public Role findRoleByName(String name) {
+        return roleServ.findByName(name);
+    }
 }
