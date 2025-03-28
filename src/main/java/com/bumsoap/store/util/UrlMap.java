@@ -44,4 +44,8 @@ public class UrlMap {
     public static final String DELETE_TOKEN = "/delete_token";
     /*== JWT Token / 토큰 검증 끝 ==================================*/
 
+    /*== 롤/Role 시작 =======================================================*/
+    public static final String ROLE = API + "/role";
+    /*== 롤/Role 끝 ======================================*/
+
 }
