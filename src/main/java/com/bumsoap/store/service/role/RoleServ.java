@@ -1,11 +1,18 @@
 package com.bumsoap.store.service.role;
 
 import com.bumsoap.store.model.Role;
+import com.bumsoap.store.repository.RoleRepoI;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
+@Service
 public class RoleServ implements RoleServInt{
+    private final RoleRepoI roleRepo;
+
     @Override
     public List<Role> getRoles() {
         return List.of();
