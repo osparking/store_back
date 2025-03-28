@@ -3,6 +3,7 @@ package com.bumsoap.store.service.role;
 import com.bumsoap.store.model.Role;
 import com.bumsoap.store.repository.RoleRepoI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.webauthn.api.CredentialRecord;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -15,27 +16,32 @@ public class RoleServ implements RoleServInt{
 
     @Override
     public List<Role> getRoles() {
-        return List.of();
+        return roleRepo.findAll();
     }
 
     @Override
     public Role findByName(String name) {
-        return null;
+        return roleRepo.findByName(name).orElseThrow(
+                () -> new RuntimeException("없는 Role: " + name));
     }
 
     @Override
     public Role findById(Long id) {
-        return null;
+        return roleRepo.findById(id).orElseThrow(
+                () -> new RuntimeException("없는 Role ID: " + id));
     }
 
     @Override
     public void saveRole(Role role) {
-
+        roleRepo.save(role);
     }
 
     @Override
     public Collection<Role> setUserRoles(List<String> roleNames) {
-        return List.of();
+        return roleNames
+                .stream()
+                .map(name -> findByName("ROLE_" + name))
+                .toList();
     }
 }
 
