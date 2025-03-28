@@ -65,7 +65,7 @@ public class AppSecurityConfig {
     }
     private static  String[] URLS = {
             "/api/s1/user/change_pwd/*",
-//            "/api/s1/user/**",
+            "/api/s1/user/**",
             "/api/s1/photo/**"
     };
 }
