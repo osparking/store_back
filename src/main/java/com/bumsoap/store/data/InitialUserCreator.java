@@ -3,11 +3,13 @@ package com.bumsoap.store.data;
 import com.bumsoap.store.model.Admin;
 import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Role;
+import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.RoleRepoI;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.role.RoleServInt;
+import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.UserType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
     private final UserRepoI userRepo;
     private final AdminServ adminServ;
     private final CustomerServ customerServ;
+    private final WorkerServInt workerServ;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -35,12 +38,37 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
         insertRolesIfNotExits(defaultRoles);
         insertAdminIfNotExists();
         insertCustomersIfNotExists();
+        insertWorkersIfNotExists();
     }
 
     private void insertRolesIfNotExits(Set<String> roles) {
         roles.stream()
                 .filter(role -> roleRepo.findByName(role).isEmpty())
                 .map(Role::new).forEach(roleRepo::save);
+    }
+
+    private void insertWorkersIfNotExists() {
+        Role workerRole = roleServ.findByName("ROLE_WORKER");
+
+        for (int i = 1; i <= 10; i++) {
+            String workerEmail = "worker" + i + "@email.com";
+            if (userRepo.existsByEmail(workerEmail)) {
+                continue;
+            }
+            Worker worker = new Worker();
+
+            worker.setFullName("직원" + i);
+            worker.setMbPhone("0104567880" + (i - 1));
+            worker.setEmail(workerEmail);
+            worker.setPassword(passwordEncoder.encode("1234"));
+            worker.setUserType(UserType.WORKER);
+            worker.setRoles(Set.of(workerRole));
+            worker.setEnabled(true);
+            worker.setDept("생산부");
+            worker = workerServ.add(worker);
+
+            System.out.println("생성된 직원 구분번호: " + i);
+        }
     }
 
     private void insertCustomersIfNotExists() {
