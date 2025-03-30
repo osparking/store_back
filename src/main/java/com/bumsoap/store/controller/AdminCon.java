@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(UrlMap.ADMIN)
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:5173/")
 public class AdminCon {
     private final AdminServ adminServ;
     private final UserServInt userServ;
