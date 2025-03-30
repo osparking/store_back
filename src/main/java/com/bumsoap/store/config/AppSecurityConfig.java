@@ -55,16 +55,20 @@ public class AppSecurityConfig {
                 .sessionManagement(session
                         -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth
-    ->auth
-    .requestMatchers("/api/s1/user/add").permitAll()
-                        .requestMatchers(URLS).authenticated()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/s1/user/add")
+                        .permitAll()
+                        .requestMatchers("/api/s1/admin/**")
+                        .hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(URLS)
+                        .authenticated()
                         .anyRequest().permitAll());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(
                 authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
     private static  String[] URLS = {
             "/api/s1/user/change_pwd/*",
             "/api/s1/user/**",
