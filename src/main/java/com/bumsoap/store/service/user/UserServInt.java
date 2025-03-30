@@ -18,4 +18,6 @@ public interface UserServInt {
     UserDto getUserDtoById(Long id);
 
     BsUser getByEmail(@NotBlank String email);
+
+    long countAll();
 }

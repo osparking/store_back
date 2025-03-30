@@ -67,4 +67,9 @@ public class UserServ implements UserServInt {
         return user.orElseThrow(() -> new DataNotFoundException(
                 Feedback.NOT_FOUND_EMAIL + email));
     }
+
+    @Override
+    public long countAll() {
+        return userRepo.count();
+    }
 }
