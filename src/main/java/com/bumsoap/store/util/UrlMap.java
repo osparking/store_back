@@ -17,6 +17,11 @@ public class UrlMap {
     public static final String CHANGE_PASSWORD = "/change_pwd/{id}";
     /*== USER / 유저 끝 ==================================*/
 
+    /*== ADMIN / 관리자 시작 ====================================================*/
+    public static final String ADMIN = API + "/admin";
+    public static final String USER_COUNT = "/user/count";
+    /*== ADMIN / 관리자 끝 ==================================*/
+
     /*== PHOTO / 사진 시작 ====================================================*/
     public static final String PHOTO = API + "/photo";
     public static final String UPLOAD = "/upload";
