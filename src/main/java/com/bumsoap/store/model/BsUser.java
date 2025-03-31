@@ -49,4 +49,10 @@ public class BsUser {
     private Collection<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<VerifinToken> verifinTokens = new ArrayList<>();
+
+    public String addedMonth() {
+        int monInt = addDate.getMonthValue();
+        int yearInt = addDate.getYear();
+        return String.format("%d-%02d월", yearInt, monInt);
+    }
 }
