@@ -1,11 +1,17 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.model.Admin;
+import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.user.UserServInt;
+import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping(UrlMap.ADMIN)
@@ -18,6 +24,18 @@ public class AdminCon {
     @PostMapping("/add")
     public void add(@RequestBody Admin admin) {
         adminServ.add(admin);
+    }
+
+    @GetMapping(UrlMap.USER_COUNT_STAT)
+    public ResponseEntity<ApiResp> countUsersByMonthAndType(){
+        try {
+            var userStat = userServ.countUsersByMonthAndType();
+            return ResponseEntity.status(OK)
+                    .body(new ApiResp(Feedback.FOUND, userStat));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
 
     @GetMapping(UrlMap.USER_COUNT)

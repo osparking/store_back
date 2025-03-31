@@ -1,6 +1,10 @@
 package com.bumsoap.store.util;
 
 public class Feedback {
+
+    /********************** 공통 사용 가능 메시지 ********************/
+    public static final String FOUND = "자원 검색 성공";
+
     /********************** 유저 처리 관련 메시지 ********************/
     public static final String USER_ADD_SUCCESS = "유저 등록 성공";
     public static final String USER_TYPE_WRONG = "존재하지 않는 유저 유형";

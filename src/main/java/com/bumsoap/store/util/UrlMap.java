@@ -20,6 +20,7 @@ public class UrlMap {
     /*== ADMIN / 관리자 시작 ====================================================*/
     public static final String ADMIN = API + "/admin";
     public static final String USER_COUNT = "/user/count";
+    public static final String USER_COUNT_STAT = "/count_stat";
     /*== ADMIN / 관리자 끝 ==================================*/
 
     /*== PHOTO / 사진 시작 ====================================================*/
