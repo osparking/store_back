@@ -10,8 +10,11 @@ import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Month;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,6 +69,18 @@ public class UserServ implements UserServInt {
         Optional<BsUser> user = userRepo.findByEmail(email);
         return user.orElseThrow(() -> new DataNotFoundException(
                 Feedback.NOT_FOUND_EMAIL + email));
+    }
+
+    @Override
+    public Map<String, Map<String, Long>> countUsersByMonthAndType() {
+        List<BsUser> users = userRepo.findAll();
+        var mapMonthType = users.stream().collect(Collectors.groupingBy(
+                BsUser::addedMonth,
+                Collectors.groupingBy(user -> user.getUserType().label,
+                        Collectors.counting())));
+        var sorted = new TreeMap<String, Map<String, Long>>();
+        sorted.putAll(mapMonthType);
+        return sorted;
     }
 
     @Override

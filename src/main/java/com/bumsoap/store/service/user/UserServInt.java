@@ -5,6 +5,7 @@ import com.bumsoap.store.model.BsUser;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserServInt {
     List<UserDto> getUserDtoList();
@@ -18,6 +19,8 @@ public interface UserServInt {
     UserDto getUserDtoById(Long id);
 
     BsUser getByEmail(@NotBlank String email);
+
+    Map<String, Map<String, Long>> countUsersByMonthAndType();
 
     long countAll();
 }
