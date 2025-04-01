@@ -10,6 +10,6 @@ public class UserRegisterReq {
     private String mbPhone; // Mobile Phone
     private String email;
     private String password;
-    private boolean usable;
+    private boolean enabled;
     private String dept;
 }
