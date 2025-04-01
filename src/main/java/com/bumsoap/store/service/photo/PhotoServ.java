@@ -73,7 +73,17 @@ public class PhotoServ implements PhotoServInt {
     }
 
     @Override
-    public byte[] getImageData(Long id) {
-        return new byte[0];
+    public byte[] getImageData(Long id) throws SQLException {
+        try {
+            Photo thePhoto = findById(id);
+            if (thePhoto == null) {
+                return new byte[0];
+            } else {
+                return thePhoto.getImage().getBytes(1,
+                        (int) thePhoto.getImage().length());
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 }

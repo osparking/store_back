@@ -12,6 +12,6 @@ public interface PhotoServInt {
     void deleteById(Long id);
     Photo update(Long id, MultipartFile file) throws SQLException, IOException;
 
-    byte[] getImageData(Long id);
+    byte[] getImageData(Long id) throws SQLException;
 
 }
