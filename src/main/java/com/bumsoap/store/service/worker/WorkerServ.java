@@ -18,6 +18,12 @@ public class WorkerServ implements WorkerServInt {
     private final EntityConverter<Worker, UserDto> entityConverter;
     private final PhotoServInt photoServ;
 
+    @Override
+    public List<UserDto> findAllWorkers() {
+        var workers = workerRepo.findAll();
+        return workers.stream().map(this::mapWorkerToDtoUser).toList();
+    }
+
     private UserDto mapWorkerToDtoUser(Worker worker) {
         UserDto dtoUser = entityConverter.mapEntityToDto(worker, UserDto.class);
 
