@@ -4,6 +4,7 @@ import com.bumsoap.store.model.Admin;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.user.UserServInt;
+import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,18 @@ import static org.springframework.http.HttpStatus.OK;
 public class AdminCon {
     private final AdminServ adminServ;
     private final UserServInt userServ;
+    private final WorkerServInt workerServ;
+
+    @GetMapping(UrlMap.GET_ALL_WORKERS)
+    public ResponseEntity<ApiResp> findAllWorkers() {
+        try {
+            var workers = workerServ.findAllWorkers();
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND, workers));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.NOT_FOUND, null ));
+        }
+    }
 
     @PostMapping("/add")
     public void add(@RequestBody Admin admin) {
