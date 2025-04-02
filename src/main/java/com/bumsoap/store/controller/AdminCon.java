@@ -7,6 +7,7 @@ import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class AdminCon {
     private final WorkerServInt workerServ;
 
     @PutMapping(UrlMap.TOGGLE_ENABLED)
+    @Transactional
     public ResponseEntity<ApiResp> toggleEnabledColumn(
             @PathVariable Long id) {
         try {
