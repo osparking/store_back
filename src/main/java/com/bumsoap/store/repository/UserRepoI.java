@@ -3,6 +3,7 @@ package com.bumsoap.store.repository;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,11 @@ import java.util.Optional;
 public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     boolean existsByEmail(String email);
+
+    @Modifying
+    @Query(nativeQuery = true, value =
+        "UPDATE Bs_User u SET u.enabled = not u.enabled WHERE u.id = :userId")
+    int toggleEnabledColumn(@Param("userId") Long userId);
 
     String selectUserDto =
             "select u.id, u.full_name, u.mb_phone, u.email, u.enabled," +
