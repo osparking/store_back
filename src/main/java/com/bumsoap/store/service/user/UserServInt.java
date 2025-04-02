@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserServInt {
+    int toggleEnabledColumn(Long id);
+
     List<UserDto> getUserDtoList();
 
     void deleteById(Long id);

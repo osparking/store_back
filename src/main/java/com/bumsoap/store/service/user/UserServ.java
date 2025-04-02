@@ -10,7 +10,6 @@ import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Month;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,6 +21,11 @@ import java.util.stream.Collectors;
 public class UserServ implements UserServInt {
     private final UserRepoI userRepo;
     private final ObjMapper mapper;
+
+    @Override
+    public int toggleEnabledColumn(Long id) {
+        return userRepo.toggleEnabledColumn(id);
+    }
 
     @Override
     public List<UserDto> getUserDtoList() {
