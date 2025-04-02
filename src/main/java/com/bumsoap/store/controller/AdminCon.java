@@ -23,6 +23,23 @@ public class AdminCon {
     private final UserServInt userServ;
     private final WorkerServInt workerServ;
 
+    @PutMapping(UrlMap.TOGGLE_ENABLED)
+    public ResponseEntity<ApiResp> toggleEnabledColumn(
+            @PathVariable Long id) {
+        try {
+            int count = userServ.toggleEnabledColumn(id);
+            if (count == 1) {
+                return ResponseEntity.ok(
+                        new ApiResp(Feedback.ENABLED_TOGGLED, null));
+            } else {
+                throw new RuntimeException(Feedback.ENABLED_TOGGLING_ERROR);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @GetMapping(UrlMap.GET_ALL_WORKERS)
     public ResponseEntity<ApiResp> findAllWorkers() {
         try {
