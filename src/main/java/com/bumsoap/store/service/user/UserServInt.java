@@ -12,7 +12,7 @@ public interface UserServInt {
 
     List<UserDto> getUserDtoList();
 
-    void deleteById(Long id);
+    String deleteById(Long id);
 
     BsUser findById(Long id);
 

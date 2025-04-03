@@ -93,9 +93,9 @@ public class UserCon {
     @DeleteMapping(UrlMap.DELETE_BY_ID)
     public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
         try {
-            userServ.deleteById(id);
+            String deletedName = userServ.deleteById(id);
             return ResponseEntity.ok(
-                    new ApiResp(Feedback.USER_DELETE_SUCCESS, null));
+                    new ApiResp(Feedback.DELETEED_USER_NAME + deletedName, null));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));

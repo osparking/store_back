@@ -12,7 +12,7 @@ public class Feedback {
     public static final String USER_TAKEN_EMAIL = "이미 사용 중인 이메일:";
     public static final String USER_ID_NOT_FOUND = "발견되지 않은 유저 아이디:";
     public static final String USER_UPDATE_SUCCESS = "유저 갱신 성공";
-    public static final String USER_DELETE_SUCCESS = "유저 삭제 성공";
+    public static final String DELETEED_USER_NAME = "성공적으로 삭제된 유저 성명: ";
     public static final String USER_DTO_BY_ID = "ID로 유저 찾기 성공";
     public static final String DEPTS_FOUND = "소속 목록 조회됨";
     public static final String DEPTS_READ_FAILURE = "소속 목록 채취 오류";
