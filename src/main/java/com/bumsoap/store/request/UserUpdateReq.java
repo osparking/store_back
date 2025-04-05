@@ -8,4 +8,5 @@ public class UserUpdateReq {
     private String fullName;
     private String mbPhone; // Mobile Phone
     private String dept;
+    private boolean enabled;
 }
