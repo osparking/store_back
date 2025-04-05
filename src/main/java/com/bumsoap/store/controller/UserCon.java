@@ -21,6 +21,7 @@ import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
+import com.bumsoap.store.util.UserType;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -127,20 +128,21 @@ public class UserCon {
 
             user.setFullName(request.getFullName());
             user.setMbPhone(request.getMbPhone());
+            user.setEnabled(request.isEnabled());
 
-            switch (request.getUserType().toUpperCase()) {
-                case "CUSTOMER":
+            switch (UserType.valueOfLabel(request.getUserType())) {
+                case CUSTOMER:
                     var customer = objMapper.mapToDto(user, Customer.class);
                     user = customerServ.add(customer);
                     break;
 
-                case "WORKER":
+                case WORKER:
                     var worker = objMapper.mapToDto(user, Worker.class);
                     worker.setDept(request.getDept());
                     user = workerServ.add(worker);
                     break;
 
-                default:
+                case null, default:
                     throw new IllegalArgumentException(Feedback.USER_TYPE_WRONG);
             }
             var userDto = objMapper.mapToDto(user, UserDto.class);
