@@ -7,6 +7,15 @@ public enum UserType {
 
     public final String label;
 
+    public static UserType valueOfLabel(String label) {
+        for (UserType e : values()) {
+            if (e.label.equals(label)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
     private UserType(String label) {
         this.label = label;
     }
