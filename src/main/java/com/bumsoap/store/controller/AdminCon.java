@@ -3,6 +3,7 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.model.Admin;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
+import com.bumsoap.store.service.CustomerServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
@@ -23,6 +24,7 @@ public class AdminCon {
     private final AdminServ adminServ;
     private final UserServInt userServ;
     private final WorkerServInt workerServ;
+    private final CustomerServInt customerServ;
 
     @PutMapping(UrlMap.TOGGLE_ENABLED)
     @Transactional
@@ -47,6 +49,17 @@ public class AdminCon {
         try {
             var workers = workerServ.findAllWorkers();
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, workers));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.NOT_FOUND, null ));
+        }
+    }
+
+    @GetMapping(UrlMap.GET_ALL_CUSTOMERS)
+    public ResponseEntity<ApiResp> findAllCustomers() {
+        try {
+            var customers = customerServ.findAllCustomers();
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND, customers));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
                     new ApiResp(Feedback.NOT_FOUND, null ));

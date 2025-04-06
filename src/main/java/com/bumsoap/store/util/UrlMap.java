@@ -22,6 +22,7 @@ public class UrlMap {
     public static final String USER_COUNT = "/user/count";
     public static final String USER_COUNT_STAT = "/user/count_stat";
     public static final String GET_ALL_WORKERS = "/worker/get_all";
+    public static final String GET_ALL_CUSTOMERS = "/customer/get_all";
     public static final String TOGGLE_ENABLED = "/worker/{id}/toggle" ;
     /*== ADMIN / 관리자 끝 ==================================*/
 
