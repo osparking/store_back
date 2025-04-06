@@ -5,11 +5,14 @@ import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.WorkerRepoI;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.service.photo.PhotoServInt;
+import com.bumsoap.store.util.BsUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class WorkerServ implements WorkerServInt {
     private UserDto mapWorkerToDtoUser(Worker worker) {
         UserDto dtoUser = entityConverter.mapEntityToDto(worker, UserDto.class);
 
+        dtoUser.setAddDate(BsUtils.getLocalDateTimeStr(worker.getAddDate()));
         if (worker.getPhoto() != null) {
             try {
                 byte[] photoBytes = photoServ.getImageData(worker.getPhoto().getId());
