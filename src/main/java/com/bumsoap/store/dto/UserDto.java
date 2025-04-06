@@ -1,5 +1,6 @@
 package com.bumsoap.store.dto;
 
+import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.UserType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,9 +34,8 @@ public class UserDto {
         this.enabled = enabled;
         this.dept = dept;
         this.userType = UserType.values()[userType].label;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-                "yyyy년 MM월 dd일 HH시 mm분 ss초", Locale.KOREAN);
-        this.addDate = addDate.toLocalDateTime().format(formatter);
+        this.addDate = BsUtils.getLocalDateTimeStr(
+                addDate.toLocalDateTime());
         this.photoId = photoId;
         this.photoBytes = photoBytes;
     }
