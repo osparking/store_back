@@ -13,4 +13,9 @@ public interface VerifinTokenRepoI extends JpaRepository<VerifinToken, Long> {
     @Query(value = "DELETE FROM verifin_token WHERE id != :tokenId AND user_id = :userId",
             nativeQuery = true)
     void deleteByUserId(@Param("tokenId") Long tokenId, @Param("userId") Long userId);
+
+    @Query(value = "SELECT vt.token FROM verifin_token vt JOIN bs_user bu " +
+            "ON vt.user_id = bu.id WHERE bu.email = :email",
+            nativeQuery = true)
+    Optional<String> findTokenByEmail(@Param("email") String email);
 }
