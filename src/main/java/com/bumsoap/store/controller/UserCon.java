@@ -5,10 +5,7 @@ import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
-import com.bumsoap.store.model.Admin;
-import com.bumsoap.store.model.BsUser;
-import com.bumsoap.store.model.Customer;
-import com.bumsoap.store.model.Worker;
+import com.bumsoap.store.model.*;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.PasswordChangeReq;
 import com.bumsoap.store.request.UserRegisterReq;
@@ -17,6 +14,7 @@ import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.password.PasswordChangeServInt;
+import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
@@ -29,6 +27,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -47,6 +47,7 @@ public class UserCon {
     private final PasswordChangeServInt passwordChangeServ;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
+    private final RoleServInt roleServ;
 
     @PutMapping(UrlMap.CHANGE_PASSWORD)
     public ResponseEntity<ApiResp> changePassword(
@@ -168,14 +169,20 @@ public class UserCon {
             switch (request.getUserType()) {
                 case ADMIN:
                     var admin = objMapper.mapToDto(request, Admin.class);
+                    Role adminRole = roleServ.findByName("ROLE_CUSTOMER");
+                    admin.setRoles(Set.of(adminRole));
                     user = adminServ.add(admin);
                     break;
                 case CUSTOMER:
                     var customer = objMapper.mapToDto(request, Customer.class);
+                    Role customerRole = roleServ.findByName("ROLE_CUSTOMER");
+                    customer.setRoles(Set.of(customerRole));
                     user = customerServ.add(customer);
                     break;
                 case WORKER:
                     var worker = objMapper.mapToDto(request, Worker.class);
+                    Role workerRole = roleServ.findByName("ROLE_WORKER");
+                    worker.setRoles(Set.of(workerRole));
                     user = workerServ.add(worker);
                     break;
                 default:
