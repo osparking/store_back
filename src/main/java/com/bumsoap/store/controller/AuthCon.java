@@ -10,6 +10,7 @@ import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.TokenResult;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,8 +62,12 @@ public class AuthCon {
             return ResponseEntity.ok(
                     new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
         } catch (DisabledException e) {
+            String message = Feedback.DISABLED_ACCOUNT;
+            if (verifinTokenService.hasNotExpiredTokenFor(request.getEmail())) {
+              message = Feedback.PLZ_VERIFY_EMAIL;
+            }
             return ResponseEntity.status(UNAUTHORIZED).body(
-                    new ApiResp(Feedback.DISABLED_ACCOUNT, null));
+                    new ApiResp(message, null));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(
                     new ApiResp(e.getMessage(), Feedback.BAD_CREDENTIAL));

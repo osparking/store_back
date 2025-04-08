@@ -48,4 +48,5 @@ public class Feedback {
     public static final String TOKEN_VALI_ERROR = "토큰 검증 오류";
     public static final String ENABLED_TOGGLED = "유저 활성화 토글" ;
     public static final String ENABLED_TOGGLING_ERROR = "유저 활성화 토글 오류";
+    public static final String PLZ_VERIFY_EMAIL = "이메일 검증을 진행하십시오.";
 }
