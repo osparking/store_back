@@ -8,6 +8,9 @@ import java.util.Optional;
 
 public interface VerifinTokenServInt {
     TokenResult verifyToken(String token);
+
+    boolean hasNotExpiredTokenFor(String email);
+
     void saveTokenForUser(String token, BsUser user);
     VerifinToken makeNewToken(String oldToken);
     Optional<VerifinToken> findByToken(String token);

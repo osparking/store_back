@@ -41,6 +41,12 @@ public class VerifinTokenServ implements VerifinTokenServInt{
     }
 
     @Override
+    public boolean hasNotExpiredTokenFor(String email) {
+        Optional<String> token = verifinTokenRepo.findTokenByEmail(email);
+        return token.isPresent() && !hasTokenExpired(token.get());
+    }
+
+    @Override
     public void saveTokenForUser(String token, BsUser user) {
         var verifinToken = new VerifinToken(token, user);
         verifinTokenRepo.save(verifinToken);
