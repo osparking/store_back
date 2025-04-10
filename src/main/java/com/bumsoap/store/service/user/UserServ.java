@@ -23,6 +23,11 @@ public class UserServ implements UserServInt {
     private final ObjMapper mapper;
 
     @Override
+    public String findDummyEmailWithMaxNum() {
+        return userRepo.findDummyEmailWithMaxNum().orElse(null);
+    }
+
+    @Override
     public int toggleEnabledColumn(Long id) {
         return userRepo.toggleEnabledColumn(id);
     }
