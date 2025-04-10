@@ -38,4 +38,9 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
     List<UserDto> findAllUserDto();
 
     Optional<BsUser> findByEmail(String email);
+
+    @Query(nativeQuery = true,
+            value="select bu.email from bs_user bu where email like " +
+                    "'dummy%@email.com' order by email desc limit 1")
+    Optional<String> findDummyEmailWithMaxNum();
 }
