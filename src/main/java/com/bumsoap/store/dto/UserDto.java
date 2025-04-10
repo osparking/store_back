@@ -23,6 +23,7 @@ public class UserDto {
     private String addDate;
     private Long photoId;
     private byte[] photoBytes;
+    private String verifToken;
 
     public UserDto(Long id, String fullName, String mbPhone, String email,
                    boolean enabled, String dept, byte userType,

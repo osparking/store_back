@@ -15,6 +15,7 @@ import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.password.PasswordChangeServInt;
 import com.bumsoap.store.service.role.RoleServInt;
+import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -172,6 +174,8 @@ public class UserCon {
         }
     }
 
+    private final VerifinTokenServInt tokenService;
+
     @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> add(@RequestBody UserRegisterReq request) {
         String encodedPwd = passwordEncoder.encode(request.getPassword());
@@ -208,6 +212,10 @@ public class UserCon {
             publisher.publishEvent(new UserRegisterEvent(user));
 
             var userDto = objMapper.mapToDto(user, UserDto.class);
+            String verifToken = UUID.randomUUID().toString();
+
+            tokenService.saveTokenForUser(verifToken, user);
+            userDto.setVerifToken(verifToken);
             return ResponseEntity.ok(
                     new ApiResp(Feedback.USER_ADD_SUCCESS, userDto));
         } catch (Exception e) {
