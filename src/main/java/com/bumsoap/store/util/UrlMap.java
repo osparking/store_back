@@ -15,6 +15,7 @@ public class UrlMap {
     public static final String USER = API + "/user";
     public static final String GET_USER_DTO_BY_ID = "/{id}/get_dto";
     public static final String CHANGE_PASSWORD = "/change_pwd/{id}";
+    public static final String GET_MAX_SUFFIX = "/get_dummy_suffix";
     /*== USER / 유저 끝 ==================================*/
 
     /*== ADMIN / 관리자 시작 ====================================================*/

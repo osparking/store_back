@@ -49,6 +49,23 @@ public class UserCon {
     private final ApplicationEventPublisher publisher;
     private final RoleServInt roleServ;
 
+    @GetMapping(UrlMap.GET_MAX_SUFFIX)
+    public ResponseEntity<ApiResp> getMaxDummyEmailSuffix() {
+        try {
+            String email = userServ.findDummyEmailWithMaxNum();
+            String suffix = null;
+            if (email != null) {
+                suffix = email.substring(5, 9);
+            }
+            return ResponseEntity.ok(new ApiResp(email == null ?
+                    Feedback.NOT_FOUND_EMAIL + "dummy email" : Feedback.FOUND,
+                    suffix));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @PutMapping(UrlMap.CHANGE_PASSWORD)
     public ResponseEntity<ApiResp> changePassword(
             @PathVariable("id") Long id, @RequestBody PasswordChangeReq request) {
