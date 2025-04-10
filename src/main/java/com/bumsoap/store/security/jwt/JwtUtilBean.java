@@ -49,8 +49,8 @@ public class JwtUtilBean {
                 .claim("id", userDetails.getId())
                 .claim("roles", roles)
                 .setIssuedAt(new java.util.Date())
-//                .setExpiration(new java.util.Date(expirationMs
-//                        + System.currentTimeMillis()))
+                .setExpiration(new java.util.Date(expirationMs
+                        + System.currentTimeMillis()))
                 .signWith(key(), SignatureAlgorithm.HS256).compact();
     }
 }
