@@ -190,7 +190,7 @@ public class UserCon {
             switch (request.getUserType()) {
                 case ADMIN:
                     var admin = objMapper.mapToDto(request, Admin.class);
-                    Role adminRole = roleServ.findByName("ROLE_CUSTOMER");
+                    Role adminRole = roleServ.findByName("ROLE_ADMIN");
                     admin.setRoles(Set.of(adminRole));
                     user = adminServ.add(admin);
                     break;
