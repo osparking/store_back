@@ -90,7 +90,7 @@ public class UserCon {
     @GetMapping(UrlMap.GET_USER_DTO_BY_ID)
     public ResponseEntity<ApiResp> getUserDtoById(@PathVariable("id") Long id) {
         try {
-            if (BsUtils.isQualified(id)) {
+            if (BsUtils.isQualified(id, false, null)) {
                 UserDto userDto = userServ.getUserDtoById(id);
                 return ResponseEntity.ok(new ApiResp(Feedback.USER_DTO_BY_ID, userDto));
             } else {
@@ -150,12 +150,12 @@ public class UserCon {
     public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
                                           @RequestBody UserUpdateReq request) {
         try {
-            if (!BsUtils.isQualified(id)) {
+BsUser user = userServ.getUserById(id);
+
+if (!BsUtils.isQualified(id, true, user.getUserType())) {
                 return ResponseEntity.status(UNAUTHORIZED).body(
                         new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
             }
-            BsUser user = userServ.getUserById(id);
-
             user.setFullName(request.getFullName());
             user.setMbPhone(request.getMbPhone());
             user.setEnabled(request.isEnabled());
