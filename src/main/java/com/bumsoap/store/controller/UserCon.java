@@ -172,6 +172,11 @@ public class UserCon {
                     user = workerServ.add(worker);
                     break;
 
+                case ADMIN:
+                    var admin = objMapper.mapToDto(user, Admin.class);
+                    user = adminServ.add(admin);
+                    break;
+
                 case null, default:
                     throw new IllegalArgumentException(Feedback.USER_TYPE_WRONG);
             }
