@@ -6,6 +6,7 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.PasswordChangeReq;
 import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PasswordChangeServ implements PasswordChangeServInt {
     private final UserRepoI userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void changePwd(Long userId, PasswordChangeReq request) {
@@ -24,7 +26,7 @@ public class PasswordChangeServ implements PasswordChangeServInt {
             throw new IllegalArgumentException(Feedback.SOME_FIELD_MISSING);
         }
 
-        boolean matches = request.getCurPwd().equals(user.getPassword());
+        boolean matches = passwordEncoder.matches(request.getCurPwd(), user.getPassword());
         if (!matches) {
             throw new IllegalArgumentException(Feedback.CUR_PASSWORD_WRONG);
         }
