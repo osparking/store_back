@@ -1,6 +1,5 @@
 package com.bumsoap.store.util;
 
-import com.bumsoap.store.exception.NOT_QUALIFIED_EX;
 import com.bumsoap.store.security.user.BsUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 

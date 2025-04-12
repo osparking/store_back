@@ -18,9 +18,11 @@ import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
+import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import com.bumsoap.store.util.UserType;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,8 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(UrlMap.USER)
@@ -89,8 +90,13 @@ public class UserCon {
     @GetMapping(UrlMap.GET_USER_DTO_BY_ID)
     public ResponseEntity<ApiResp> getUserDtoById(@PathVariable("id") Long id) {
         try {
-            UserDto userDto = userServ.getUserDtoById(id);
-            return ResponseEntity.ok(new ApiResp(Feedback.USER_DTO_BY_ID, userDto));
+            if (BsUtils.isQualified(id)) {
+                UserDto userDto = userServ.getUserDtoById(id);
+                return ResponseEntity.ok(new ApiResp(Feedback.USER_DTO_BY_ID, userDto));
+            } else {
+                return ResponseEntity.status(UNAUTHORIZED).body(
+                        new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
+            }
         } catch (IdNotFoundEx e) {
             return ResponseEntity.status(NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));
