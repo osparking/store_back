@@ -150,6 +150,10 @@ public class UserCon {
     public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
                                           @RequestBody UserUpdateReq request) {
         try {
+            if (!BsUtils.isQualified(id)) {
+                return ResponseEntity.status(UNAUTHORIZED).body(
+                        new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
+            }
             BsUser user = userServ.getUserById(id);
 
             user.setFullName(request.getFullName());
