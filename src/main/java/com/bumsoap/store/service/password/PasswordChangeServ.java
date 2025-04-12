@@ -35,7 +35,7 @@ public class PasswordChangeServ implements PasswordChangeServInt {
             throw new IllegalArgumentException(Feedback.CNF_PASSWORD_WRONG);
         }
 
-        user.setPassword(request.getNewPwd());
+        user.setPassword(passwordEncoder.encode(request.getNewPwd()));
         userRepo.save(user);
     }
 }
