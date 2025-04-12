@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class BsUtils {
     private static final int EXPIRE_MIN = 10;
@@ -31,12 +32,18 @@ public class BsUtils {
      * @param userId 특정 유저 ID
      * @return 자격 유무 - 참: 자격이 있음. 거짓: 자격이 없음
      */
-    public static boolean isQualified(Long userId) {
+    public static boolean isQualified(Long userId, boolean isUpdate, UserType type) {
         var authen = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authen.getAuthorities().stream().anyMatch(
                 role -> "ROLE_ADMIN".equals(role.toString()));
         Long loginId = ((BsUserDetails)authen.getPrincipal()).getId();
 
-        return (userId == loginId || isAdmin);
+        if (Objects.equals(userId, loginId)) {
+            return true;
+        } else if (isUpdate) {
+            return isAdmin && (type == UserType.WORKER);
+        } else {
+            return isAdmin;
+        }
     }
 }
