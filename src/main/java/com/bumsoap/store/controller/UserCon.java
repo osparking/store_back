@@ -150,9 +150,9 @@ public class UserCon {
     public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
                                           @RequestBody UserUpdateReq request) {
         try {
-BsUser user = userServ.getUserById(id);
+            BsUser user = userServ.getUserById(id);
 
-if (!BsUtils.isQualified(id, true, user.getUserType())) {
+            if (!BsUtils.isQualified(id, true, user.getUserType())) {
                 return ResponseEntity.status(UNAUTHORIZED).body(
                         new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
             }
