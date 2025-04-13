@@ -62,7 +62,8 @@ public class AppSecurityConfig {
                         .hasAuthority("ROLE_ADMIN")
                         .requestMatchers(URLS)
                         .authenticated()
-                        .anyRequest().permitAll());
+                        .anyRequest().permitAll())
+                .oauth2Login(Customizer.withDefaults());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(
                 authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
