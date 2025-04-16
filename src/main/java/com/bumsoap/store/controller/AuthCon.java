@@ -10,7 +10,6 @@ import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.TokenResult;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +17,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
 @RequestMapping(UrlMap.AUTHO)
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:5173/")
 public class AuthCon {
     private final AuthenticationManager authenticationManager;
     private final JwtUtilBean jwtUtilBean;
@@ -44,6 +47,15 @@ public class AuthCon {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping(UrlMap.COMBINE)
+    public Map<String, Object> combine(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal != null) {
+            return principal.getAttributes();
+        } else {
+            return new HashMap<String, Object>();
         }
     }
 

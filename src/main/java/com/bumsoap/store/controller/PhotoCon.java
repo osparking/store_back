@@ -21,7 +21,6 @@ import java.sql.SQLException;
 @RestController
 @RequestMapping(UrlMap.PHOTO)
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:5173/")
 public class PhotoCon {
     private final PhotoServInt photoServ;
     private final EmployeeServInt employeeServ;
