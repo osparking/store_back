@@ -20,6 +20,6 @@ public class BsUserDetailsService implements UserDetailsService {
         BsUser user = userRepo.findByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException(
                         Feedback.NOT_FOUND_EMAIL + email));
-        return BsUserDetails.buildUserDetails(user);
+        return new PrincipalDetails(user);
     }
 }

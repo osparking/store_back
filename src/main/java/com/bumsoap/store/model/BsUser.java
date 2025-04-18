@@ -50,6 +50,9 @@ public class BsUser {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<VerifinToken> verifinTokens = new ArrayList<>();
 
+    private String provider; // 구글, 네이버 식별자
+    private String providerId; // provider key/id
+
     public String addedMonth() {
         int monInt = addDate.getMonthValue();
         int yearInt = addDate.getYear();

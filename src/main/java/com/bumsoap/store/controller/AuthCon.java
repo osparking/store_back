@@ -51,7 +51,9 @@ public class AuthCon {
     }
 
     @GetMapping(UrlMap.COMBINE)
-    public Map<String, Object> combine(@AuthenticationPrincipal OAuth2User principal) {
+    public Map<String, Object> combine(
+            @AuthenticationPrincipal(errorOnInvalidType = true)
+            OAuth2User principal) {
         if (principal != null) {
             return principal.getAttributes();
         } else {
@@ -60,7 +62,8 @@ public class AuthCon {
     }
 
     @PostMapping(UrlMap.LOGIN)
-    public ResponseEntity<ApiResp> login (@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResp> login (@Valid @RequestBody LoginRequest request,
+                                          @AuthenticationPrincipal OAuth2User oauth) {
         try {
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(

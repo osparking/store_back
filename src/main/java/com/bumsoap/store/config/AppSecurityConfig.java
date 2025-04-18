@@ -3,6 +3,7 @@ package com.bumsoap.store.config;
 import com.bumsoap.store.security.jwt.AuthTokenFilter;
 import com.bumsoap.store.security.jwt.BsJwtErrorEntry;
 import com.bumsoap.store.security.user.BsUserDetailsService;
+import com.bumsoap.store.security.user.PrincipalOauthUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,19 +25,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.security.Principal;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class AppSecurityConfig {
     private final BsUserDetailsService userDetailsService;
     private final BsJwtErrorEntry bsJwtErrorEntry;
+    private final PrincipalOauthUserService pOUserService;
+    private final PasswordEncoder passwordEncoder;
+
     @Bean
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
-    }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
     @Bean
     public AuthenticationManager authenticationManager(
@@ -46,7 +50,7 @@ public class AppSecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         var authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
         return authenticationProvider;
     }
     @Bean
@@ -66,8 +70,9 @@ public class AppSecurityConfig {
                         .requestMatchers(URLS)
                         .authenticated()
                         .anyRequest().permitAll())
-                .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl(
-                        "http://localhost:5173", true));
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("http://localhost:5173", true)
+                        .userInfoEndpoint(userInfo -> userInfo.userService(pOUserService)));
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(
                 authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
