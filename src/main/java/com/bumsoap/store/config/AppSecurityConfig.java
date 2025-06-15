@@ -63,7 +63,9 @@ public class AppSecurityConfig {
                         .requestMatchers(URLS)
                         .authenticated()
                         .anyRequest().permitAll())
-                .oauth2Login(Customizer.withDefaults());
+                .oauth2Login(oauth2 ->
+                    oauth2.defaultSuccessUrl("http://localhost:5173",true));
+
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(
                 authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
