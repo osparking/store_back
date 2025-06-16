@@ -1,5 +1,6 @@
 package com.bumsoap.store.config;
 
+import com.bumsoap.store.model.Role;
 import com.bumsoap.store.repository.RoleRepoI;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.service.user.UserServInt;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,13 +38,14 @@ public class OAuth2LoginSuccessHandler
   private final JwtUtilBean jwtUtilBean;
 
   @Autowired
-  RoleRepoI roleRepository;
+  private final RoleRepoI roleRepository;
 
   @Value("${frontend.base.url}")
   private String frontendUrl;
 
-  String username;
-  String idAttributeKey;
+  private String username;
+  private String idAttributeKey;
+  private String signUpMethod = null;
 
   private void putAuth2Context(String role,
                                Map<String, Object> attributes,
@@ -89,6 +92,22 @@ public class OAuth2LoginSuccessHandler
         idAttributeKey = "id";
       }
       System.out.println("attrs: " + email + ", " + username);
+
+      userService.getBsUserByEmail(email)
+          .ifPresentOrElse(
+              // 등록된 유저의 OAuth 2 로그인 처리
+              user -> {
+                Collection<Role> roles = user.getRoles();
+                Role firstRole = roles.iterator().next();
+                putAuth2Context(firstRole.getName(),
+                    attributes, idAttributeKey, oAuth2);
+                username = user.getEmail();
+                signUpMethod = user.getSignUpMethod();
+              },
+              // 이메일이 DB 에 부재인 경우 처리
+              () -> {
+              }
+          );
     }
   }
 
