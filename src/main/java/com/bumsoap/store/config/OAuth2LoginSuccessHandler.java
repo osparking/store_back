@@ -121,6 +121,10 @@ public class OAuth2LoginSuccessHandler
                 customer.setSignUpMethod(loginSource.toString());
 
                 customerServ.add(customer);
+
+                putAuth2Context("ROLE_CUSTOMER",
+                    attributes, idAttributeKey, oAuth2);
+                signUpMethod = oAuth2;
               }
           );
     }
