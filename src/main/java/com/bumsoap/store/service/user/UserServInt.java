@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface UserServInt {
     String findDummyEmailWithMaxNum();
@@ -23,6 +24,8 @@ public interface UserServInt {
     UserDto getUserDtoById(Long id);
 
     BsUser getByEmail(@NotBlank String email);
+
+    Optional<BsUser> getBsUserByEmail(String email);
 
     Map<String, Map<String, Long>> countUsersByMonthAndType();
 

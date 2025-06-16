@@ -84,6 +84,11 @@ public class UserServ implements UserServInt {
     }
 
     @Override
+    public Optional<BsUser> getBsUserByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
+
+    @Override
     public Map<String, Map<String, Long>> countUsersByMonthAndType() {
         List<BsUser> users = userRepo.findAll();
         var mapMonthType = users.stream().collect(Collectors.groupingBy(
