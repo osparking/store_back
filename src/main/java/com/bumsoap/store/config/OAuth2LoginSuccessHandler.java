@@ -19,8 +19,10 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -73,6 +75,21 @@ public class OAuth2LoginSuccessHandler
     LoginSource loginSource = LoginSource.valueOf(oAuth2.toUpperCase());
     var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
     Map<String, Object> attributes = oauth2User.getAttributes();
+
+    if (loginSource == LoginSource.GOOGLE
+        || loginSource == LoginSource.NAVER) {
+      String email = attributes.getOrDefault("email", "").toString();
+      String name = attributes.getOrDefault("name", "").toString();
+
+      if (loginSource == LoginSource.GOOGLE) {
+        username = email.split("@")[0];
+        idAttributeKey = "sub";
+      } else {
+        username = attributes.getOrDefault("login", "").toString();
+        idAttributeKey = "id";
+      }
+      System.out.println("attrs: " + email + ", " + username);
+    }
   }
 
 }
