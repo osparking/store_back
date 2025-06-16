@@ -3,6 +3,7 @@ package com.bumsoap.store.config;
 import com.bumsoap.store.repository.RoleRepoI;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.service.user.UserServInt;
+import com.bumsoap.store.util.LoginSource;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -64,9 +65,14 @@ public class OAuth2LoginSuccessHandler
       HttpServletRequest request,
       HttpServletResponse response,
       Authentication authentication)
-      throws ServletException, IOException
-  {
-    return;
+      throws ServletException, IOException {
+    OAuth2AuthenticationToken oAuth2AuthenticationToken
+        = (OAuth2AuthenticationToken) authentication;
+    String oAuth2 = oAuth2AuthenticationToken
+        .getAuthorizedClientRegistrationId();
+    LoginSource loginSource = LoginSource.valueOf(oAuth2.toUpperCase());
+    var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
+    Map<String, Object> attributes = oauth2User.getAttributes();
   }
 
 }
