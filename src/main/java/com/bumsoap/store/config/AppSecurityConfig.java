@@ -4,8 +4,10 @@ import com.bumsoap.store.security.jwt.AuthTokenFilter;
 import com.bumsoap.store.security.jwt.BsJwtErrorEntry;
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -26,6 +28,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class AppSecurityConfig {
     private final BsUserDetailsService userDetailsService;
     private final BsJwtErrorEntry bsJwtErrorEntry;
+
+    @Autowired
+    @Lazy
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     @Bean
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
@@ -64,7 +71,7 @@ public class AppSecurityConfig {
                         .authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 ->
-                    oauth2.defaultSuccessUrl("http://localhost:5173",true));
+                    oauth2.successHandler(oAuth2LoginSuccessHandler));
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(
