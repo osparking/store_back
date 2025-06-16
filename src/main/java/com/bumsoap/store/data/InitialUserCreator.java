@@ -65,6 +65,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             worker.setRoles(Set.of(workerRole));
             worker.setEnabled(true);
             worker.setDept("생산부");
+            worker.setSignUpMethod("EMAIL");
             worker = workerServ.add(worker);
 
             System.out.println("생성된 직원 구분번호: " + i);
@@ -87,6 +88,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             customer.setUserType(UserType.CUSTOMER);
             customer.setRoles(Set.of(customerRole));
             customer.setEnabled(true);
+            customer.setSignUpMethod("EMAIL");
             customer = customerServ.add(customer);
             System.out.println("생성된 고객 일련번호: " + i);
         }
@@ -109,6 +111,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
         admin.setPassword(passwordEncoder.encode("1234"));
         admin.setUserType(UserType.ADMIN);
         admin.setEnabled(true);
+        admin.setSignUpMethod("EMAIL");
 
         Admin theAdmin = adminServ.add(admin);
         System.out.println("관리자 생성 - " + defaultEmail);
