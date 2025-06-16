@@ -47,6 +47,7 @@ public class BsUser {
                     = @UniqueConstraint(name = "unique_user_role",
                     columnNames = {"user_id", "role_id"}))
     private Collection<Role> roles = new HashSet<>();
+    private String signUpMethod; // 이메일, 구글, 네이버, 등
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<VerifinToken> verifinTokens = new ArrayList<>();
 
