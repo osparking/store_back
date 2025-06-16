@@ -1,10 +1,14 @@
 package com.bumsoap.store.config;
 
+import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Role;
-import com.bumsoap.store.repository.RoleRepoI;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
+import com.bumsoap.store.service.CustomerServInt;
+import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.LoginSource;
+import com.bumsoap.store.util.UserType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,11 +24,10 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -33,12 +36,13 @@ public class OAuth2LoginSuccessHandler
 
   @Autowired
   private final UserServInt userService;
+  private final CustomerServInt customerServ;
 
   @Autowired
   private final JwtUtilBean jwtUtilBean;
 
   @Autowired
-  private final RoleRepoI roleRepository;
+  private final RoleServInt roleServ;
 
   @Value("${frontend.base.url}")
   private String frontendUrl;
@@ -106,6 +110,17 @@ public class OAuth2LoginSuccessHandler
               },
               // 이메일이 DB 에 부재인 경우 처리
               () -> {
+                Customer customer = new Customer();
+
+                customer.setFullName(name);
+                customer.setEmail(email);
+                customer.setUserType(UserType.CUSTOMER);
+                customer.setRoles(
+                    Set.of(roleServ.findByName("ROLE_CUSTOMER")));
+                customer.setEnabled(true);
+                customer.setSignUpMethod(loginSource.toString());
+
+                customerServ.add(customer);
               }
           );
     }
