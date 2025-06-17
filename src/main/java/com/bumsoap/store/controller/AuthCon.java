@@ -55,7 +55,8 @@ public class AuthCon {
                             request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(
                     authentication);
-            String jwt = jwtUtilBean.generateTokenForUser(authentication);
+            String jwt = jwtUtilBean.generateTokenForUser((BsUserDetails)
+                authentication.getPrincipal());
             BsUserDetails userDetails =
                     (BsUserDetails) authentication.getPrincipal();
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);

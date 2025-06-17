@@ -39,9 +39,7 @@ public class JwtUtilBean {
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String generateTokenForUser(Authentication authentication) {
-        var userDetails = (BsUserDetails) authentication.getPrincipal();
-
+    public String generateTokenForUser(BsUserDetails userDetails) {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
 
