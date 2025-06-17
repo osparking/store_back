@@ -4,6 +4,7 @@ import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Role;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.CustomerServInt;
 import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.user.UserServInt;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -28,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -96,7 +99,6 @@ public class OAuth2LoginSuccessHandler
         idAttributeKey = "id";
       }
       System.out.println("attrs: " + email + ", " + username);
-
       userService.getBsUserByEmail(email)
           .ifPresentOrElse(
               // 등록된 유저의 OAuth 2 로그인 처리
@@ -107,6 +109,7 @@ public class OAuth2LoginSuccessHandler
                     attributes, idAttributeKey, oAuth2);
                 username = user.getEmail();
                 signUpMethod = user.getSignUpMethod();
+                redirectWithJwt(user, oauth2User);
               },
               // 이메일이 DB 에 부재인 경우 처리
               () -> {
@@ -120,11 +123,12 @@ public class OAuth2LoginSuccessHandler
                 customer.setEnabled(true);
                 customer.setSignUpMethod(loginSource.toString());
 
-                customerServ.add(customer);
+                BsUser user = customerServ.add(customer);
 
                 putAuth2Context("ROLE_CUSTOMER",
                     attributes, idAttributeKey, oAuth2);
                 signUpMethod = oAuth2;
+                redirectWithJwt(user, oauth2User);
               }
           );
     }
