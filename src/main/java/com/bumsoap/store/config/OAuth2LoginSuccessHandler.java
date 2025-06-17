@@ -134,4 +134,27 @@ public class OAuth2LoginSuccessHandler
     }
   }
 
+  /**
+   * 전단 URL 에 착륙하되, URL에는 JWT 토큰을 붙여서 보낸다.
+   *
+   * @param user
+   * @param oAuth2User
+   */
+  private void redirectWithJwt(
+      BsUser user, DefaultOAuth2User oAuth2User) {
+    Map<String, Object> attributes = oAuth2User.getAttributes();
+
+    // JWT 생성용 이메일 및 롤 수집 확보
+    String email = (String) attributes.get("email");
+    Set<GrantedAuthority> authorities=
+        oAuth2User.getAuthorities().stream()
+            .map(authority -> new SimpleGrantedAuthority(
+                authority.getAuthority()))
+            .collect(Collectors.toSet());
+
+    Collection<Role> roles = user.getRoles();
+    String firstRoleStr = roles.iterator().next().toString();
+    authorities.add(new SimpleGrantedAuthority(firstRoleStr));
+  }
+
 }
