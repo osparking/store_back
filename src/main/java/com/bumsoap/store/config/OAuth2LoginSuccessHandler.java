@@ -155,6 +155,14 @@ public class OAuth2LoginSuccessHandler
     Collection<Role> roles = user.getRoles();
     String firstRoleStr = roles.iterator().next().toString();
     authorities.add(new SimpleGrantedAuthority(firstRoleStr));
+
+    BsUserDetails userDetails = new BsUserDetails(
+        user.getId(), email, null, true, authorities);
+
+    this.setAlwaysUseDefaultTargetUrl(true);
+
+    // Generate JWT token
+    String jwtToken = jwtUtilBean.generateTokenForUser(userDetails);
   }
 
 }
