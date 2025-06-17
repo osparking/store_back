@@ -24,6 +24,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -132,6 +133,7 @@ public class OAuth2LoginSuccessHandler
               }
           );
     }
+    super.onAuthenticationSuccess(request, response, authentication);
   }
 
   /**
@@ -163,6 +165,13 @@ public class OAuth2LoginSuccessHandler
 
     // Generate JWT token
     String jwtToken = jwtUtilBean.generateTokenForUser(userDetails);
+
+    // Redirect to the frontend with the JWT token
+    String targetUrl = UriComponentsBuilder.fromUriString(
+            frontendUrl + "/oauth2/redirect")
+        .queryParam("token", jwtToken)
+        .build().toUriString();
+    this.setDefaultTargetUrl(targetUrl);
   }
 
 }
