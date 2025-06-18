@@ -46,6 +46,7 @@ public class JwtUtilBean {
         return Jwts.builder().setSubject(userDetails.getUsername())
                 .claim("id", userDetails.getId())
                 .claim("roles", roles)
+                .claim("signUpMethod", userDetails.getSignUpMethod())
                 .setIssuedAt(new java.util.Date())
                 .setExpiration(new java.util.Date(expirationMs
                         + System.currentTimeMillis()))
