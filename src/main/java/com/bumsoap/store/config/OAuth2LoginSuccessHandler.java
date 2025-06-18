@@ -53,7 +53,7 @@ public class OAuth2LoginSuccessHandler
 
   private String username;
   private String idAttributeKey;
-  private String signUpMethod = null;
+  private LoginSource signUpSource = null;
 
   private void putAuth2Context(String role,
                                Map<String, Object> attributes,
@@ -82,7 +82,7 @@ public class OAuth2LoginSuccessHandler
     OAuth2AuthenticationToken oAuth2AuthenticationToken
         = (OAuth2AuthenticationToken) authentication;
     String oAuth2 = oAuth2AuthenticationToken
-        .getAuthorizedClientRegistrationId();
+        .getAuthorizedClientRegistrationId().toUpperCase();
     LoginSource loginSource = LoginSource.valueOf(oAuth2.toUpperCase());
     var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
     Map<String, Object> attributes = oauth2User.getAttributes();
@@ -109,8 +109,9 @@ public class OAuth2LoginSuccessHandler
                 putAuth2Context(firstRole.getName(),
                     attributes, idAttributeKey, oAuth2);
                 username = user.getEmail();
-                signUpMethod = user.getSignUpMethod();
-                redirectWithJwt(user, oauth2User);
+                this.signUpSource =
+                    LoginSource.valueOf(user.getSignUpMethod());
+                redirectWithJwt(user, oauth2User, loginSource);
               },
               // 이메일이 DB 에 부재인 경우 처리
               () -> {
@@ -127,9 +128,9 @@ public class OAuth2LoginSuccessHandler
                 BsUser user = customerServ.add(customer);
 
                 putAuth2Context("ROLE_CUSTOMER",
-                    attributes, idAttributeKey, oAuth2);
-                signUpMethod = oAuth2;
-                redirectWithJwt(user, oauth2User);
+                    attributes, idAttributeKey, oAuth2.toString());
+                this.signUpSource = LoginSource.valueOf(oAuth2);
+                redirectWithJwt(user, oauth2User, loginSource);
               }
           );
     }
@@ -142,13 +143,14 @@ public class OAuth2LoginSuccessHandler
    * @param user
    * @param oAuth2User
    */
-  private void redirectWithJwt(
-      BsUser user, DefaultOAuth2User oAuth2User) {
+  private void redirectWithJwt(BsUser user,
+                               DefaultOAuth2User oAuth2User,
+                               LoginSource loginSource) {
     Map<String, Object> attributes = oAuth2User.getAttributes();
 
     // JWT 생성용 이메일 및 롤 수집 확보
     String email = (String) attributes.get("email");
-    Set<GrantedAuthority> authorities=
+    Set<GrantedAuthority> authorities =
         oAuth2User.getAuthorities().stream()
             .map(authority -> new SimpleGrantedAuthority(
                 authority.getAuthority()))
@@ -159,7 +161,8 @@ public class OAuth2LoginSuccessHandler
     authorities.add(new SimpleGrantedAuthority(firstRoleStr));
 
     BsUserDetails userDetails = new BsUserDetails(
-        user.getId(), email, null, true, authorities, signUpMethod);
+        user.getId(), email, null, true, authorities,
+        signUpSource.getLabel(), loginSource.getLabel());
 
     this.setAlwaysUseDefaultTargetUrl(true);
 
