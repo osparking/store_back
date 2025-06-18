@@ -22,6 +22,7 @@ public class BsUserDetails implements UserDetails {
     private boolean enabled;
 
     private Collection<GrantedAuthority> authorities;
+    private String signUpMethod;
 
     public static BsUserDetails buildUserDetails(BsUser user) {
         List<GrantedAuthority> authorities = user.getRoles()
@@ -29,7 +30,8 @@ public class BsUserDetails implements UserDetails {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
         return new BsUserDetails(user.getId(), user.getEmail(),
-                user.getPassword(), user.isEnabled(), authorities);
+            user.getPassword(), user.isEnabled(), authorities,
+            user.getSignUpMethod());
     }
 
     @Override
