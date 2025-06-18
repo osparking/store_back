@@ -43,12 +43,11 @@ public class JwtUtilBean {
     public String generateTokenForUser(BsUserDetails userDetails) {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
-        var signUp = LoginSource.valueOf(userDetails.getSignUpMethod());
         return Jwts.builder().setSubject(userDetails.getUsername())
                 .claim("id", userDetails.getId())
                 .claim("email", userDetails.getEmail())
                 .claim("roles", roles)
-                .claim("signUpMethod",signUp.getLabel())
+                .claim("signUpMethod",userDetails.getSignUpMethod())
                 .claim("loginMethod", userDetails.getLoginMethod())
                 .setIssuedAt(new java.util.Date())
                 .setExpiration(new java.util.Date(expirationMs
