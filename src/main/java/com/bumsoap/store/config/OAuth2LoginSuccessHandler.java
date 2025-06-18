@@ -159,7 +159,7 @@ public class OAuth2LoginSuccessHandler
     authorities.add(new SimpleGrantedAuthority(firstRoleStr));
 
     BsUserDetails userDetails = new BsUserDetails(
-        user.getId(), email, null, true, authorities);
+        user.getId(), email, null, true, authorities, signUpMethod);
 
     this.setAlwaysUseDefaultTargetUrl(true);
 
