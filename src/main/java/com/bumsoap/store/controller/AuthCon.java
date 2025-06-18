@@ -7,6 +7,7 @@ import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.TokenResult;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.validation.Valid;
@@ -55,8 +56,9 @@ public class AuthCon {
                             request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(
                     authentication);
-            String jwt = jwtUtilBean.generateTokenForUser((BsUserDetails)
-                authentication.getPrincipal());
+            var details = (BsUserDetails)authentication.getPrincipal();
+            details.setLoginMethod(LoginSource.EMAIL.getLabel());
+            String jwt = jwtUtilBean.generateTokenForUser(details);
             BsUserDetails userDetails =
                     (BsUserDetails) authentication.getPrincipal();
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
