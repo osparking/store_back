@@ -23,6 +23,7 @@ public class BsUserDetails implements UserDetails {
 
     private Collection<GrantedAuthority> authorities;
     private String signUpMethod;
+    private String loginMethod;
 
     public static BsUserDetails buildUserDetails(BsUser user) {
         List<GrantedAuthority> authorities = user.getRoles()
@@ -31,7 +32,7 @@ public class BsUserDetails implements UserDetails {
                 .collect(Collectors.toList());
         return new BsUserDetails(user.getId(), user.getEmail(),
             user.getPassword(), user.isEnabled(), authorities,
-            user.getSignUpMethod());
+            user.getSignUpMethod(), null);
     }
 
     @Override
