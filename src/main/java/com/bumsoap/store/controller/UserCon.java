@@ -11,6 +11,7 @@ import com.bumsoap.store.request.PasswordChangeReq;
 import com.bumsoap.store.request.UserRegisterReq;
 import com.bumsoap.store.request.UserUpdateReq;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetailsService;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
 import com.bumsoap.store.service.password.PasswordChangeServInt;
@@ -28,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +54,7 @@ public class UserCon {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
     private final RoleServInt roleServ;
+    private final BsUserDetailsService bsUserDetailsService;
 
     @GetMapping(UrlMap.GET_MAX_SUFFIX)
     public ResponseEntity<ApiResp> getMaxDummyEmailSuffix() {
@@ -140,6 +144,19 @@ public class UserCon {
             } else {
                 return ResponseEntity.ok(new ApiResp("유저 발견됨", user));
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping(UrlMap.GET_DETAILS)
+    public ResponseEntity<ApiResp> getUserDetails(@AuthenticationPrincipal
+                                                      UserDetails userDetails) {
+        try {
+            var details = bsUserDetailsService.loadUserByUsername(
+                userDetails.getUsername());
+            return ResponseEntity.ok(new ApiResp("유저 발견됨", details));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
