@@ -1,6 +1,7 @@
 package com.bumsoap.store.security.jwt;
 
 import com.bumsoap.store.security.user.BsUserDetails;
+import com.bumsoap.store.util.LoginSource;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -42,11 +43,13 @@ public class JwtUtilBean {
     public String generateTokenForUser(BsUserDetails userDetails) {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
-
+        var signUp = LoginSource.valueOf(userDetails.getSignUpMethod());
         return Jwts.builder().setSubject(userDetails.getUsername())
                 .claim("id", userDetails.getId())
+                .claim("email", userDetails.getEmail())
                 .claim("roles", roles)
-                .claim("signUpMethod", userDetails.getSignUpMethod())
+                .claim("signUpMethod",signUp.getLabel())
+                .claim("loginMethod", userDetails.getLoginMethod())
                 .setIssuedAt(new java.util.Date())
                 .setExpiration(new java.util.Date(expirationMs
                         + System.currentTimeMillis()))
