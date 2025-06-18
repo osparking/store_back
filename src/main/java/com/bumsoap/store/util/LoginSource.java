@@ -1,6 +1,7 @@
 package com.bumsoap.store.util;
 
 public enum LoginSource {
+  EMAIL("이메일"),
   GOOGLE("구글"),
   NAVER("네이버");
 
