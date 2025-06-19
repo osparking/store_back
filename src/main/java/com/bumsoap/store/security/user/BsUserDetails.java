@@ -1,6 +1,7 @@
 package com.bumsoap.store.security.user;
 
 import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.util.LoginSource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,11 @@ public class BsUserDetails implements UserDetails {
     private boolean enabled;
 
     private Collection<GrantedAuthority> authorities;
+
+    public String getSignUpMethod() {
+        return LoginSource.valueOf(signUpMethod).getLabel();
+    }
+
     private String signUpMethod;
     private String loginMethod;
 
