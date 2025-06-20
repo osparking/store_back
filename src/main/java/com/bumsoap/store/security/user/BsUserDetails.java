@@ -2,6 +2,7 @@ package com.bumsoap.store.security.user;
 
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.util.LoginSource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class BsUserDetails implements UserDetails {
     private Long id;
     private String email;
+    @JsonIgnore
     private String password;
     private String fullName;
     private boolean enabled;
