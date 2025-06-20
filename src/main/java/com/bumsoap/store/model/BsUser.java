@@ -50,6 +50,8 @@ public class BsUser {
     private String signUpMethod; // 이메일, 구글, 네이버, 등
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<VerifinToken> verifinTokens = new ArrayList<>();
+    private boolean twoFAEnabled = false;
+    private String twoFASecret;
 
     public String addedMonth() {
         int monInt = addDate.getMonthValue();
