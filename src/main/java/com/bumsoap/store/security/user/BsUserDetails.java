@@ -20,6 +20,7 @@ public class BsUserDetails implements UserDetails {
     private Long id;
     private String email;
     private String password;
+    private String fullName;
     private boolean enabled;
 
     private Collection<GrantedAuthority> authorities;
@@ -36,9 +37,9 @@ public class BsUserDetails implements UserDetails {
                 .stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
-        return new BsUserDetails(user.getId(), user.getEmail(),
-            user.getPassword(), user.isEnabled(), authorities,
-            user.getSignUpMethod(), null);
+return new BsUserDetails(user.getId(), user.getEmail(),
+    user.getPassword(), user.getFullName(), user.isEnabled(),
+    authorities, user.getSignUpMethod(), null);
     }
 
     @Override
