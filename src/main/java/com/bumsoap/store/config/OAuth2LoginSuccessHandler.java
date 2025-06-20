@@ -161,8 +161,9 @@ public class OAuth2LoginSuccessHandler
     authorities.add(new SimpleGrantedAuthority(firstRoleStr));
 
     BsUserDetails userDetails = new BsUserDetails(
-        user.getId(), email, null, true, authorities,
-        signUpSource.toString(), loginSource.getLabel());
+        user.getId(), email, null, user.getFullName(), true,
+        authorities, signUpSource.toString(),
+        loginSource.getLabel());
 
     this.setAlwaysUseDefaultTargetUrl(true);
 
