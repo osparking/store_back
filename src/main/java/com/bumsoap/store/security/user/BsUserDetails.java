@@ -33,15 +33,17 @@ public class BsUserDetails implements UserDetails {
 
     private String signUpMethod;
     private String loginMethod;
+    private boolean twoFAEnabled;
 
     public static BsUserDetails buildUserDetails(BsUser user) {
         List<GrantedAuthority> authorities = user.getRoles()
-                .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-return new BsUserDetails(user.getId(), user.getEmail(),
-    user.getPassword(), user.getFullName(), user.isEnabled(),
-    authorities, user.getSignUpMethod(), null);
+            .stream()
+            .map(role -> new SimpleGrantedAuthority(role.getName()))
+            .collect(Collectors.toList());
+        return new BsUserDetails(user.getId(), user.getEmail(),
+            user.getPassword(), user.getFullName(), user.isEnabled(),
+            authorities, user.getSignUpMethod(), null,
+            user.isTwoFAEnabled());
     }
 
     @Override
