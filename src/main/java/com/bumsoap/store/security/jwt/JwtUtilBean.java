@@ -46,6 +46,7 @@ public class JwtUtilBean {
         return Jwts.builder().setSubject(userDetails.getUsername())
                 .claim("id", userDetails.getId())
                 .claim("email", userDetails.getEmail())
+                .claim("fullName", userDetails.getFullName())
                 .claim("roles", roles)
                 .claim("signUpMethod",userDetails.getSignUpMethod())
                 .claim("loginMethod", userDetails.getLoginMethod())
