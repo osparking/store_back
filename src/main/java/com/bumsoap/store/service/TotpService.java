@@ -7,4 +7,6 @@ public interface TotpService {
 
   String getQRcodeUrl(
       GoogleAuthenticatorKey secret, String username);
+
+  boolean verifyCode(String secret, int code);
 }

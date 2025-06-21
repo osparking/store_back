@@ -24,4 +24,9 @@ public class TotpServiceImpl implements TotpService {
     return GoogleAuthenticatorQRGenerator.getOtpAuthURL(
         "범이비누", username, secret);
   }
+
+  @Override
+  public boolean verifyCode(String secret, int code) {
+    return googleAuthenticator.authorize(secret, code);
+  }
 }
