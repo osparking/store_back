@@ -26,6 +26,22 @@ public class UserServ implements UserServInt {
     private final TotpService totpService;
 
     @Override
+    public void enable2FA(Long id) {
+        BsUser user = userRepo.findById(id).orElseThrow(
+            () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+        user.setTwoFaEnabled(true);
+        userRepo.save(user);
+    }
+
+    @Override
+    public void disable2FA(Long id) {
+        BsUser user = userRepo.findById(id).orElseThrow(
+            () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+        user.setTwoFaEnabled(false);
+        userRepo.save(user);
+    }
+
+    @Override
     public boolean verifyCode(Long id, int code) {
         BsUser user = userRepo.findById(id).orElseThrow(() ->
             new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));

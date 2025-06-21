@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserServInt {
+  void enable2FA(Long id);
+
+  void disable2FA(Long id);
+
   boolean verifyCode(Long id, int code);
 
   GoogleAuthenticatorKey generateSecret(Long id);
