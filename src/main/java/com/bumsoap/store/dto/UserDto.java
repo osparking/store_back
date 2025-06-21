@@ -1,9 +1,11 @@
 package com.bumsoap.store.dto;
 
 import com.bumsoap.store.util.BsUtils;
+import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.UserType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.java.Log;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ public class UserDto {
     private boolean enabled;
     private String dept;
     private String userType;
+    private LoginSource signUpMethod;
     private String addDate;
     private Long photoId;
     private byte[] photoBytes;
@@ -27,6 +30,7 @@ public class UserDto {
 
     public UserDto(Long id, String fullName, String mbPhone, String email,
                    boolean enabled, String dept, byte userType,
+                   String signUpMethod,
                    Timestamp addDate, Long photoId, byte[] photoBytes) {
         this.id = id;
         this.fullName = fullName;
@@ -35,10 +39,14 @@ public class UserDto {
         this.enabled = enabled;
         this.dept = dept;
         this.userType = UserType.values()[userType].label;
+        this.signUpMethod = LoginSource.valueOf(signUpMethod);
         this.addDate = BsUtils.getLocalDateTimeStr(
                 addDate.toLocalDateTime());
         this.photoId = photoId;
         this.photoBytes = photoBytes;
     }
 
+    public String getSignUpMethod() {
+        return signUpMethod.getLabel();
+    }
 }
