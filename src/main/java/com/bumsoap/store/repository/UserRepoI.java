@@ -23,7 +23,8 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     String selectUserDto =
             "select u.id, u.full_name, u.mb_phone, u.email, u.enabled," +
-            " w.dept, u.user_type, u.add_date, e.photo_id, p.image " +
+            " w.dept, u.user_type, u.sign_up_method, u.add_date," +
+            " e.photo_id, p.image " +
             "from bs_user u" +
             " left join employee e on e.employee_id = u.id" +
             " left join worker w on w.worker_id = e.employee_id" +
