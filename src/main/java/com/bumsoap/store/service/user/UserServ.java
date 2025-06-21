@@ -6,7 +6,9 @@ import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.service.TotpService;
 import com.bumsoap.store.util.Feedback;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,18 @@ import java.util.stream.Collectors;
 public class UserServ implements UserServInt {
     private final UserRepoI userRepo;
     private final ObjMapper mapper;
+    private final TotpService totpService;
+
+    @Override
+    public GoogleAuthenticatorKey generateSecret(Long id) {
+        BsUser user = userRepo.findById(id).orElseThrow(() ->
+            new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+        var secret = totpService.generateSecret();
+        user.setTwoFaSecret(secret.getKey());
+        userRepo.save(user);
+
+        return secret;
+    }
 
     @Override
     public String findDummyEmailWithMaxNum() {

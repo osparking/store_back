@@ -2,6 +2,7 @@ package com.bumsoap.store.service.user;
 
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserServInt {
+  GoogleAuthenticatorKey generateSecret(Long id);
+
   String findDummyEmailWithMaxNum();
 
   int toggleEnabledColumn(Long id);
