@@ -2,6 +2,7 @@ package com.bumsoap.store.service;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,5 +16,12 @@ public class TotpServiceImpl implements TotpService {
   @Override
   public GoogleAuthenticatorKey generateSecret() {
     return googleAuthenticator.createCredentials();
+  }
+
+  @Override
+  public String getQRcodeUrl(
+      GoogleAuthenticatorKey secret, String username) {
+    return GoogleAuthenticatorQRGenerator.getOtpAuthURL(
+        "범이비누", username, secret);
   }
 }
