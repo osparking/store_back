@@ -13,6 +13,10 @@ public class TotpServiceImpl implements TotpService {
     this.googleAuthenticator = googleAuthenticator;
   }
 
+  public TotpServiceImpl() {
+    this.googleAuthenticator = new GoogleAuthenticator();
+  }
+
   @Override
   public GoogleAuthenticatorKey generateSecret() {
     return googleAuthenticator.createCredentials();
