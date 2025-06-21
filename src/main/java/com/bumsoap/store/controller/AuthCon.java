@@ -1,11 +1,13 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.request.LoginRequest;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.response.JwtResponse;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
+import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.TokenResult;
@@ -22,7 +24,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(UrlMap.AUTHO)
@@ -32,6 +34,7 @@ public class AuthCon {
     private final AuthenticationManager authenticationManager;
     private final JwtUtilBean jwtUtilBean;
     private final VerifinTokenServInt verifinTokenService;
+    private final UserServInt userService;
 
     @GetMapping(UrlMap.EMAIL_ADDRESS)
     public ResponseEntity<ApiResp> verifyEmailToken(@RequestParam("token") String token) {
@@ -74,6 +77,17 @@ public class AuthCon {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(
                     new ApiResp(e.getMessage(), Feedback.BAD_CREDENTIAL));
+        } catch (RuntimeException e) {
+            BsUser user = userService.getByEmail(request.getEmail());
+            if (user == null) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+            } else {
+                var signUp = LoginSource.valueOf(user.getSignUpMethod());
+                var message = signUp.getLabel() + Feedback.TRY_SOCIAL_LOGIN;
+                return ResponseEntity.status(BAD_REQUEST).body(
+                    new ApiResp(message, null));
+            }
         }
     }
 }
