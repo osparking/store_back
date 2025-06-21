@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserServInt {
+  boolean verifyCode(Long id, int code);
+
   GoogleAuthenticatorKey generateSecret(Long id);
 
   String findDummyEmailWithMaxNum();

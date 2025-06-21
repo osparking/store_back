@@ -26,6 +26,13 @@ public class UserServ implements UserServInt {
     private final TotpService totpService;
 
     @Override
+    public boolean verifyCode(Long id, int code) {
+        BsUser user = userRepo.findById(id).orElseThrow(() ->
+            new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+        return totpService.verifyCode(user.getTwoFaSecret(), code);
+    }
+
+    @Override
     public GoogleAuthenticatorKey generateSecret(Long id) {
         BsUser user = userRepo.findById(id).orElseThrow(() ->
             new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
