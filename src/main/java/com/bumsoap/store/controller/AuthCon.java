@@ -36,6 +36,21 @@ public class AuthCon {
     private final AuthUtil authUtil;
     private final TotpService totpService;
 
+    @PostMapping("/verify-2fa")
+    public ResponseEntity<String> verify2FA(@RequestParam int code) {
+        Long userId = authUtil.loggedInUserId();
+        boolean validCode = userService.verifyCode(userId, code);
+
+        if (validCode) {
+            userService.enable2FA(userId);
+            return ResponseEntity.ok(Feedback.TWO_FA_VERIFIED);
+        } else {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Feedback.TWO_FA_CODE_ERROR);
+        }
+    }
+
     @PostMapping("/disable-2fa")
     public ResponseEntity<String> disableUserFor2FA() {
         Long userId = authUtil.loggedInUserId();
