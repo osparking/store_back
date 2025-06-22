@@ -22,6 +22,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -35,6 +37,19 @@ public class AuthCon {
     private final UserServInt userService;
     private final AuthUtil authUtil;
     private final TotpService totpService;
+
+    @GetMapping("/user/2fa-status")
+    public ResponseEntity<?> get2FAstatus() {
+        var details = authUtil.loggedInUserDetails();
+
+        if (details == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Feedback.NOT_FOUND);
+        } else {
+            return ResponseEntity.ok().body(
+                Map.of("2FA-활성화", details.isTwoFaAEnabled()));
+        }
+    }
 
     @PostMapping("/verify-2fa")
     public ResponseEntity<String> verify2FA(@RequestParam int code) {
