@@ -19,10 +19,7 @@ import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
-import com.bumsoap.store.util.BsUtils;
-import com.bumsoap.store.util.Feedback;
-import com.bumsoap.store.util.UrlMap;
-import com.bumsoap.store.util.UserType;
+import com.bumsoap.store.util.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -90,9 +87,12 @@ public class UserCon {
                     .body(new ApiResp(e.getMessage(), null));
         }
     }
+    private final AuthUtil authUtil;
 
     @GetMapping(UrlMap.GET_USER_DTO_BY_ID)
     public ResponseEntity<ApiResp> getUserDtoById(@PathVariable("id") Long id) {
+        System.out.println("enab " +
+            authUtil.loggedInUserDetails().isTwoFaAEnabled());
         try {
             if (BsUtils.isQualified(id, false, null)) {
                 UserDto userDto = userServ.getUserDtoById(id);
