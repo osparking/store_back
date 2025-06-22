@@ -16,15 +16,17 @@ public class AuthUtil {
   public Long loggedInUserId() {
     var principal = SecurityContextHolder.getContext()
         .getAuthentication().getPrincipal();
-    Long id = null;
-    if (principal instanceof BsUserDetails) {
-      id = ((BsUserDetails) principal).getId();
-    } else if (principal instanceof DefaultOAuth2User) {
-      String email = ((DefaultOAuth2User) principal).getAttribute("email");
-      BsUser user = userRepo.findByEmail(email).orElseThrow(
-          () -> new RuntimeException(Feedback.NOT_FOUND_EMAIL + email));
-      id = user.getId();
-    }
+    Long id = switch (principal) {
+      case BsUserDetails userDetails -> userDetails.getId();
+      case DefaultOAuth2User oauth2User -> {
+        String email = oauth2User.getAttribute("email");
+        yield userRepo.findByEmail(email)
+            .map(BsUser::getId)
+            .orElseThrow(() -> new RuntimeException
+                (Feedback.NOT_FOUND_EMAIL + email));
+      }
+      default -> null;
+    };
     return id;
   }
 }
