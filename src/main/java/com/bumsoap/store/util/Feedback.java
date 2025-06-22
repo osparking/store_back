@@ -51,4 +51,7 @@ public class Feedback {
     public static final String ENABLED_TOGGLING_ERROR = "유저 활성화 토글 오류";
     public static final String PLZ_VERIFY_EMAIL = "이메일 검증을 진행하십시오.";
     public static final String TRY_SOCIAL_LOGIN = " 계정으로 로그인하세요";
+
+    /** 2FA 관련 메시지 **/
+    public static final String DISABLED_2FA = "2FA 비활성화됨";
 }

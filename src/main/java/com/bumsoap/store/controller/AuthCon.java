@@ -36,6 +36,13 @@ public class AuthCon {
     private final AuthUtil authUtil;
     private final TotpService totpService;
 
+    @PostMapping("/disable-2fa")
+    public ResponseEntity<String> disableUserFor2FA() {
+        Long userId = authUtil.loggedInUserId();
+        userService.disable2FA(userId);
+        return ResponseEntity.ok(Feedback.DISABLED_2FA);
+    }
+
     @PostMapping("/enable-2fa")
     public ResponseEntity<String> enableUserFor2FA() {
         Long userId = authUtil.loggedInUserId();
