@@ -87,12 +87,9 @@ public class UserCon {
                     .body(new ApiResp(e.getMessage(), null));
         }
     }
-    private final AuthUtil authUtil;
 
     @GetMapping(UrlMap.GET_USER_DTO_BY_ID)
     public ResponseEntity<ApiResp> getUserDtoById(@PathVariable("id") Long id) {
-        System.out.println("enab " +
-            authUtil.loggedInUserDetails().isTwoFaAEnabled());
         try {
             if (BsUtils.isQualified(id, false, null)) {
                 UserDto userDto = userServ.getUserDtoById(id);
