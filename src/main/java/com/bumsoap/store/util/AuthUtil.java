@@ -13,6 +13,23 @@ public class AuthUtil {
   @Autowired
   UserRepoI userRepo;
 
+  public BsUserDetails loggedInUserDetails() {
+    var principal = SecurityContextHolder.getContext()
+        .getAuthentication().getPrincipal();
+    BsUserDetails details = switch (principal) {
+      case BsUserDetails userDetails -> userDetails;
+      case DefaultOAuth2User oauth2User -> {
+        String email = oauth2User.getAttribute("email");
+        yield userRepo.findByEmail(email)
+            .map(BsUserDetails::buildUserDetails)
+            .orElseThrow(() -> new RuntimeException
+                (Feedback.NOT_FOUND_EMAIL + email));
+      }
+      default -> null;
+    };
+    return details;
+  }
+
   public Long loggedInUserId() {
     var principal = SecurityContextHolder.getContext()
         .getAuthentication().getPrincipal();
