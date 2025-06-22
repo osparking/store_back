@@ -6,12 +6,10 @@ import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.response.JwtResponse;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.security.user.BsUserDetails;
+import com.bumsoap.store.service.TotpService;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
-import com.bumsoap.store.util.Feedback;
-import com.bumsoap.store.util.LoginSource;
-import com.bumsoap.store.util.TokenResult;
-import com.bumsoap.store.util.UrlMap;
+import com.bumsoap.store.util.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +33,17 @@ public class AuthCon {
     private final JwtUtilBean jwtUtilBean;
     private final VerifinTokenServInt verifinTokenService;
     private final UserServInt userService;
+    private final AuthUtil authUtil;
+    private final TotpService totpService;
+
+    @PostMapping("/enable-2fa")
+    public ResponseEntity<String> enableUserFor2FA() {
+        Long userId = authUtil.loggedInUserId();
+        var secret = userService.generateSecret(userId);
+        String qrCodeUrl = totpService.getQRcodeUrl(secret,
+            userService.getUserById(userId).getEmail());
+        return ResponseEntity.ok(qrCodeUrl);
+    }
 
     @GetMapping(UrlMap.EMAIL_ADDRESS)
     public ResponseEntity<ApiResp> verifyEmailToken(@RequestParam("token") String token) {

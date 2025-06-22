@@ -48,6 +48,12 @@ public class UserServ implements UserServInt {
         return totpService.verifyCode(user.getTwoFaSecret(), code);
     }
 
+    /**
+     * 2FA 체계에서 유저를 위해 사용할 비밀을 생성하고, 유저 테이블에
+     * 저장하는 작업도 병행한다.
+     * @param id
+     * @return
+     */
     @Override
     public GoogleAuthenticatorKey generateSecret(Long id) {
         BsUser user = userRepo.findById(id).orElseThrow(() ->
