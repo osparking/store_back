@@ -23,6 +23,7 @@ public class UserDto {
     private String dept;
     private String userType;
     private LoginSource signUpMethod;
+    private boolean twoFaEnabled;
     private String addDate;
     private Long photoId;
     private byte[] photoBytes;
@@ -30,7 +31,7 @@ public class UserDto {
 
     public UserDto(Long id, String fullName, String mbPhone, String email,
                    boolean enabled, String dept, byte userType,
-                   String signUpMethod,
+                   String signUpMethod, boolean twoFaEnabled,
                    Timestamp addDate, Long photoId, byte[] photoBytes) {
         this.id = id;
         this.fullName = fullName;
@@ -40,6 +41,7 @@ public class UserDto {
         this.dept = dept;
         this.userType = UserType.values()[userType].label;
         this.signUpMethod = LoginSource.valueOf(signUpMethod);
+        this.twoFaEnabled = twoFaEnabled;
         this.addDate = BsUtils.getLocalDateTimeStr(
                 addDate.toLocalDateTime());
         this.photoId = photoId;
