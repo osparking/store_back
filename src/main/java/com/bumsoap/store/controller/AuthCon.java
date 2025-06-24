@@ -61,7 +61,7 @@ public class AuthCon {
             return ResponseEntity.ok(Feedback.TWO_FA_VERIFIED);
         } else {
             return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
+                .status(BAD_REQUEST)
                 .body(Feedback.TWO_FA_CODE_ERROR);
         }
     }
