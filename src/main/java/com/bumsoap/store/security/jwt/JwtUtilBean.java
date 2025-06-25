@@ -50,6 +50,7 @@ public class JwtUtilBean {
                 .claim("roles", roles)
                 .claim("signUpMethod",userDetails.getSignUpMethod())
                 .claim("loginMethod", userDetails.getLoginMethod())
+                .claim("twoFaEnabled", userDetails.isTwoFaAEnabled())
                 .setIssuedAt(new java.util.Date())
                 .setExpiration(new java.util.Date(expirationMs
                         + System.currentTimeMillis()))
