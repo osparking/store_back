@@ -66,6 +66,20 @@ public class AuthCon {
         }
     }
 
+    @PostMapping("/public/verify-2fa-login")
+    public ResponseEntity<ApiResp> verify2FaLogin(@RequestParam int code,
+                                                 @RequestParam String jwtToken) {
+        String username = jwtUtilBean.getUsernameFrom(jwtToken);
+        var user = userService.getBsUserByEmail(username);
+        if (user.isPresent() &&
+            userService.verifyCode(user.get().getId(), code)) {
+            return ResponseEntity.ok(
+                new ApiResp(Feedback.AUTHEN_SUCCESS, null));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+            new ApiResp(Feedback.TWO_FA_CODE_ERROR, null));
+    }
+
     @PostMapping("/disable-2fa")
     public ResponseEntity<String> disableUserFor2FA() {
         Long userId = authUtil.loggedInUserId();

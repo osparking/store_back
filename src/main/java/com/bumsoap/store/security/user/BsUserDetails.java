@@ -46,6 +46,10 @@ public class BsUserDetails implements UserDetails {
             user.isTwoFaEnabled());
     }
 
+    /**
+     * 유저네임으로 이메일이 사용되고 있음
+     * @return 이메일
+     */
     @Override
     public String getUsername() {
         return email;
