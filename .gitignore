@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### 프로젝트 암호 ###
+.env
