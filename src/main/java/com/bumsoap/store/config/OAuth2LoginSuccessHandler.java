@@ -89,16 +89,26 @@ public class OAuth2LoginSuccessHandler
 
     if (loginSource == LoginSource.GOOGLE
         || loginSource == LoginSource.NAVER) {
-      String email = attributes.getOrDefault("email", "").toString();
-      String name = attributes.getOrDefault("name", "").toString();
 
-      if (loginSource == LoginSource.GOOGLE) {
-        username = email.split("@")[0];
-        idAttributeKey = "sub";
-      } else {
-        username = attributes.getOrDefault("login", "").toString();
-        idAttributeKey = "id";
+      if (loginSource == LoginSource.NAVER) {
+        attributes = (Map<String, Object>) attributes.get("response");
       }
+      String name = attributes.getOrDefault("name", "").toString();
+      String email = attributes.getOrDefault("email", "").toString();
+
+      switch (loginSource) {
+        case LoginSource.GOOGLE -> {
+          username = email.split("@")[0];
+          idAttributeKey = "sub";
+        }
+        case LoginSource.NAVER -> {
+          username = attributes.getOrDefault("nickname", "").toString();
+          idAttributeKey = "id";
+        }
+        default -> {
+        }
+      }
+
       System.out.println("attrs: " + email + ", " + username);
       userService.getBsUserByEmail(email)
           .ifPresentOrElse(
