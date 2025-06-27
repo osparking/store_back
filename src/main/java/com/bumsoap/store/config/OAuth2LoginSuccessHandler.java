@@ -159,8 +159,6 @@ public class OAuth2LoginSuccessHandler
                                LoginSource loginSource) {
     Map<String, Object> attributes = oAuth2User.getAttributes();
 
-    // JWT 생성용 이메일 및 롤 수집 확보
-    String email = (String) attributes.get("email");
     Set<GrantedAuthority> authorities =
         oAuth2User.getAuthorities().stream()
             .map(authority -> new SimpleGrantedAuthority(
@@ -172,8 +170,8 @@ public class OAuth2LoginSuccessHandler
     authorities.add(new SimpleGrantedAuthority(firstRoleStr));
 
     BsUserDetails userDetails = new BsUserDetails(
-        user.getId(), email, null, user.getFullName(), true,
-        authorities, signUpSource.toString(),
+        user.getId(), user.getEmail(), null, user.getFullName(),
+        true, authorities, signUpSource.toString(),
         loginSource.getLabel(), user.isTwoFaEnabled());
 
     this.setAlwaysUseDefaultTargetUrl(true);
