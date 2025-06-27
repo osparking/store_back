@@ -110,6 +110,7 @@ public class OAuth2LoginSuccessHandler
       }
 
       System.out.println("attrs: " + email + ", " + username);
+      final Map<String, Object> finalAttributes = attributes;
       userService.getBsUserByEmail(email)
           .ifPresentOrElse(
               // 등록된 유저의 OAuth 2 로그인 처리
@@ -117,7 +118,7 @@ public class OAuth2LoginSuccessHandler
                 Collection<Role> roles = user.getRoles();
                 Role firstRole = roles.iterator().next();
                 putAuth2Context(firstRole.getName(),
-                    attributes, idAttributeKey, oAuth2);
+                    finalAttributes, idAttributeKey, oAuth2);
                 username = user.getEmail();
                 this.signUpSource =
                     LoginSource.valueOf(user.getSignUpMethod());
@@ -138,7 +139,7 @@ public class OAuth2LoginSuccessHandler
                 BsUser user = customerServ.add(customer);
 
                 putAuth2Context("ROLE_CUSTOMER",
-                    attributes, idAttributeKey, oAuth2.toString());
+                    finalAttributes, idAttributeKey, oAuth2.toString());
                 this.signUpSource = LoginSource.valueOf(oAuth2);
                 redirectWithJwt(user, oauth2User, loginSource);
               }
