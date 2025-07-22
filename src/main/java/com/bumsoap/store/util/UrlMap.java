@@ -60,4 +60,8 @@ public class UrlMap {
     public static final String BY_NAME = "/{name}/by_name";
     /*== 롤/Role 끝 ======================================*/
 
+    /*== 재료 구매 기록 시작 ====================================== */
+    public static final String STORE_INGRED = API + "/store_ingred";
+    /*== 재료 구매 기록 끝 ====================================== */
+
 }
