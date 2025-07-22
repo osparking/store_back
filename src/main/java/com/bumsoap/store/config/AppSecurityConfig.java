@@ -70,6 +70,8 @@ public class AppSecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/s1/admin/**")
                         .hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/s1/store_ingred/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_WORKER")
                         .requestMatchers(URLS)
                         .authenticated()
                         .anyRequest().permitAll())
