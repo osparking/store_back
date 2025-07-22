@@ -19,8 +19,10 @@ import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
-import com.bumsoap.store.util.*;
-import jakarta.servlet.http.HttpServletRequest;
+import com.bumsoap.store.util.BsUtils;
+import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.UrlMap;
+import com.bumsoap.store.util.UserType;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,7 +41,6 @@ import static org.springframework.http.HttpStatus.*;
 @RestController
 @RequestMapping(UrlMap.USER)
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:5173/")
 public class UserCon {
     private final ObjMapper objMapper;
     private final AdminServ adminServ;

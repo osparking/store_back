@@ -11,7 +11,6 @@ import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,6 @@ import static org.springframework.http.HttpStatus.*;
 @RestController
 @RequestMapping(UrlMap.AUTHO)
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:5173/")
 public class AuthCon {
     private final AuthenticationManager authenticationManager;
     private final JwtUtilBean jwtUtilBean;
