@@ -7,6 +7,7 @@ import com.bumsoap.store.model.StoreIngre;
 import com.bumsoap.store.repository.StoreIngreRepoI;
 import com.bumsoap.store.request.IngreStoreReq;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.service.store.StoreIngreServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +18,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(UrlMap.STORE_INGRED)
 @RequiredArgsConstructor
 public class StoreIngreCon {
   private final StoreIngreRepoI storeIngreRepo;
+  private final StoreIngreServI storeIngreServI;
   private final EntityConverter<StoreIngre, StoreIngreDto> stInConverter;
   private final ObjMapper objMapper;
 
@@ -35,6 +38,18 @@ public class StoreIngreCon {
           new ApiResp(Feedback.INGRE_STORE_SUCC, savedRow));
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
+
+  @DeleteMapping(UrlMap.DELETE_BY_ID)
+  public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
+    try {
+      String ingredName = storeIngreServI.deleteById(id);
+      return ResponseEntity.ok(
+          new ApiResp(Feedback.DELETEED_STORE_INGRE + ingredName, null));
+    } catch (Exception e) {
+      return ResponseEntity.status(NOT_FOUND)
           .body(new ApiResp(e.getMessage(), null));
     }
   }

@@ -59,4 +59,6 @@ public class Feedback {
 
     /*************** 재료 입고 관련 메시지 ********************************/
     public static final String INGRE_STORE_SUCC = "재료 입고 정보 저장됨";
+    public static final String DELETEED_STORE_INGRE = "삭제된 입고 재료명: ";
+    public static final String ST_RE_ID_NOT_FOUND = "없는 입고 재료 아이디: ";
 }
