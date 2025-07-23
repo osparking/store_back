@@ -25,14 +25,15 @@ public class StoreIngre {
   private int count; // 수량
   private LocalDate storeDate;  // 입고일
 
-  @Column(name = "add_time", updatable = false, nullable = false)
+  @Column(name = "add_time", updatable = false, nullable = false,
+      columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime addTime = LocalDateTime.now();
   // 자료 입력 일시, 자동 부여
   private String buyPlace; // 구매처, 제공
   private long workerId; // 정보 입력 직원ID
   /**
    * 만료일 - 제조일, 유효 기한, 소비 기한 등에서 도출
-    */
+   */
   private LocalDate expireDate;
 }
 
