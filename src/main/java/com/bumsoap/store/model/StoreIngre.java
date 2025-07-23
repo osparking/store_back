@@ -24,10 +24,10 @@ public class StoreIngre {
   private PackUnit packunit; // 용량 단위
   private int count; // 수량
   private LocalDate storeDate;  // 입고일
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(name = "add_time", updatable = false,
-      columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-  private LocalDateTime addTime;  // 자료 입력 일시, 자동 부여
+
+  @Column(name = "add_time", updatable = false, nullable = false)
+  private LocalDateTime addTime = LocalDateTime.now();
+  // 자료 입력 일시, 자동 부여
   private String buyPlace; // 구매처, 제공
   private long workerId; // 정보 입력 직원ID
   /**
