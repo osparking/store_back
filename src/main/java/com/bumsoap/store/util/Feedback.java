@@ -54,6 +54,9 @@ public class Feedback {
 
     /** 2FA 관련 메시지 **/
     public static final String DISABLED_2FA = "2FA 비활성화됨";
-  public static final String TWO_FA_VERIFIED = "2FA 검증됨";
+    public static final String TWO_FA_VERIFIED = "2FA 검증됨";
     public static final String TWO_FA_CODE_ERROR = "2FA 코드 오류";
+
+    /*************** 재료 입고 관련 메시지 ********************************/
+    public static final String INGRE_STORE_SUCC = "재료 입고 정보 저장됨";
 }
