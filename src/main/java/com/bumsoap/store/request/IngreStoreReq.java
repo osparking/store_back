@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class IngreStoreReq {
+  private Long id;
   private String ingreName; // 재료명; 제공; 필수
   private int quantity; // 용량; 필수
   private PackUnit packunit; // 용량 단위; 필수

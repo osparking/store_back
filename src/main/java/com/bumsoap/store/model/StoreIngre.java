@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class StoreIngre {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
   private String ingreName; // 재료명; 제공
   private int quantity; // 용량
   private PackUnit packunit; // 용량 단위

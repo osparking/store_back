@@ -30,7 +30,6 @@ public class StoreIngreCon {
   public ResponseEntity<ApiResp> add(@RequestBody IngreStoreReq request) {
     try {
       var inStRow = objMapper.mapToDto(request, StoreIngre.class);
-      inStRow.setId(0);
       var savedRow = storeIngreRepo.save(inStRow);
       return ResponseEntity.ok(
           new ApiResp(Feedback.INGRE_STORE_SUCC, savedRow));
