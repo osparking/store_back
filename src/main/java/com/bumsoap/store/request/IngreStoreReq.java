@@ -14,4 +14,7 @@ public class IngreStoreReq {
   private String buyPlace; // 구매처, 제공; 필수
   private long workerId; // 정보 입력 직원ID; 필수
   private LocalDate expireDate;
+  public void setPackunit(String packunit) {
+    this.packunit = PackUnit.valueOfLabel(packunit);
+  }
 }
