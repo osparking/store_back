@@ -6,19 +6,21 @@ import com.bumsoap.store.dto.StoreIngreDto;
 import com.bumsoap.store.model.StoreIngre;
 import com.bumsoap.store.repository.StoreIngreRepoI;
 import com.bumsoap.store.request.IngreStoreReq;
+import com.bumsoap.store.request.IngreUpdateReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.store.StoreIngreServI;
+import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(UrlMap.STORE_INGRED)
@@ -28,6 +30,34 @@ public class StoreIngreCon {
   private final StoreIngreServI storeIngreServI;
   private final EntityConverter<StoreIngre, StoreIngreDto> stInConverter;
   private final ObjMapper objMapper;
+
+  @PutMapping(UrlMap.UPDATE)
+  public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
+                                        @RequestBody IngreUpdateReq request) {
+    try {
+      var storedIngre = storeIngreServI.findById(id);
+
+      if (!BsUtils.isQualified(storedIngre.getWorkerId())) {
+        return ResponseEntity.status(UNAUTHORIZED).body(
+            new ApiResp(Feedback.NOT_QUALIFIED_ON + id, null));
+      }
+      storedIngre.setIngreName(request.getIngreName());
+      storedIngre.setQuantity(request.getQuantity());
+      storedIngre.setPackunit(request.getPackunit());
+      storedIngre.setCount(request.getCount());
+      storedIngre.setStoreDate(request.getStoreDate());
+      storedIngre.setBuyPlace(request.getBuyPlace());
+      storedIngre.setExpireDate(request.getExpireDate());
+      var storedIng = storeIngreRepo.save(storedIngre);
+      var storedIngDto = objMapper.mapToDto(storedIng, StoreIngreDto.class);
+
+      return ResponseEntity.ok(
+          new ApiResp(Feedback.INGRE_UPDATE_SUCC, storedIngDto));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(
+          new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @PostMapping(UrlMap.ADD)
   public ResponseEntity<ApiResp> add(@RequestBody IngreStoreReq request) {
