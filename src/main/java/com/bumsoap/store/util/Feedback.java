@@ -61,4 +61,6 @@ public class Feedback {
     public static final String INGRE_STORE_SUCC = "재료 입고 정보 저장됨";
     public static final String DELETEED_STORE_INGRE = "삭제된 입고 재료명: ";
     public static final String ST_RE_ID_NOT_FOUND = "없는 입고 재료 아이디: ";
+    public static final String INGRE_UPDATE_SUCC = "재료 입고 정보 수정됨";
+    public static final String NOT_QUALIFIED_ON = "수정 불허 재료입고기록 ID: ";
 }
