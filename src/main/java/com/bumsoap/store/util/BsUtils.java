@@ -46,4 +46,20 @@ public class BsUtils {
             return isAdmin;
         }
     }
+
+    /**
+     * 한 노동자가 입력한 재료 입고 기록을 현재 로그인한 유저가 갱시할 자격이
+     * 되는지 판단.
+     *
+     * @param writerId 재료 입고 기록을 삽입한 노동자 아이디.
+     * @return
+     */
+    public static boolean isQualified(Long writerId) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream().anyMatch(
+                role -> "ROLE_ADMIN".equals(role.toString()));
+        Long loginId = ((BsUserDetails)auth.getPrincipal()).getId();
+
+        return isAdmin || Objects.equals(writerId, loginId);
+    }
 }
