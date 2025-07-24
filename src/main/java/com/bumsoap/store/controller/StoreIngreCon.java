@@ -31,6 +31,12 @@ public class StoreIngreCon {
   private final EntityConverter<StoreIngre, StoreIngreDto> stInConverter;
   private final ObjMapper objMapper;
 
+  @GetMapping(UrlMap.GET_INGRE_NAMES)
+  public ResponseEntity<ApiResp> getIngreNames() {
+    return ResponseEntity.ok(new ApiResp(Feedback.FOUND_INGRE_NAMES,
+        storeIngreRepo.findDistinctIngreNames()));
+  }
+
   @PutMapping(UrlMap.UPDATE)
   public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
                                         @RequestBody IngreUpdateReq request) {

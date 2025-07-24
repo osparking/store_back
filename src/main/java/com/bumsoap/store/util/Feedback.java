@@ -63,4 +63,5 @@ public class Feedback {
     public static final String ST_RE_ID_NOT_FOUND = "없는 입고 재료 아이디: ";
     public static final String INGRE_UPDATE_SUCC = "재료 입고 정보 수정됨";
     public static final String NOT_QUALIFIED_ON = "수정 불허 재료입고기록 ID: ";
+    public static final String FOUND_INGRE_NAMES = "재료명 목록 발견됨";
 }
