@@ -12,4 +12,8 @@ public interface StoreIngreRepoI extends JpaRepository<StoreIngre, Long> {
   @Query(nativeQuery = true,
       value = "select distinct si.ingre_name from store_ingre si ")
   List<String> findDistinctIngreNames();
+
+  @Query(nativeQuery = true,
+      value = "select distinct si.buy_place from store_ingre si")
+  List<String> findDistinctBuyPlaces();
 }
