@@ -18,7 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,8 +36,10 @@ public class StoreIngreCon {
 
   @GetMapping(UrlMap.GET_PACKUNITS)
   public ResponseEntity<ApiResp> getPackunits() {
-    var list = Arrays.stream(PackUnit.values())
-        .map(PackUnit::toString).toList();
+    List<String> list = new ArrayList<>();
+    for (PackUnit unit : EnumSet.allOf(PackUnit.class)) {
+      list.add(unit.toString());
+    }
     return ResponseEntity.ok(new ApiResp(Feedback.FOUND_PACKUNITS, list));
   }
 
