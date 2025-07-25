@@ -37,6 +37,12 @@ public class StoreIngreCon {
         storeIngreRepo.findDistinctIngreNames()));
   }
 
+  @GetMapping(UrlMap.GET_BUY_PLACES)
+  public ResponseEntity<ApiResp> getBuyPlaces() {
+    return ResponseEntity.ok(new ApiResp(Feedback.FOUND_BUY_PLACES,
+        storeIngreRepo.findDistinctBuyPlaces()));
+  }
+
   @PutMapping(UrlMap.UPDATE)
   public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
                                         @RequestBody IngreUpdateReq request) {
