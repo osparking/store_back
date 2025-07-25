@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,27 +36,10 @@ public class StoreIngreCon {
 
   @GetMapping(UrlMap.GET_PACKUNITS)
   public ResponseEntity<ApiResp> getPackunits() {
-
-    long startTime = System.nanoTime();
-
-    var list2 = Arrays.stream(PackUnit.values())
-        .map(PackUnit::toString).toList();
-
-    long midTime = System.nanoTime();
-
     List<String> list = new ArrayList<>();
     for (PackUnit unit : EnumSet.allOf(PackUnit.class)) {
       list.add(unit.toString());
     }
-
-    long endTime = System.nanoTime();
-
-    long duration1InNano = midTime - startTime;
-    long duration2InNano = endTime - midTime;
-
-    System.out.println("EnumSet: " + duration2InNano);
-    System.out.println("stream-: " + duration1InNano);
-
     return ResponseEntity.ok(new ApiResp(Feedback.FOUND_PACKUNITS, list));
   }
 
