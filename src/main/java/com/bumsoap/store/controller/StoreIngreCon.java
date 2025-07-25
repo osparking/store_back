@@ -11,12 +11,14 @@ import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.store.StoreIngreServI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.PackUnit;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,13 @@ public class StoreIngreCon {
   private final StoreIngreServI storeIngreServI;
   private final EntityConverter<StoreIngre, StoreIngreDto> stInConverter;
   private final ObjMapper objMapper;
+
+  @GetMapping(UrlMap.GET_PACKUNITS)
+  public ResponseEntity<ApiResp> getPackunits() {
+    var list = Arrays.stream(PackUnit.values())
+        .map(PackUnit::toString).toList();
+    return ResponseEntity.ok(new ApiResp(Feedback.FOUND_PACKUNITS, list));
+  }
 
   @GetMapping(UrlMap.GET_INGRE_NAMES)
   public ResponseEntity<ApiResp> getIngreNames() {

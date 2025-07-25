@@ -64,4 +64,6 @@ public class Feedback {
     public static final String INGRE_UPDATE_SUCC = "재료 입고 정보 수정됨";
     public static final String NOT_QUALIFIED_ON = "수정 불허 재료입고기록 ID: ";
     public static final String FOUND_INGRE_NAMES = "재료명 목록 발견됨";
+    public static final String FOUND_BUY_PLACES = "재료 구매처 목록 발견됨";
+    public static final String FOUND_PACKUNITS = "재료 포장 단위 발견됨";
 }
