@@ -22,6 +22,7 @@ public class StoreIngreDto {
   private String buyPlace; // 구매처, 제공
   private long workerId; // 정보 입력 직원ID
   private LocalDate expireDate;
+  private String workerName; // 입력 직원 성명
   public String getPackunit() {
     return packunit.toString();
   }
