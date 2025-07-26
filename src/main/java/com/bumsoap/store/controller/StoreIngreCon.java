@@ -3,6 +3,7 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.dto.EntityConverter;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.StoreIngreDto;
+import com.bumsoap.store.dto.StoreIngreRow;
 import com.bumsoap.store.model.StoreIngre;
 import com.bumsoap.store.repository.StoreIngreRepoI;
 import com.bumsoap.store.request.IngreStoreReq;
@@ -31,7 +32,7 @@ import static org.springframework.http.HttpStatus.*;
 public class StoreIngreCon {
   private final StoreIngreRepoI storeIngreRepo;
   private final StoreIngreServI storeIngreServI;
-  private final EntityConverter<StoreIngre, StoreIngreDto> stInConverter;
+  private final EntityConverter<StoreIngreRow, StoreIngreDto> stInConverter;
   private final ObjMapper objMapper;
 
   @GetMapping(UrlMap.GET_PACKUNITS)
@@ -111,7 +112,7 @@ public class StoreIngreCon {
   @GetMapping(UrlMap.GET_ALL)
   public ResponseEntity<ApiResp> getAllStoredIngred() {
     try {
-      var storedIngre = storeIngreRepo.findAll();
+      var storedIngre = storeIngreRepo.findAllWorkerName();
       List<StoreIngreDto> storeIngreDtos = storedIngre.stream()
           .map(entity -> stInConverter.mapEntityToDto
               (entity, StoreIngreDto.class))
