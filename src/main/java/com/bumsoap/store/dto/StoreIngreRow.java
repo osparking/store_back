@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class StoreIngreRow extends StoreIngre {
