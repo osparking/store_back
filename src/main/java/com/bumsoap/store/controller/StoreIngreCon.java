@@ -9,6 +9,7 @@ import com.bumsoap.store.repository.StoreIngreRepoI;
 import com.bumsoap.store.request.IngreStoreReq;
 import com.bumsoap.store.request.IngreUpdateReq;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.store.StoreIngreServI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
@@ -17,6 +18,7 @@ import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -87,6 +89,11 @@ public class StoreIngreCon {
   @PostMapping(UrlMap.ADD)
   public ResponseEntity<ApiResp> add(@RequestBody IngreStoreReq request) {
     try {
+      if (request.getWorkerId() == null) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        Long workerId = ((BsUserDetails)auth.getPrincipal()).getId();
+        request.setWorkerId(workerId);
+      }
       var inStRow = objMapper.mapToDto(request, StoreIngre.class);
       var savedRow = storeIngreRepo.save(inStRow);
       return ResponseEntity.ok(

@@ -13,7 +13,7 @@ public class IngreStoreReq {
   private int count; // 수량; 필수
   private LocalDate storeDate;  // 입고일
   private String buyPlace; // 구매처, 제공; 필수
-  private long workerId; // 정보 입력 직원ID; 필수
+  private Long workerId; // 정보 입력 직원ID; 필수
   private LocalDate expireDate;
   public void setPackunit(String packunit) {
     this.packunit = PackUnit.valueOfLabel(packunit);
