@@ -27,6 +27,13 @@ public class BsUtils {
         return ldTime.format(formatter);
     }
 
+    public static String getShortTimeStr(LocalDateTime ldTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                "yyyy-MM-dd HH:mm:ss", Locale.KOREAN);
+
+        return ldTime.format(formatter);
+    }
+
     /**
      * 현재 로그인한 유저가 특정 유저(ID)의 정보레 접근할 자격이 있는지 판단.
      * @param userId 특정 유저 ID
