@@ -212,7 +212,7 @@ public class UserCon {
         request.setPassword(encodedPwd);
         String email = request.getEmail();
         BsUser user = null;
-
+        request.setSignUpMethod("EMAIL");
         try {
             if (userRepo.existsByEmail(email)) {
                 throw new ExistingEmailEx(Feedback.USER_TAKEN_EMAIL + email);

@@ -12,4 +12,5 @@ public class UserRegisterReq {
     private String password;
     private boolean enabled;
     private String dept;
+    private String signUpMethod;
 }
