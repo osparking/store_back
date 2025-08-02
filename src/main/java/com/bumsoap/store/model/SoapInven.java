@@ -26,4 +26,10 @@ public class SoapInven {
   @Column(name = "add_time", updatable = false, nullable = false,
       columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime addTime = LocalDateTime.now();
+
+  public SoapInven(BsShape bsShape, int stockLevel, BigDecimal unitPrice) {
+    this.bsShape = bsShape;
+    this.stockLevel = stockLevel;
+    this.unitPrice = unitPrice;
+  }
 }
