@@ -67,4 +67,6 @@ public class UrlMap {
     public static final String GET_PACKUNITS = "/get_packunits";
     /*== 재료 구매 기록 끝 ====================================== */
 
+    public static final String SOAP = API + "/soap";
+
 }
