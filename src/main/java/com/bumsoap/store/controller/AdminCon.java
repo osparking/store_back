@@ -1,15 +1,19 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.model.Admin;
+import com.bumsoap.store.model.SoapPrice;
+import com.bumsoap.store.request.SoapPriceAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServInt;
+import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +28,22 @@ public class AdminCon {
     private final UserServInt userServ;
     private final WorkerServInt workerServ;
     private final CustomerServInt customerServ;
+    private final PriceServI priceServ;
+
+    @PostMapping(UrlMap.ADD_PRICE)
+    public ResponseEntity<ApiResp> addPrice(@RequestBody SoapPriceAddReq request) {
+        try {
+            SoapPrice soapPrice = new SoapPrice();
+            soapPrice.setBsShape(request.getBsShape());
+            soapPrice.setUnitPrice(request.getUnitPrice());
+            SoapPrice updated = priceServ.add(soapPrice);
+            return ResponseEntity.ok(
+                new ApiResp(Feedback.PRICE_INSERT_SUCC, updated));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @PutMapping(UrlMap.TOGGLE_ENABLED)
     @Transactional

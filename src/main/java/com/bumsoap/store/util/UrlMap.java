@@ -26,6 +26,7 @@ public class UrlMap {
     public static final String GET_ALL_WORKERS = "/worker/get_all";
     public static final String GET_ALL_CUSTOMERS = "/customer/get_all";
     public static final String TOGGLE_ENABLED = "/worker/{id}/toggle" ;
+    public static final String ADD_PRICE = "/add_price";
     /*== ADMIN / 관리자 끝 ==================================*/
 
     /*== PHOTO / 사진 시작 ====================================================*/
@@ -68,5 +69,4 @@ public class UrlMap {
     /*== 재료 구매 기록 끝 ====================================== */
 
     public static final String SOAP = API + "/soap";
-
 }

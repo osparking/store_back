@@ -70,4 +70,5 @@ public class Feedback {
     /*************** 비누 상품 관련 메시지 ********************************/
     public static final String SHAPE_NOT_FOUND = "재고 수량 부재 비누 종류: ";
     public static final String INVEN_UPDATE_SUCC = "비누 재고 갱신 성공";
+    public static final String PRICE_INSERT_SUCC = "비누 가격 등록 성공";
 }
