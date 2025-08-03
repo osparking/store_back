@@ -6,9 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -21,15 +18,9 @@ public class SoapInven {
   private BsShape bsShape;
   @Column(nullable = false)
   private int stockLevel;
-  @Column(nullable = false)
-  private BigDecimal unitPrice;
-  @Column(name = "add_time", updatable = false, nullable = false,
-      columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-  private LocalDateTime addTime = LocalDateTime.now();
 
-  public SoapInven(BsShape bsShape, int stockLevel, BigDecimal unitPrice) {
+  public SoapInven(BsShape bsShape, int stockLevel) {
     this.bsShape = bsShape;
     this.stockLevel = stockLevel;
-    this.unitPrice = unitPrice;
   }
 }
