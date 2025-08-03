@@ -8,8 +8,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 @RequiredArgsConstructor
 public class InitialSoapInvenCreator implements ApplicationListener<ApplicationReadyEvent> {
@@ -27,8 +25,7 @@ public class InitialSoapInvenCreator implements ApplicationListener<ApplicationR
             // Create a new SoapInven object for the NORMAL shape with default values
             SoapInven normal = new SoapInven(
                 BsShape.NORMAL, // Shape of the soap
-                0,              // Initial quantity
-                BigDecimal.valueOf(4110) // Price
+                0               // Initial quantity
             );
 
             // Save the new SoapInven object to the inventory
@@ -40,8 +37,7 @@ public class InitialSoapInvenCreator implements ApplicationListener<ApplicationR
             // Create a new SoapInven object for the MAEJU shape with default values
             SoapInven normal = new SoapInven(
                 BsShape.MAEJU_S, // Shape of the soap
-                0,              // Initial quantity
-                BigDecimal.valueOf(4020) // Price
+                0                // Initial quantity
             );
 
             // Save the new SoapInven object to the inventory
@@ -53,8 +49,7 @@ public class InitialSoapInvenCreator implements ApplicationListener<ApplicationR
             // Create a new SoapInven object for the SNOW WHITE shape with default values
             SoapInven normal = new SoapInven(
                 BsShape.S_WHITE, // Shape of the soap
-                500,              // Initial quantity
-                BigDecimal.valueOf(3900) // Price
+                500              // Initial quantity
             );
 
             // Save the new SoapInven object to the inventory
