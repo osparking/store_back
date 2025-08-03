@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "soap_price", indexes = {
+  @Index(name = "latest_price", columnList = "bs_shape, apply_time desc")
+})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +24,7 @@ public class SoapPrice {
   private BsShape bsShape;
   @Column(nullable = false)
   private BigDecimal unitPrice;
-  @Column(name = "add_time", updatable = false, nullable = false,
+  @Column(name = "apply_time", updatable = false, nullable = false,
       columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime applyTime = LocalDateTime.now();
 
