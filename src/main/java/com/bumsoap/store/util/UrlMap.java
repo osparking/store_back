@@ -69,4 +69,5 @@ public class UrlMap {
     /*== 재료 구매 기록 끝 ====================================== */
 
     public static final String SOAP = API + "/soap";
+    public static final String SOAP_PRICE = "/price";
 }
