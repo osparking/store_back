@@ -86,8 +86,7 @@ public class AppSecurityConfig {
 
     private static  String[] URLS = {
             "/api/s1/user/**",
-            "/api/s1/photo/**",
-            "/api/s1/soap/**"
+            "/api/s1/photo/**"
     };
 
     @Bean
