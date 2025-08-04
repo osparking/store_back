@@ -70,4 +70,5 @@ public class UrlMap {
 
     public static final String SOAP = API + "/soap";
     public static final String SOAP_PRICE = "/price";
+    public static final String SHAPE_PRICE = "/{shape}/price";
 }
