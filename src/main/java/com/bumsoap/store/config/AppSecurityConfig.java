@@ -84,9 +84,10 @@ public class AppSecurityConfig {
         return http.build();
     }
 
-    private static  String[] URLS = {
-            "/api/s1/user/**",
-            "/api/s1/photo/**"
+    private static String[] URLS = {
+        "/api/s1/user/**",
+        "/api/s1/photo/**",
+        "/api/s1/order/**"
     };
 
     @Bean
