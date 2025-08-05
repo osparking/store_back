@@ -93,7 +93,7 @@ public class ZipCode {
           nd = nd.getNextSibling();
           String zBunAddress = nd.getTextContent();
           pageAddresses
-              .add(new AddressBasis(zipcode, roadAddress, zBunAddress));
+              .add(new AddressBasis(null, zipcode, roadAddress, zBunAddress));
         }
       }
 
