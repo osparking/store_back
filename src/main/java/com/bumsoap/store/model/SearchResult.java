@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class SearchResult {
-  private Page<AddressDJ> addressPage;
+  private Page<AddressBasis> addressPage;
   private int currentPage;
   private int totalPages;
   private List<Integer> pageNumbers;

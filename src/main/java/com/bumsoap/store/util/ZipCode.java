@@ -1,6 +1,6 @@
 package com.bumsoap.store.util;
 
-import com.bumsoap.store.model.AddressDJ;
+import com.bumsoap.store.model.AddressBasis;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -25,7 +25,7 @@ public class ZipCode {
    * @return 오류 메시지, 성공한 경우 null
    */
   public static String find(String addrSearchKey, int pageIndex, int pageSize,
-                            List<AddressDJ> pageAddresses, int[] result) {
+                            List<AddressBasis> pageAddresses, int[] result) {
     HttpURLConnection con = null;
     var urlBuilder = new StringBuilder("http://openapi.epost.go.kr/");
 
@@ -93,7 +93,7 @@ public class ZipCode {
           nd = nd.getNextSibling();
           String zBunAddress = nd.getTextContent();
           pageAddresses
-              .add(new AddressDJ(zipcode, roadAddress, zBunAddress));
+              .add(new AddressBasis(zipcode, roadAddress, zBunAddress));
         }
       }
 
