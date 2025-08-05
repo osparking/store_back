@@ -73,9 +73,7 @@ public class UrlMap {
     public static final String SHAPE_PRICE = "/{shape}/price";
 
     /*== 주문-배송 주소 관련 항목 시작 ================================= */
-    public static final String ADDRESS = API + "/address";
-    public static final String SEARCH = "/search";
     public static final String ORDER = API + "/order";
-
     public static final String ADD_BASIC_ADDR = "/address/basic/add";
+    public static final String ADDRESS_SEARCH = "/address/search";
 }
