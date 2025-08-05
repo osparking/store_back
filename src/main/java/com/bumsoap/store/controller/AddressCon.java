@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-@RequestMapping(UrlMap.ADDRESS)
+@RequestMapping(UrlMap.ORDER)
 public class AddressCon {
 
   @Autowired
   private AddressServI addressServ;
 
-  @GetMapping(UrlMap.SEARCH)
+  @GetMapping(UrlMap.ADDRESS_SEARCH)
   public ResponseEntity<ApiResp> addressSearch(
       @Valid @RequestParam("searchKey") SearchKey searchKey,
       @RequestParam("page") Optional<Integer> page,
