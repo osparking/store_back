@@ -27,18 +27,13 @@ public class OrderCon {
 
   @PostMapping(UrlMap.ADD_BASIC_ADDR)
   public ResponseEntity<ApiResp> addBasicAddr(
-      @RequestBody AddrBasisAddReq addressBasis) {
+      @RequestBody AddrBasisAddReq addrBasisAddReq) {
     try {
-      var addr = addrBasisServ.findByRoadAddress(addressBasis.getRoadAddress());
+      var basis = objMapper.mapToDto(addrBasisAddReq, AddressBasis.class);
+      var addressBasisSavedOrFromDB = addrBasisServ.addAddressBasis(basis);
 
-      if (addr == null) { // 주소 인자를 테이블에 추가.
-        var basis = objMapper.mapToDto(addressBasis, AddressBasis.class);
-        return ResponseEntity.ok(new ApiResp(Feedback.BASIC_ADDR_STORED,
-            addrBasisServ.saveUpdate(basis)));
-      } else { // 테이블에서 읽은 주소를 반환.
-        return ResponseEntity.ok(new ApiResp(Feedback.BASIC_ADDR_FOUND,
-            addr));
-      }
+      return ResponseEntity.ok(new ApiResp(Feedback.BASIC_ADDR_SAVED,
+          addressBasisSavedOrFromDB));
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));
