@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(UrlMap.ORDER)
+@RequestMapping(UrlMap.RECIPIENT)
 @RequiredArgsConstructor
 public class RecipientCon {
   private final ObjMapper objMapper;
