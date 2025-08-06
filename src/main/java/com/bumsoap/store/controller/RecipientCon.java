@@ -23,7 +23,7 @@ public class RecipientCon {
   private final AddressBasisServI addressBasisServ;
 
   @GetMapping(UrlMap.GET_BY_ID)
-  public ResponseEntity<ApiResp> getById(@PathVariable("id") int id) {
+  public ResponseEntity<ApiResp> getById(@PathVariable("id") long id) {
     try {
       Recipient recipient = recipientServ.findById(id);
       return ResponseEntity.ok(

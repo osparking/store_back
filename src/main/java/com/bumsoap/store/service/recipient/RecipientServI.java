@@ -5,5 +5,5 @@ import com.bumsoap.store.model.Recipient;
 public interface RecipientServI {
   Recipient save(Recipient recipient);
 
-  Recipient findById(int id);
+  Recipient findById(long id);
 }
