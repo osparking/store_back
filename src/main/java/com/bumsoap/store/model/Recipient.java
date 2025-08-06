@@ -26,17 +26,17 @@ public class Recipient {
 
   @Column(nullable = false)
   private DoroZbun doroZbun = DoroZbun.ROAD;
-  private String addrDetail; // Detailed address
+  private String addressDetail; // Detailed address
 
   public Recipient(String fullName,
                    String mbPhone,
                    AddressBasis addressBasis,
                    DoroZbun doroZbun,
-                   String addrDetail) {
+                   String addressDetail) {
     this.fullName = fullName;
     this.mbPhone = mbPhone;
     this.addressBasis = addressBasis;
     this.doroZbun = doroZbun;
-    this.addrDetail = addrDetail;
+    this.addressDetail = addressDetail;
   }
 }
