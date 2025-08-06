@@ -12,9 +12,7 @@ import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(UrlMap.RECIPIENT)
@@ -23,6 +21,18 @@ public class RecipientCon {
   private final ObjMapper objMapper;
   private final RecipientServ recipientServ;
   private final AddressBasisServI addressBasisServ;
+
+  @GetMapping(UrlMap.GET_BY_ID)
+  public ResponseEntity<ApiResp> getById(@PathVariable("id") int id) {
+    try {
+      Recipient recipient = new Recipient();
+      return ResponseEntity.ok(
+          new ApiResp(Feedback.RECIPIENT_FOUND, recipient));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(
+          new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @PostMapping(UrlMap.SAVE_RECIPIENT)
   public ResponseEntity<ApiResp> save(@RequestBody RecipRegiReq request) {

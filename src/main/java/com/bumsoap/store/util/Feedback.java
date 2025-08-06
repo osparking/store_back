@@ -76,4 +76,5 @@ public class Feedback {
     public static final String ADDRESS_FOUND = "주소 목록 검색 결과";
     public static final String RECIPIENT_SAVED = "수취인 정보 저장됨";
     public static final String BASIC_ADDR_SAVED = "저장된 기초 주소";
+    public static final String RECIPIENT_FOUND = "수취인 정보 찾음";
 }
