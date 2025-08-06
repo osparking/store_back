@@ -10,6 +10,7 @@ import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,17 @@ public class RecipientCon {
   private final ObjMapper objMapper;
   private final RecipientServI recipientServ;
   private final AddressBasisServI addressBasisServ;
+
+  @PutMapping(UrlMap.UPDATE2) // '/update'
+  public ResponseEntity<ApiResp> update(@RequestBody Recipient request) {
+    try {
+      return ResponseEntity.ok(
+          new ApiResp(Feedback.RECIPIENT_UPDATED, null));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(
+          new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @GetMapping(UrlMap.GET_BY_ID)
   public ResponseEntity<ApiResp> getById(@PathVariable("id") long id) {

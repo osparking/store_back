@@ -78,4 +78,5 @@ public class Feedback {
     public static final String BASIC_ADDR_SAVED = "저장된 기초 주소";
     public static final String RECIPIENT_FOUND = "수취인 정보 찾음";
     public static final String RECIP_ID_NOT_FOUND = "없는 수취인 ID: ";
+    public static final String RECIPIENT_UPDATED = "수취인 정보 수정됨";
 }

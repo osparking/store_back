@@ -78,4 +78,5 @@ public class UrlMap {
     public static final String ADD_BASIC_ADDR = "/address/basic/add";
     public static final String ADDRESS_SEARCH = "/address/search";
     public static final String SAVE_RECIPIENT = "/save_recipient";
+    public static final String UPDATE2 = "/update";
 }
