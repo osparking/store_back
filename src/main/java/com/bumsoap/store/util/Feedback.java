@@ -74,6 +74,6 @@ public class Feedback {
 
     /*************** 주소 관련 메시지 ********************************/
     public static final String ADDRESS_FOUND = "주소 목록 검색 결과";
-    public static final String BASIC_ADDR_STORED = "기초 주소 저장됨";
-    public static final String BASIC_ADDR_FOUND = "기초 주소 발견됨";
+    public static final String RECIPIENT_SAVED = "수취인 정보 저장됨";
+    public static final String BASIC_ADDR_SAVED = "저장된 기초 주소";
 }
