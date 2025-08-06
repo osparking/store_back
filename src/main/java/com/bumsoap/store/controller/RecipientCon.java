@@ -6,7 +6,7 @@ import com.bumsoap.store.model.Recipient;
 import com.bumsoap.store.request.RecipRegiReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressBasisServI;
-import com.bumsoap.store.service.recipient.RecipientServ;
+import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RecipientCon {
   private final ObjMapper objMapper;
-  private final RecipientServ recipientServ;
+  private final RecipientServI recipientServ;
   private final AddressBasisServI addressBasisServ;
 
   @GetMapping(UrlMap.GET_BY_ID)
   public ResponseEntity<ApiResp> getById(@PathVariable("id") int id) {
     try {
-      Recipient recipient = new Recipient();
+      Recipient recipient = recipientServ.findById(id);
       return ResponseEntity.ok(
           new ApiResp(Feedback.RECIPIENT_FOUND, recipient));
     } catch (Exception e) {

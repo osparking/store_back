@@ -14,4 +14,9 @@ public class RecipientServ implements RecipientServI {
   public Recipient save(Recipient recipient) {
     return recipientRepo.save(recipient);
   }
+
+  @Override
+  public Recipient findById(int id) {
+    return null;
+  }
 }
