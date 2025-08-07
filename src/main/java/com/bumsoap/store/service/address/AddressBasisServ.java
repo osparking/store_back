@@ -28,7 +28,7 @@ public class AddressBasisServ implements AddressBasisServI{
    * @return (결과적으로) DB에 존재하는 기초 주소
    */
   @Override
-  public AddressBasis addAddressBasis(AddressBasis addressBasis) {
+  public AddressBasis addGetAddrBasis(AddressBasis addressBasis) {
     // 테이블에 같은 주소 존재 가능성 타진
     var addressInDB = addrBasisRepo.findByRoadAddress(
         addressBasis.getRoadAddress());

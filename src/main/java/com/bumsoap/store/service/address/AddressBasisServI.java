@@ -5,5 +5,5 @@ import com.bumsoap.store.model.AddressBasis;
 public interface AddressBasisServI {
   AddressBasis saveUpdate(AddressBasis addressBasis);
   AddressBasis findByRoadAddress(String roadAddress);
-  AddressBasis addAddressBasis(AddressBasis addressBasis);
+  AddressBasis addGetAddrBasis(AddressBasis addressBasis);
 }

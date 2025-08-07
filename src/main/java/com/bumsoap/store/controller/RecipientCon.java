@@ -42,7 +42,7 @@ public class RecipientCon {
     try {
       var addrBasis = request.getAddressBasis();
       if (addrBasis.getId() == null) {
-        addrBasis = addressBasisServ.addAddressBasis(addrBasis);
+        addrBasis = addressBasisServ.addGetAddrBasis(addrBasis);
         request.setAddressBasis(addrBasis);
       }
       var recipientUpdated = recipientServ.save(request);
@@ -71,7 +71,7 @@ public class RecipientCon {
     try {
       var addressBasis = objMapper
           .mapToDto(request.getAddrBasisAddReq(), AddressBasis.class);
-      var addrBasisSaved = addressBasisServ.addAddressBasis(addressBasis);
+      var addrBasisSaved = addressBasisServ.addGetAddrBasis(addressBasis);
 
       Recipient recipient = objMapper.mapToDto(request, Recipient.class);
       recipient.setAddressBasis(addrBasisSaved);

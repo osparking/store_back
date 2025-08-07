@@ -30,7 +30,7 @@ public class OrderCon {
       @RequestBody AddrBasisAddReq addrBasisAddReq) {
     try {
       var basis = objMapper.mapToDto(addrBasisAddReq, AddressBasis.class);
-      var addressBasisSavedOrFromDB = addrBasisServ.addAddressBasis(basis);
+      var addressBasisSavedOrFromDB = addrBasisServ.addGetAddrBasis(basis);
 
       return ResponseEntity.ok(new ApiResp(Feedback.BASIC_ADDR_SAVED,
           addressBasisSavedOrFromDB));
