@@ -6,4 +6,6 @@ public interface RecipientServI {
   Recipient save(Recipient recipient);
 
   Recipient findById(long id);
+
+  String deleteById(Long id);
 }

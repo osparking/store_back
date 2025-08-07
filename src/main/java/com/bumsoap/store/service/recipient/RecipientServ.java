@@ -22,4 +22,15 @@ public class RecipientServ implements RecipientServI {
     return recipientRepo.findById(id).orElseThrow(
         () -> new IdNotFoundEx(Feedback.RECIP_ID_NOT_FOUND));
   }
+
+  @Override
+  public String deleteById(Long id) {
+    return recipientRepo.findById(id)
+        .map(recipient -> {
+          recipientRepo.deleteById(id);
+          return recipient.getFullName();
+        })
+        .orElseThrow(() ->
+            new IdNotFoundEx(Feedback.RECIP_ID_NOT_FOUND));
+  }
 }
