@@ -1,6 +1,8 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.model.OrderItem;
+import com.bumsoap.store.request.AddOrderItemReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.orderItem.OrderItemServI;
 import com.bumsoap.store.util.Feedback;
@@ -19,11 +21,13 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequiredArgsConstructor
 public class OrderItemCon {
   private final OrderItemServI orderItemServ;
+  private final ObjMapper objMapper;
 
   @PostMapping(UrlMap.ADD_ORDER_ITEM)
   public ResponseEntity<ApiResp> addOrderItem(
-      @RequestBody OrderItem orderItem) {
+      @RequestBody AddOrderItemReq itemReq) {
     try {
+      var orderItem = objMapper.mapToDto(itemReq, OrderItem.class);
       OrderItem itemSaved = orderItemServ.save(orderItem);
       return ResponseEntity.ok(
           new ApiResp(Feedback.ORDER_ITEM_SAVED, itemSaved));
