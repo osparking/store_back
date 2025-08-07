@@ -39,15 +39,8 @@ public class Recipient {
     this.doroZbun = doroZbun;
     this.addressDetail = addressDetail;
   }
-  public Recipient(String fullName,
-                   String mbPhone,
-                   AddressBasis addressBasis,
-                   String doroZbunLabel,
-                   String addressDetail) {
-    this.fullName = fullName;
-    this.mbPhone = mbPhone;
-    this.addressBasis = addressBasis;
-    this.doroZbun = DoroZbun.valueOfLabel(doroZbunLabel);
-    this.addressDetail = addressDetail;
+
+  public void setDoroZbun(String dZlabel) {
+    this.doroZbun = DoroZbun.valueOfLabel(dZlabel);
   }
 }
