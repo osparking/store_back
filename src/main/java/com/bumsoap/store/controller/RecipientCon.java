@@ -26,8 +26,14 @@ public class RecipientCon {
   @PutMapping(UrlMap.UPDATE2) // '/update'
   public ResponseEntity<ApiResp> update(@RequestBody Recipient request) {
     try {
+      var addrBasis = request.getAddressBasis();
+      if (addrBasis.getId() == null) {
+        addrBasis = addressBasisServ.addAddressBasis(addrBasis);
+        request.setAddressBasis(addrBasis);
+      }
+      var recipientUpdated = recipientServ.save(request);
       return ResponseEntity.ok(
-          new ApiResp(Feedback.RECIPIENT_UPDATED, null));
+          new ApiResp(Feedback.RECIPIENT_UPDATED, recipientUpdated));
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.CONFLICT).body(
           new ApiResp(e.getMessage(), null));
