@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @Controller
 @RequestMapping(UrlMap.RECIPIENT)
 @RequiredArgsConstructor
@@ -22,6 +24,18 @@ public class RecipientCon {
   private final ObjMapper objMapper;
   private final RecipientServI recipientServ;
   private final AddressBasisServI addressBasisServ;
+
+  @DeleteMapping(UrlMap.DELETE_BY_ID)
+  public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
+    try {
+      String reciName = recipientServ.deleteById(id);
+      return ResponseEntity.ok(
+          new ApiResp(Feedback.DELETEED_RECI_NAME + reciName, null));
+    } catch (Exception e) {
+      return ResponseEntity.status(NOT_FOUND)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @PutMapping(UrlMap.UPDATE2) // '/update'
   public ResponseEntity<ApiResp> update(@RequestBody Recipient request) {
