@@ -53,6 +53,9 @@ public class BsUser {
     private boolean twoFaEnabled = false;
     private String twoFaSecret;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<BsOrder> bsOrders = new ArrayList<>();
+
     public String addedMonth() {
         int monInt = addDate.getMonthValue();
         int yearInt = addDate.getYear();

@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -27,6 +30,9 @@ public class Recipient {
   @Column(nullable = false)
   private DoroZbun doroZbun = DoroZbun.ROAD;
   private String addressDetail; // Detailed address
+
+  @OneToMany(mappedBy = "recipient", cascade = CascadeType.REMOVE)
+  private List<BsOrder> bsOrders = new ArrayList<>();
 
   public Recipient(String fullName,
                    String mbPhone,
