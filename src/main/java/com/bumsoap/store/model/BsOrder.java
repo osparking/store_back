@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,6 +25,9 @@ public class BsOrder {
   @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
   @JoinColumn(name="user_id", nullable = false)
   private BsUser user;
+
+  @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
+  private List<OrderItem> items = new ArrayList<>();
 
   @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
   @JoinColumn(name="recipient_id")

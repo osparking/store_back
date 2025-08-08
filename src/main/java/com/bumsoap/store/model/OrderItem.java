@@ -1,10 +1,7 @@
 package com.bumsoap.store.model;
 
 import com.bumsoap.store.util.BsShape;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +18,15 @@ public class OrderItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private Long orderId;
+
+  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+  @JoinColumn(name="order_id", nullable = false)
+  private BsOrder order;
+
+  @Column(nullable = false)
   private BsShape shape;
+  
+  @Column(nullable = false)
   private int count;
   private BigDecimal subTotal; // 일종의 정보 중복
 }
