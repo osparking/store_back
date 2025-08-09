@@ -1,5 +1,6 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.dto.BsOrderDto;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
@@ -43,9 +44,9 @@ public class OrderCon {
           () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND));
       order.setUser(user);
       BsOrder orderSaved = orderServ.saveOrder(order);
-
+      var orderDto = objMapper.mapToDto(orderSaved, BsOrderDto.class);
       return ResponseEntity.ok(new ApiResp(Feedback.SOAP_ORDER_SAVED,
-          orderSaved));
+          orderDto));
     } catch (InventoryException e) {
       return ResponseEntity.status(BAD_REQUEST)
           .body(new ApiResp(e.getMessage(), null));
