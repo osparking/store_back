@@ -1,7 +1,10 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
+import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.AddressBasis;
+import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.request.AddOrderReq;
 import com.bumsoap.store.request.AddrBasisAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressBasisServI;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Controller
@@ -24,6 +28,24 @@ public class OrderCon {
   @Autowired
   private final AddressBasisServI addrBasisServ;
   private final ObjMapper objMapper;
+
+  @PostMapping(UrlMap.ADD)
+  public ResponseEntity<ApiResp> addOrder(
+      @RequestBody AddOrderReq addOrderReq) {
+    try {
+      BsOrder order = objMapper.mapToDto(addOrderReq, BsOrder.class);
+      BsOrder orderSaved = null;
+
+      return ResponseEntity.ok(new ApiResp(Feedback.SOAP_ORDER_SAVED,
+          orderSaved));
+    } catch (InventoryException e) {
+      return ResponseEntity.status(BAD_REQUEST)
+          .body(new ApiResp(e.getMessage(), null));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @PostMapping(UrlMap.ADD_BASIC_ADDR)
   public ResponseEntity<ApiResp> addBasicAddr(
