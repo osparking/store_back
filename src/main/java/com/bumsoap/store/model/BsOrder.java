@@ -26,7 +26,7 @@ public class BsOrder {
   @JoinColumn(name="user_id", nullable = false)
   private BsUser user;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "order", cascade = CascadeType.MERGE)
   private List<OrderItem> items = new ArrayList<>();
 
   @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
