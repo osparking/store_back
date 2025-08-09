@@ -81,4 +81,6 @@ public class Feedback {
     public static final String RECIPIENT_UPDATED = "수취인 정보 수정됨";
     public static final String DELETEED_RECI_NAME = "삭제된 수취인명: ";
     public static final String ORDER_ITEM_SAVED = "주문 항목 저장됨";
+    public static final String SOAP_ORDER_SAVED = "비누 주문 저장됨";
+    public static final String SHORT_INVENTORY = "범이비누 재고: ";
 }
