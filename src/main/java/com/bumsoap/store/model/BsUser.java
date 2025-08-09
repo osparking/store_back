@@ -1,6 +1,7 @@
 package com.bumsoap.store.model;
 
 import com.bumsoap.store.util.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
+@JsonIgnoreProperties({"bsOrders", "verifinTokens", "roles"})
 public class BsUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
