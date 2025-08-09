@@ -25,7 +25,7 @@ public class InitialSoapInvenCreator implements ApplicationListener<ApplicationR
             // Create a new SoapInven object for the NORMAL shape with default values
             SoapInven normal = new SoapInven(
                 BsShape.NORMAL, // Shape of the soap
-                0               // Initial quantity
+                200               // Initial quantity
             );
 
             // Save the new SoapInven object to the inventory
@@ -37,7 +37,7 @@ public class InitialSoapInvenCreator implements ApplicationListener<ApplicationR
             // Create a new SoapInven object for the MAEJU shape with default values
             SoapInven normal = new SoapInven(
                 BsShape.MAEJU_S, // Shape of the soap
-                0                // Initial quantity
+                100                // Initial quantity
             );
 
             // Save the new SoapInven object to the inventory
