@@ -7,6 +7,7 @@ import com.bumsoap.store.request.AddCartItemReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.cartItem.CartItemServI;
 import com.bumsoap.store.service.user.UserServInt;
+import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,12 +28,17 @@ public class CartItemCon {
   private final UserServInt userServ;
 
   @GetMapping(UrlMap.GET_BY_USERID)
-  public ResponseEntity<ApiResp> getCartByUserId(@PathVariable int uid) {
+  public ResponseEntity<ApiResp> getCartByUserId(@PathVariable Long uid) {
     try {
-      // 존재하는 uid 인지 확인. 없으면 예외 투척
-      // 그 유저 카트 항목 모두 읽기
-      List<CartItem> items = null;
-      return ResponseEntity.ok(new ApiResp(Feedback.CART_FOUND, items));
+      if (BsUtils.isQualified(uid, false, null)) {
+        // 존재하는 uid 인지 확인. 없으면 예외 투척
+        // 그 유저 카트 항목 모두 읽기
+        List<CartItem> items = null;
+        return ResponseEntity.ok(new ApiResp(Feedback.CART_FOUND, items));
+      } else {
+        return ResponseEntity.status(UNAUTHORIZED).body(
+            new ApiResp(Feedback.NOT_QUALIFIED_FOR + uid, null));
+      }
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));
