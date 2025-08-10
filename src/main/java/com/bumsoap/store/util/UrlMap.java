@@ -80,4 +80,8 @@ public class UrlMap {
     public static final String SAVE_RECIPIENT = "/save_recipient";
     public static final String UPDATE2 = "/update";
     public static final String ADD_ORDER_ITEM = "/item/add";
+
+    /*== 카트 관련 항목 시작 ================================= */
+    public static final String CART = API + "/cart";
+    public static final String ADD_CART_ITEM = "/item/add";
 }
