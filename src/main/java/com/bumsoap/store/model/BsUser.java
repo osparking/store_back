@@ -25,7 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonIgnoreProperties({"bsOrders", "verifinTokens", "roles"})
+@JsonIgnoreProperties({"bsOrders", "verifinTokens", "roles", "cartItems"})
 public class BsUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +37,7 @@ public class BsUser {
     private String password;
     private boolean enabled;
     @CreationTimestamp
+
     private LocalDateTime addDate; // 유저 생성(=추가) 날짜
     private UserType userType;
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
@@ -57,6 +58,9 @@ public class BsUser {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<BsOrder> bsOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<CartItem> cartItems = new ArrayList<>();
 
     public String addedMonth() {
         int monInt = addDate.getMonthValue();
