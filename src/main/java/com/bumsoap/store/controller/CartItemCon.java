@@ -1,5 +1,6 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.dto.CartItemDto;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.CartItem;
@@ -32,7 +33,7 @@ public class CartItemCon {
     try {
       if (BsUtils.isQualified(uid, false, null)) {
         // 그 유저 카트 항목 모두 읽기
-        List<CartItem> items = cartItemServ.readUserCartItems(uid);
+        List<CartItemDto> items = cartItemServ.readUserCartItems(uid);
         return ResponseEntity.ok(new ApiResp(Feedback.CART_FOUND, items));
       } else {
         return ResponseEntity.status(UNAUTHORIZED).body(
