@@ -86,4 +86,5 @@ public class Feedback {
     public static final String SOAP_ORDER_SAVED = "비누 주문 저장됨";
     public static final String SHORT_INVENTORY = "범이비누 재고: ";
     public static final String CART_ITEM_SAVED = "카트 항목 저장됨";
+    public static final String CART_FOUND = "카트 항목(들) 읽음";
 }

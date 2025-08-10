@@ -84,4 +84,5 @@ public class UrlMap {
     /*== 카트 관련 항목 시작 ================================= */
     public static final String CART = API + "/cart";
     public static final String ADD_CART_ITEM = "/item/add";
+    public static final String GET_BY_USERID = "/{uid}/get";
 }

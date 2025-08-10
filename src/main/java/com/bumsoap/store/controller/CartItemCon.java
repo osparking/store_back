@@ -12,9 +12,9 @@ import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -26,6 +26,19 @@ public class CartItemCon {
   private final CartItemServI cartItemServ;
   private final ObjMapper objMapper;
   private final UserServInt userServ;
+
+  @GetMapping(UrlMap.GET_BY_USERID)
+  public ResponseEntity<ApiResp> getCartByUserId(@PathVariable int uid) {
+    try {
+      // 존재하는 uid 인지 확인. 없으면 예외 투척
+      // 그 유저 카트 항목 모두 읽기
+      List<CartItem> items = null;
+      return ResponseEntity.ok(new ApiResp(Feedback.CART_FOUND, items));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @PostMapping(UrlMap.ADD_CART_ITEM)
   public ResponseEntity<ApiResp> addItem(
