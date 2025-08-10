@@ -1,6 +1,7 @@
 package com.bumsoap.store.model;
 
 import com.bumsoap.store.util.BsShape;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties("user")
 public class CartItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
