@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddItemReq {
+  private Long id;
   private String shape;
   private int count;
 
