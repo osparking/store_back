@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AddOrderItemReq {
+public class AddItemReq {
   private String shape;
   private int count;
 

@@ -2,7 +2,7 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.model.OrderItem;
-import com.bumsoap.store.request.AddOrderItemReq;
+import com.bumsoap.store.request.AddItemReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.orderItem.OrderItemServI;
 import com.bumsoap.store.util.Feedback;
@@ -25,7 +25,7 @@ public class OrderItemCon {
 
   @PostMapping(UrlMap.ADD_ORDER_ITEM)
   public ResponseEntity<ApiResp> addOrderItem(
-      @RequestBody AddOrderItemReq itemReq) {
+      @RequestBody AddItemReq itemReq) {
     try {
       var orderItem = objMapper.mapToDto(itemReq, OrderItem.class);
       OrderItem itemSaved = orderItemServ.save(orderItem);

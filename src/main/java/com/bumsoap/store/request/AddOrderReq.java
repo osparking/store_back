@@ -12,7 +12,7 @@ import java.util.List;
 public class AddOrderReq {
   private Long id;
   private Long userId;
-  private List<AddOrderItemReq> items; // 예, 백설공주 2개
+  private List<AddItemReq> items; // 예, 백설공주 2개
   private Recipient recipient;
   private String orderStatus;
 
