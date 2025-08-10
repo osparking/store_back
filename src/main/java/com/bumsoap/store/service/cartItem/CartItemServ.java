@@ -8,6 +8,8 @@ import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CartItemServ implements CartItemServI {
@@ -29,5 +31,10 @@ public class CartItemServ implements CartItemServI {
     }
 
     return cartItemRepo.save(item);
+  }
+
+  @Override
+  public List<CartItem> readUserCartItems(Long uid) {
+    return cartItemRepo.findByUserId(uid);
   }
 }

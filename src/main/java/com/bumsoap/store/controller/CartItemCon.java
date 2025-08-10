@@ -31,9 +31,8 @@ public class CartItemCon {
   public ResponseEntity<ApiResp> getCartByUserId(@PathVariable Long uid) {
     try {
       if (BsUtils.isQualified(uid, false, null)) {
-        // 존재하는 uid 인지 확인. 없으면 예외 투척
         // 그 유저 카트 항목 모두 읽기
-        List<CartItem> items = null;
+        List<CartItem> items = cartItemServ.readUserCartItems(uid);
         return ResponseEntity.ok(new ApiResp(Feedback.CART_FOUND, items));
       } else {
         return ResponseEntity.status(UNAUTHORIZED).body(
