@@ -31,7 +31,7 @@ public class CartItemServ implements CartItemServI {
      */
     int level = invenServ.getByBsShape(item.getShape()).getStockLevel();
 
-    if (level < item.getCount()) {
+    if (level < item.getCount() || item.getCount() < 1) {
       String sb = Feedback.SHORT_INVENTORY + item.getShape().label +
           " - " +
           level;
