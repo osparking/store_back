@@ -29,6 +29,20 @@ public class CartItemCon {
   private final ObjMapper objMapper;
   private final UserServInt userServ;
 
+  @DeleteMapping(UrlMap.DELETE_BY_ID)
+  public ResponseEntity<ApiResp> deleteCartItem(@PathVariable Long id) {
+    try {
+      cartItemServ.deleteCartItem(id);
+      return ResponseEntity.ok(new ApiResp(Feedback.CART_ITEM_DELETED, null));
+    } catch (UnauthorizedException e) {
+      return ResponseEntity.status(UNAUTHORIZED).body(
+          new ApiResp(e.getMessage() + id, null));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
+
   @PatchMapping(UrlMap.CART_ITEM_COUNT)
   public ResponseEntity<ApiResp> updateShapeCount(
       @PathVariable Long itemId, @PathVariable int count) {
