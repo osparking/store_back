@@ -90,4 +90,5 @@ public class Feedback {
     public static final String CART_FIXED = "카트 비누 수량 변경";
     public static final String NO_CART_ITEM = "없는 카트 항목 ID: ";
     public static final String NOT_MY_CART = "내것 아닌 카트 항목 ID: ";
+    public static final String CART_ITEM_DELETED = "카트 항목 삭제됨";
 }

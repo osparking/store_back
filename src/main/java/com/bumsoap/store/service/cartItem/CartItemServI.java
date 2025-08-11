@@ -13,4 +13,6 @@ public interface CartItemServI {
   CartItem findById(Long itemId);
 
   CartItem updateShapeCount(Long itemId, int count);
+
+  void deleteCartItem(Long itemId);
 }

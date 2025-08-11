@@ -70,4 +70,14 @@ public class CartItemServ implements CartItemServI {
     }
     return result;
   }
+
+  @Override
+  public void deleteCartItem(Long itemId) {
+    CartItem item = findById(itemId);
+    if (BsUtils.isQualified(item.getUser().getId(), false, null)) {
+      cartItemRepo.deleteById(itemId);
+    } else {
+      throw new UnauthorizedException(Feedback.NOT_MY_CART);
+    }
+  }
 }
