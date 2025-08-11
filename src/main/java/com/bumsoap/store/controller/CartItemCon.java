@@ -35,6 +35,9 @@ public class CartItemCon {
     try {
       CartItem fixedItem = cartItemServ.updateShapeCount(itemId, count);
       return ResponseEntity.ok(new ApiResp(Feedback.CART_FIXED, fixedItem));
+    } catch (InventoryException e) {
+      return ResponseEntity.status(BAD_REQUEST).body(
+          new ApiResp(e.getMessage(), null));
     } catch (UnauthorizedException e) {
       return ResponseEntity.status(UNAUTHORIZED).body(
           new ApiResp(e.getMessage() + itemId, null));

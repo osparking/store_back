@@ -64,7 +64,7 @@ public class CartItemServ implements CartItemServI {
     CartItem result = null;
     if (BsUtils.isQualified(item.getUser().getId(), false, null)) {
       item.setCount(count);
-      result = cartItemRepo.save(item);
+      result = saveItem(item);
     } else {
       throw new UnauthorizedException(Feedback.NOT_MY_CART);
     }
