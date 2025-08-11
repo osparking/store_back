@@ -1,6 +1,5 @@
 package com.bumsoap.store.dto;
 
-import com.bumsoap.store.util.BsShape;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItemDto {
+public class CartItemDto extends ShapeCount{
   private long id;
-
-  private BsShape shape;
-  private int count;
   private LocalDateTime addTime; // 주문일시
   private BigDecimal subTotal;
 }

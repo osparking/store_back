@@ -1,6 +1,6 @@
 package com.bumsoap.store.util;
 
-import com.bumsoap.store.dto.CartItemDto;
+import com.bumsoap.store.dto.ShapeCount;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.service.soap.InvenServI;
 import com.bumsoap.store.service.soap.PriceServI;
@@ -16,7 +16,7 @@ public class SubTotaler {
   private final InvenServI invenServ;
   private final PriceServI priceServ;
 
-  public BigDecimal getSubtotal(CartItemDto item) {
+  public BigDecimal getSubtotal(ShapeCount item) {
     /**
      * 재고 검사 및 예외 발생
      */
