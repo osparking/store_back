@@ -12,18 +12,16 @@ import com.bumsoap.store.request.AddrBasisAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
+import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 @Controller
 @RequestMapping(UrlMap.ORDER)
@@ -34,6 +32,27 @@ public class OrderCon {
   private final ObjMapper objMapper;
   private final OrderServI orderServ;
   private final UserRepoI userRepo;
+
+  @GetMapping(UrlMap.GET_BY_ID)
+  public ResponseEntity<ApiResp> getOrderById(@PathVariable Long id) {
+    try {
+      // id 로 주문을 읽고 그 주문을 낸 유저의 id 를 uid 로 저장
+      // uid 를 사용하여 주문을 읽을 자격 유무를 판단
+      long uid = 3;
+      if (BsUtils.isQualified(uid, false, null)) {
+        // 주문을 dto 객체로 사상
+        BsOrderDto orderDto = null;
+        return ResponseEntity.ok(
+            new ApiResp(Feedback.ORDER_FOUND, orderDto));
+      } else {
+        return ResponseEntity.status(UNAUTHORIZED).body(
+            new ApiResp(Feedback.NOT_QUALIFIED_FOR + uid, null));
+      }
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @PostMapping(UrlMap.ADD)
   public ResponseEntity<ApiResp> addOrder(
