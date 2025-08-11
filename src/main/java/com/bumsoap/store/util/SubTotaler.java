@@ -1,7 +1,9 @@
 package com.bumsoap.store.util;
 
+import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.ShapeCount;
 import com.bumsoap.store.exception.InventoryException;
+import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.service.soap.InvenServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.math.RoundingMode;
 public class SubTotaler {
   private final InvenServI invenServ;
   private final PriceServI priceServ;
+  private final ObjMapper objMapper;
 
   public BigDecimal getSubtotal(ShapeCount item) {
     /**
@@ -31,5 +34,10 @@ public class SubTotaler {
     var subTotal = priceServ.findSoapPrice(item.getShape())
         .multiply(BigDecimal.valueOf(item.getCount()));
     return subTotal.setScale(0, RoundingMode.HALF_UP);
+  }
+
+  public BigDecimal getSubtotal(OrderItem item) {
+    var shapeCount = objMapper.mapToDto(item, ShapeCount.class);
+    return getSubtotal(shapeCount);
   }
 }
