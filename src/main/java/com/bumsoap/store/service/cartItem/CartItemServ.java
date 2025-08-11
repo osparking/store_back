@@ -55,7 +55,7 @@ public class CartItemServ implements CartItemServI {
   @Override
   public CartItem findById(Long itemId) {
     return cartItemRepo.findById(itemId).orElseThrow(
-        () -> new IdNotFoundEx(Feedback.NO_CART_ITEM + "itemId"));
+        () -> new IdNotFoundEx(Feedback.NO_CART_ITEM + itemId));
   }
 
   @Override
