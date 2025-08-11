@@ -85,4 +85,6 @@ public class UrlMap {
     public static final String CART = API + "/cart";
     public static final String ADD_CART_ITEM = "/item/add";
     public static final String GET_BY_USERID = "/{uid}/get";
+    public static final String CART_ITEM_COUNT =
+        "/{itemId}/{count}/fix";
 }

@@ -28,6 +28,18 @@ public class CartItemCon {
   private final ObjMapper objMapper;
   private final UserServInt userServ;
 
+  @PatchMapping(UrlMap.CART_ITEM_COUNT)
+  public ResponseEntity<ApiResp> updateShapeCount(
+      @PathVariable Long itemId, @PathVariable int count) {
+    try {
+      CartItemDto item = null;
+      return ResponseEntity.ok(new ApiResp(Feedback.CART_FIXED, item));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
+
   @GetMapping(UrlMap.GET_BY_USERID)
   public ResponseEntity<ApiResp> getCartByUserId(@PathVariable Long uid) {
     try {
