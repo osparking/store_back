@@ -9,4 +9,8 @@ public interface CartItemServI {
   CartItem saveItem(CartItem item);
 
   List<CartItemDto> readUserCartItems(Long uid);
+
+  CartItem findById(Long itemId);
+
+  CartItem updateShapeCount(Long itemId, int count);
 }

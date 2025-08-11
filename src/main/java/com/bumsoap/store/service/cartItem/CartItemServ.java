@@ -2,10 +2,13 @@ package com.bumsoap.store.service.cartItem;
 
 import com.bumsoap.store.dto.CartItemDto;
 import com.bumsoap.store.dto.ObjMapper;
+import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
+import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.CartItem;
 import com.bumsoap.store.repository.CartItemRepo;
 import com.bumsoap.store.service.soap.InvenServI;
+import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.SubTotaler;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +50,24 @@ public class CartItemServ implements CartItemServI {
           return dto;
         })
         .toList();
+  }
+
+  @Override
+  public CartItem findById(Long itemId) {
+    return cartItemRepo.findById(itemId).orElseThrow(
+        () -> new IdNotFoundEx(Feedback.NO_CART_ITEM + "itemId"));
+  }
+
+  @Override
+  public CartItem updateShapeCount(Long itemId, int count) {
+    CartItem item = findById(itemId);
+    CartItem result = null;
+    if (BsUtils.isQualified(item.getUser().getId(), false, null)) {
+      item.setCount(count);
+      result = cartItemRepo.save(item);
+    } else {
+      throw new UnauthorizedException(Feedback.NOT_MY_CART);
+    }
+    return result;
   }
 }
