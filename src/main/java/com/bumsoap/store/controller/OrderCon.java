@@ -47,7 +47,7 @@ public class OrderCon {
             new ApiResp(Feedback.ORDER_FOUND, orderDto));
       } else {
         return ResponseEntity.status(UNAUTHORIZED).body(
-            new ApiResp(Feedback.NOT_QUALIFIED_FOR + uid, null));
+            new ApiResp(Feedback.NOT_BELONG_TO_YOU + id, null));
       }
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
