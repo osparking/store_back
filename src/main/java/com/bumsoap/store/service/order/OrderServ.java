@@ -1,10 +1,12 @@
 package com.bumsoap.store.service.order;
 
+import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.service.orderItem.OrderItemServI;
+import com.bumsoap.store.util.Feedback;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,5 +28,11 @@ public class OrderServ implements OrderServI {
     List<OrderItem> savedItems = orderItemServ.saveOrderItems(order.getItems());
     order.setItems(savedItems);
     return savedOrder;
+  }
+
+  @Override
+  public BsOrder findOrderById(Long id) {
+    return orderRepo.findById(id).orElseThrow(
+        () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + id));
   }
 }
