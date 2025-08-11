@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties("user")
+@Table(name = "cart_item", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "shape"})
+})
 public class CartItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
