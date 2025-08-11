@@ -3,6 +3,7 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.dto.CartItemDto;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.exception.InventoryException;
+import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.CartItem;
 import com.bumsoap.store.request.AddCartItemReq;
 import com.bumsoap.store.response.ApiResp;
@@ -32,8 +33,11 @@ public class CartItemCon {
   public ResponseEntity<ApiResp> updateShapeCount(
       @PathVariable Long itemId, @PathVariable int count) {
     try {
-      CartItemDto item = null;
-      return ResponseEntity.ok(new ApiResp(Feedback.CART_FIXED, item));
+      CartItem fixedItem = cartItemServ.updateShapeCount(itemId, count);
+      return ResponseEntity.ok(new ApiResp(Feedback.CART_FIXED, fixedItem));
+    } catch (UnauthorizedException e) {
+      return ResponseEntity.status(UNAUTHORIZED).body(
+          new ApiResp(e.getMessage() + itemId, null));
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));

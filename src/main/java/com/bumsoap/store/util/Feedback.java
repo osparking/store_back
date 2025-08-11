@@ -88,4 +88,6 @@ public class Feedback {
     public static final String CART_ITEM_SAVED = "카트 항목 저장됨";
     public static final String CART_FOUND = "카트 항목(들) 읽음";
     public static final String CART_FIXED = "카트 비누 수량 변경";
+    public static final String NO_CART_ITEM = "없는 카트 항목 ID: ";
+    public static final String NOT_MY_CART = "내것 아닌 카트 항목 ID: ";
 }
