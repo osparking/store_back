@@ -37,11 +37,12 @@ public class OrderCon {
   public ResponseEntity<ApiResp> getOrderById(@PathVariable Long id) {
     try {
       // id 로 주문을 읽고 그 주문을 낸 유저의 id 를 uid 로 저장
-      // uid 를 사용하여 주문을 읽을 자격 유무를 판단
-      long uid = 3;
+      BsOrder order = orderServ.findOrderById(id);
+      long uid = order.getUser().getId();
+
       if (BsUtils.isQualified(uid, false, null)) {
         // 주문을 dto 객체로 사상
-        BsOrderDto orderDto = null;
+        var orderDto = objMapper.mapToDto(order, BsOrderDto.class);
         return ResponseEntity.ok(
             new ApiResp(Feedback.ORDER_FOUND, orderDto));
       } else {
