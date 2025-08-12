@@ -1,7 +1,6 @@
 package com.bumsoap.store.util;
 
 public enum OrderStatus {
-  SHOP_CART("장바구니"),
   ORDER_PAID("주문"),
   SELLER_RECOGNIZED("판매자 인지"),
   AT_GS25("GS25 접수"),

@@ -18,17 +18,11 @@ import java.util.List;
 @NoArgsConstructor
 public class BsOrderDto {
   @Autowired
-  private ObjMapper objMapper;
   private long id;
-  private UserDto user;
   private List<OrderItem> items;
   private Recipient recipient;
 
   private BigDecimal payAmount;
   private LocalDateTime orderTime;
   private OrderStatus orderStatus;
-
-  public void serUserDto(BsUser user) {
-    this.user = objMapper.mapToDto(user, UserDto.class);
-  }
 }
