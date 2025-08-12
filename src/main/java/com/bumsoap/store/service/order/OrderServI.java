@@ -6,4 +6,6 @@ public interface OrderServI {
   BsOrder saveOrder(BsOrder order);
 
   BsOrder findOrderById(Long id);
+
+  BsOrder updateOrder(BsOrder order);
 }
