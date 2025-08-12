@@ -84,6 +84,7 @@ public class Feedback {
     /*************** 주문 관련 메시지 ********************************/
     public static final String ORDER_ITEM_SAVED = "주문 항목 저장됨";
     public static final String SOAP_ORDER_SAVED = "비누 주문 저장됨";
+    public static final String ORDER_UPDATED = "비누 주문 갱신됨";
     public static final String SHORT_INVENTORY = "주문 수량 - 최소: 1, 최대: ";
     public static final String CART_ITEM_SAVED = "카트 항목 저장됨";
     public static final String CART_FOUND = "카트 항목(들) 읽음";

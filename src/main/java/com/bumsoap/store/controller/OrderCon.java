@@ -33,6 +33,24 @@ public class OrderCon {
   private final OrderServI orderServ;
   private final UserRepoI userRepo;
 
+  @PutMapping(UrlMap.UPDATE2)
+  public ResponseEntity<ApiResp> updateOrder(
+      @RequestBody AddOrderReq addOrderReq) {
+    try {
+      BsOrder order = objMapper.mapToDto(addOrderReq, BsOrder.class);
+      BsOrder orderSaved = orderServ.updateOrder(order);
+
+      return ResponseEntity.ok(new ApiResp(Feedback.ORDER_UPDATED,
+          objMapper.mapToDto(orderSaved, BsOrderDto.class)));
+    } catch (InventoryException e) {
+      return ResponseEntity.status(BAD_REQUEST)
+          .body(new ApiResp(e.getMessage(), null));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
+
   @GetMapping(UrlMap.GET_BY_ID)
   public ResponseEntity<ApiResp> getOrderById(@PathVariable Long id) {
     try {
