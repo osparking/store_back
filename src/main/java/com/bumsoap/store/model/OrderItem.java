@@ -31,4 +31,9 @@ public class OrderItem {
   @Column(nullable = false)
   private int count;
   private BigDecimal subTotal; // 일종의 정보 중복
+
+  public void assign(OrderItem newItem) {
+    this.shape = newItem.getShape();
+    this.count = newItem.getCount();
+  }
 }
