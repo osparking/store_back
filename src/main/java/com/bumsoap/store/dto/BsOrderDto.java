@@ -1,13 +1,10 @@
 package com.bumsoap.store.dto;
 
-import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.model.Recipient;
 import com.bumsoap.store.util.OrderStatus;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -25,4 +22,7 @@ public class BsOrderDto {
   private BigDecimal payAmount;
   private LocalDateTime orderTime;
   private OrderStatus orderStatus;
+  public String getOrderStatus() {
+    return orderStatus.label;
+  }
 }
