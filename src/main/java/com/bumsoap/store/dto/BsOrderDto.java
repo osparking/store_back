@@ -1,6 +1,5 @@
 package com.bumsoap.store.dto;
 
-import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.model.Recipient;
 import com.bumsoap.store.util.OrderStatus;
 import lombok.Data;
@@ -16,7 +15,7 @@ import java.util.List;
 public class BsOrderDto {
   @Autowired
   private long id;
-  private List<OrderItem> items;
+  private List<OrderItemDto> items;
   private Recipient recipient;
 
   private BigDecimal payAmount;
