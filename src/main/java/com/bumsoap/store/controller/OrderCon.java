@@ -33,6 +33,24 @@ public class OrderCon {
   private final OrderServI orderServ;
   private final UserRepoI userRepo;
 
+  @DeleteMapping(UrlMap.DELETE_BY_ID)
+  public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
+    try {
+      var order = orderServ.findOrderById(id);
+      if (BsUtils.isQualified(order.getUser().getId(), false, null)) {
+        String deletedOrderID = ""; // 주문 삭제 서비스 메소드 호출
+        return ResponseEntity.ok(
+            new ApiResp(Feedback.DELETEED_ORDER_ID + deletedOrderID, null));
+      } else {
+        return ResponseEntity.status(UNAUTHORIZED).body(
+            new ApiResp(Feedback.NOT_BELONG_TO_YOU + id, null));
+      }
+    } catch (Exception e) {
+      return ResponseEntity.status(NOT_FOUND)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
+
   @PutMapping(UrlMap.UPDATE2)
   public ResponseEntity<ApiResp> updateOrder(
       @RequestBody AddOrderReq addOrderReq) {
