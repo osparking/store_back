@@ -34,6 +34,7 @@ public class AdminCon {
     private final CustomerServInt customerServ;
     private final PriceServI priceServ;
     private final ObjMapper objMapper;
+    private final FeeEtcServI feeEtcServ;
 
     @PostMapping(UrlMap.ADD_FEE_ETC)
     public ResponseEntity<ApiResp> addFeeEtc(@RequestBody FeeEtcAddReq request) {
@@ -41,7 +42,7 @@ public class AdminCon {
             var feeEtc = objMapper.mapToDto(request, FeeEtc.class);
 
             return ResponseEntity.ok(
-                new ApiResp(Feedback.FEE_ETC_INSERTED, null));
+                new ApiResp(Feedback.FEE_ETC_INSERTED, feeEtcServ.add(feeEtc)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ApiResp(e.getMessage(), null));
