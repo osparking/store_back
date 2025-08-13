@@ -45,8 +45,11 @@ public class OrderCon {
         return ResponseEntity.status(UNAUTHORIZED).body(
             new ApiResp(Feedback.NOT_BELONG_TO_YOU + id, null));
       }
-    } catch (Exception e) {
+    } catch (IdNotFoundEx e) {
       return ResponseEntity.status(NOT_FOUND)
+          .body(new ApiResp(e.getMessage(), null));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));
     }
   }
