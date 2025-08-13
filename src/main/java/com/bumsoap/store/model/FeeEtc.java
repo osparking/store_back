@@ -32,4 +32,12 @@ public class FeeEtc {
   @Column(name = "apply_time", updatable = false, nullable = false,
       columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime applyTime = LocalDateTime.now();
+
+  public FeeEtc(BigDecimal deliBasis, BigDecimal deliJeju,
+                BigDecimal deliIsol, BigDecimal deliFreeMin) {
+    this.deliBasis = deliBasis;
+    this.deliJeju = deliJeju;
+    this.deliIsol = deliIsol;
+    this.deliFreeMin = deliFreeMin;
+  }
 }
