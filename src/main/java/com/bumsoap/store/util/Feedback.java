@@ -96,4 +96,5 @@ public class Feedback {
     public static final String ORDER_ID_NOT_FOUND = "없는 주문 ID: ";
     public static final String NOT_BELONG_TO_YOU = "소유하지 않은 주문 ID: ";
     public static final String DELETEED_ORDER_ID = "삭제된 주문 ID: ";
+    public static final String FEE_ETC_INSERTED = "배송비 등 숫자 삽입됨";
 }

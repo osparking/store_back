@@ -1,11 +1,15 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.model.Admin;
+import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.SoapPrice;
+import com.bumsoap.store.request.FeeEtcAddReq;
 import com.bumsoap.store.request.SoapPriceAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServInt;
+import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
@@ -29,6 +33,20 @@ public class AdminCon {
     private final WorkerServInt workerServ;
     private final CustomerServInt customerServ;
     private final PriceServI priceServ;
+    private final ObjMapper objMapper;
+
+    @PostMapping(UrlMap.ADD_FEE_ETC)
+    public ResponseEntity<ApiResp> addFeeEtc(@RequestBody FeeEtcAddReq request) {
+        try {
+            var feeEtc = objMapper.mapToDto(request, FeeEtc.class);
+
+            return ResponseEntity.ok(
+                new ApiResp(Feedback.FEE_ETC_INSERTED, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @PostMapping(UrlMap.ADD_PRICE)
     public ResponseEntity<ApiResp> addPrice(@RequestBody SoapPriceAddReq request) {
