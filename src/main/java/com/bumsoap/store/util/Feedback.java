@@ -95,4 +95,5 @@ public class Feedback {
     public static final String ORDER_FOUND = "주문 정보 읽음";
     public static final String ORDER_ID_NOT_FOUND = "없는 주문 ID: ";
     public static final String NOT_BELONG_TO_YOU = "소유하지 않은 주문 ID: ";
+    public static final String DELETEED_ORDER_ID = "삭제된 주문 ID: ";
 }
