@@ -38,9 +38,9 @@ public class OrderCon {
     try {
       var order = orderServ.findOrderById(id);
       if (BsUtils.isQualified(order.getUser().getId(), false, null)) {
-        String deletedOrderID = ""; // 주문 삭제 서비스 메소드 호출
+        orderServ.deleteById(id);
         return ResponseEntity.ok(
-            new ApiResp(Feedback.DELETEED_ORDER_ID + deletedOrderID, null));
+            new ApiResp(Feedback.DELETEED_ORDER_ID + id, null));
       } else {
         return ResponseEntity.status(UNAUTHORIZED).body(
             new ApiResp(Feedback.NOT_BELONG_TO_YOU + id, null));
