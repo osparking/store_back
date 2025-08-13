@@ -90,4 +90,9 @@ public class OrderServ implements OrderServI {
     BsOrder savedOrder = orderRepo.save(readOrder);
     return savedOrder;
   }
+
+  @Override
+  public void deleteById(Long id) {
+    orderRepo.deleteById(id);
+  }
 }

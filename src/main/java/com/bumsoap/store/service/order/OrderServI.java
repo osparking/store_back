@@ -8,4 +8,6 @@ public interface OrderServI {
   BsOrder findOrderById(Long id);
 
   BsOrder updateOrder(BsOrder order);
+
+  void deleteById(Long id);
 }
