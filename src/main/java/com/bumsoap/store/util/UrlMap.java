@@ -88,4 +88,8 @@ public class UrlMap {
     public static final String GET_BY_USERID = "/{uid}/get";
     public static final String CART_ITEM_COUNT =
         "/{itemId}/{count}/fix";
+
+    /*== 배송비 등 관련 항목 ======== */
+    public static final String FEE_ETC = API + "/fee_etc";
+    public static final String GET_LATEST = "/get_latest";
 }
