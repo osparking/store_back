@@ -16,7 +16,7 @@ public class RecipientServ implements RecipientServI {
 
   @Override
   public Recipient save(Recipient recipient) {
-    var recipientInDB = recipientRepo.getRecipientIdIfExist(
+    var recipientInDB = recipientRepo.getIdenticalRecipient(
         recipient.getAddressBasis().getId(),
         recipient.getAddressDetail(),
         recipient.getDoroZbun().ordinal(),
