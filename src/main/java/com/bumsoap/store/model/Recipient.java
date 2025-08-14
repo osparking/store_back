@@ -15,6 +15,13 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "recipient", // 실제 테이블명
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+            "full_name", "mb_phone", "doro_zbun",
+            "address_detail", "addr_basis_id"
+        }) // 실제 열 이름 목록
+    })
 public class Recipient {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
