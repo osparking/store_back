@@ -30,7 +30,7 @@ public class BsOrder {
   private List<OrderItem> items = new ArrayList<>();
 
   @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
-  @JoinColumn(name="recipient_id")
+  @JoinColumn(name="recipient_id", nullable = false)
   private Recipient recipient;
 
   private BigDecimal payAmount;
