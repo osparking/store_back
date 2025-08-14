@@ -4,4 +4,6 @@ import com.bumsoap.store.model.FeeEtc;
 
 public interface FeeEtcServI {
   FeeEtc add(FeeEtc soapInven);
+
+  FeeEtc readLatest();
 }

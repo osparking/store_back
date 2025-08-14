@@ -14,4 +14,9 @@ public class FeeEtcServ implements FeeEtcServI{
   public FeeEtc add(FeeEtc feeEtc) {
     return feeEtcRepo.save(feeEtc);
   }
+
+  @Override
+  public FeeEtc readLatest() {
+    return feeEtcRepo.findLatestFee();
+  }
 }
