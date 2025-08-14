@@ -6,6 +6,7 @@ import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.AddressBasis;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.model.Recipient;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.AddOrderReq;
 import com.bumsoap.store.request.AddrBasisAddReq;
@@ -98,7 +99,15 @@ public class OrderCon {
   public ResponseEntity<ApiResp> addOrder(
       @RequestBody AddOrderReq addOrderReq) {
     try {
+      var recipReq = addOrderReq.getRecipRegiReq();
+      var basisReq = recipReq.getAddrBasisAddReq();
+      var addrBasis = objMapper.mapToDto(basisReq, AddressBasis.class);
+      var recipient = objMapper.mapToDto(recipReq, Recipient.class);
+
+      recipient.setAddressBasis(addrBasis);
       BsOrder order = objMapper.mapToDto(addOrderReq, BsOrder.class);
+      order.setRecipient(recipient);
+
       var user = userRepo.findById(addOrderReq.getUserId()).orElseThrow(
           () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND));
       order.setUser(user);
