@@ -6,14 +6,15 @@ import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
+import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.orderItem.OrderItemServI;
+import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.SubTotaler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -24,15 +25,26 @@ public class OrderServ implements OrderServI {
   private final OrderItemServI orderItemServ;
   private final OrderItemRepo orderItemRepo;
   private final SubTotaler subTotaler;
+  private final RecipientServI recipientServ;
+  private final AddressBasisServI addressBasisServ;
 
   @Override
   @Transactional(rollbackOn = InventoryException.class)
   public BsOrder saveOrder(BsOrder order) {
+    // recipient 저장 및 order 속성 변경
+    // 상향식 순서로 하위 요소들을 저장하고, 저장 결과로 기존 멤버를 대체!
+    var recipient = order.getRecipient();
+    var basis = addressBasisServ.addGetAddrBasis(recipient.getAddressBasis());
+    recipient.setAddressBasis(basis);
+
+    var recipientSaved = recipientServ.save(recipient);
+    order.setRecipient(recipientSaved);
     BsOrder savedOrder = orderRepo.save(order);
     order.getItems().forEach(item -> item.setOrder(savedOrder));
 
-    List<OrderItem> savedItems = orderItemServ.saveOrderItems(order.getItems());
+    var savedItems = orderItemServ.saveOrderItems(order.getItems());
     order.setItems(savedItems);
+
     return savedOrder;
   }
 
