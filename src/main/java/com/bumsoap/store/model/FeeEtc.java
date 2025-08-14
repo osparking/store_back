@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "fee_etc", indexes = {
-    @Index(name = "latest_fee", columnList = "deli_basis, apply_time desc")
-})
 public class FeeEtc {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
