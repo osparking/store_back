@@ -33,6 +33,7 @@ public class BsOrder {
   @JoinColumn(name="recipient_id", nullable = false)
   private Recipient recipient;
 
+  @Column(nullable = false)
   private BigDecimal payAmount;
 
   @Column(name = "order_time", updatable = false, nullable = false,
