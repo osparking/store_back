@@ -72,7 +72,7 @@ public class OrderServ implements OrderServI {
     boolean isJeju = order.getRecipient().getAddressBasis()
         .getZipcode().startsWith("63");
     if (isJeju) {
-      delivery.add(feeEtc.getDeliJeju());
+      delivery = delivery.add(feeEtc.getDeliJeju());
     }
     return payment.add(delivery);
   }
