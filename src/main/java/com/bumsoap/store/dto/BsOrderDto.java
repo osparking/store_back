@@ -18,7 +18,7 @@ public class BsOrderDto {
   private List<OrderItemDto> items;
   private Recipient recipient;
 
-  private BigDecimal payAmount;
+  private BigDecimal payment;
   private LocalDateTime orderTime;
   private OrderStatus orderStatus;
   public String getOrderStatus() {
