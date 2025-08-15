@@ -23,9 +23,6 @@ public class OrderItemServ implements OrderItemServI {
 
   @Override
   public List<OrderItem> saveOrderItems(List<OrderItem> items) {
-    items.forEach(item ->
-        item.setSubTotal(subTotaler.getSubtotal(item)));
-
     return orderItemRepo.saveAll(items);
   }
 }

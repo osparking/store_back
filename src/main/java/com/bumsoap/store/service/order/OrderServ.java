@@ -43,6 +43,10 @@ public class OrderServ implements OrderServI {
 
     var recipientSaved = recipientServ.save(recipient);
     order.setRecipient(recipientSaved);
+    order.getItems().forEach(item ->
+        item.setSubTotal(subTotaler.getSubtotal(item)));
+    order.setPayment(calculatePayment(order));
+
     BsOrder savedOrder = orderRepo.save(order);
     order.getItems().forEach(item -> item.setOrder(savedOrder));
 
