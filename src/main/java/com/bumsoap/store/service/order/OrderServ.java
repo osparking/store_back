@@ -65,16 +65,14 @@ public class OrderServ implements OrderServI {
 
     // 배송비 계산
     FeeEtc feeEtc = feeEtcServ.readLatest();
-    int comp = payment.compareTo(feeEtc.getDeliFreeMin());
-    BigDecimal delivery = comp >= 0
-        ? new BigDecimal(0) : feeEtc.getDeliBasis();
+    BigDecimal delivery =
+        payment.compareTo(feeEtc.getDeliFreeMin()) >= 0
+            ? BigDecimal.ZERO : feeEtc.getDeliBasis();
 
     boolean isJeju = order.getRecipient().getAddressBasis()
         .getZipcode().startsWith("63");
-    if (isJeju) {
-      delivery = delivery.add(feeEtc.getDeliJeju());
-    }
-    return payment.add(delivery);
+    return payment.add(
+        isJeju ? delivery.add(feeEtc.getDeliJeju()) : delivery);
   }
 
   @Override
