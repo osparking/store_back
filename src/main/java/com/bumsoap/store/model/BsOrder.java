@@ -34,7 +34,7 @@ public class BsOrder {
   private Recipient recipient;
 
   @Column(nullable = false)
-  private BigDecimal payAmount;
+  private BigDecimal payment;
 
   @Column(name = "order_time", updatable = false, nullable = false,
       columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
