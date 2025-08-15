@@ -3,18 +3,21 @@ package com.bumsoap.store.service.order;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.orderItem.OrderItemServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
+import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.SubTotaler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ public class OrderServ implements OrderServI {
   private final SubTotaler subTotaler;
   private final RecipientServI recipientServ;
   private final AddressBasisServI addressBasisServ;
+  private final FeeEtcServI feeEtcServ;
 
   @Override
   @Transactional(rollbackOn = InventoryException.class)
@@ -46,6 +50,27 @@ public class OrderServ implements OrderServI {
     order.setItems(savedItems);
 
     return savedOrder;
+  }
+
+  private BigDecimal calculatePayment(BsOrder order) {
+    // 각 항목의 소계를 합한다.
+    BigDecimal payment = new BigDecimal(0);
+    for (var item : order.getItems()) {
+      payment = payment.add(item.getSubTotal());
+    }
+
+    // 배송비 계산
+    FeeEtc feeEtc = feeEtcServ.readLatest();
+    int comp = payment.compareTo(feeEtc.getDeliFreeMin());
+    BigDecimal delivery = comp >= 0
+        ? new BigDecimal(0) : feeEtc.getDeliBasis();
+
+    boolean isJeju = order.getRecipient().getAddressBasis()
+        .getZipcode().startsWith("63");
+    if (isJeju) {
+      delivery.add(feeEtc.getDeliJeju());
+    }
+    return payment.add(delivery);
   }
 
   @Override
