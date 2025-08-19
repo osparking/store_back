@@ -1,11 +1,20 @@
 package com.bumsoap.store.util;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum BsShape {
-  NORMAL("보통비누"),
   S_WHITE("백설공주"),
+  NORMAL("보통비누"),
   MAEJU_S("메주비누");
 
   public final String label;
+
+  public static List<String> getKoreanLabels() {
+    return Arrays.stream(values())
+        .map(shape -> shape.label).collect(Collectors.toList());
+  }
 
   public static BsShape valueOfLabel(String label) {
     for (BsShape e : values()) {
