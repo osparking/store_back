@@ -72,6 +72,7 @@ public class UrlMap {
     public static final String SOAP = API + "/soap";
     public static final String SOAP_PRICE = "/price";
     public static final String SHAPE_PRICE = "/{shape}/price";
+    public static final String SOAP_SHAPES = "/shapes";
 
     /*== 주문-배송 주소 관련 항목 시작 ================================= */
     public static final String ORDER = API + "/order";
