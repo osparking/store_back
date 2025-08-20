@@ -1,6 +1,5 @@
 package com.bumsoap.store.service.soap;
 
-import com.bumsoap.store.dto.ShapeSelDto;
 import com.bumsoap.store.dto.ShapeSelItem;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.model.SoapInven;
@@ -35,7 +34,7 @@ public class InvenServ implements InvenServI {
   }
 
   @Override
-  public ShapeSelDto getShapeSelItems() {
+  public List<ShapeSelItem> getShapeSelItems() {
     List<SoapInven> soapInventories = soapInvenI.findAll();
     List<ShapeSelItem> shapeSelItems = new ArrayList<>();
     List<SoapInven> outOfStockList = new ArrayList<>();
@@ -57,8 +56,7 @@ public class InvenServ implements InvenServI {
     var firstInStock = shapeSelItems.stream()
         .filter(item -> item.getCount() > 0).findFirst();
 
-    return new ShapeSelDto(shapeSelItems,
-        firstInStock.isPresent() ? firstInStock.get().getShapeLabel() : "");
+    return shapeSelItems;
   }
 
   @Override

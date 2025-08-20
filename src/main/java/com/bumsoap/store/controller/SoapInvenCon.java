@@ -1,6 +1,6 @@
 package com.bumsoap.store.controller;
 
-import com.bumsoap.store.dto.ShapeSelDto;
+import com.bumsoap.store.dto.ShapeSelItem;
 import com.bumsoap.store.model.SoapInven;
 import com.bumsoap.store.request.InvenUpdateReq;
 import com.bumsoap.store.response.ApiResp;
@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -23,7 +25,7 @@ public class SoapInvenCon {
   @GetMapping(UrlMap.SOAP_SHAPES)
   public ResponseEntity<ApiResp> getShapeSelectionData() {
     try {
-      ShapeSelDto shapeSelItems = invenServ.getShapeSelItems();
+      List<ShapeSelItem> shapeSelItems = invenServ.getShapeSelItems();
 
       return ResponseEntity.ok(
           new ApiResp(Feedback.ORDER_FOUND, shapeSelItems));
