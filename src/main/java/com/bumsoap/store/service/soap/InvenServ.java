@@ -26,10 +26,9 @@ public class InvenServ implements InvenServI {
   }
 
   // Helper method to create ShapeSelItem
-  private ShapeSelItem createShapeItem(SoapInven inventory,
-                                       boolean isOutOfStock) {
+  private ShapeSelItem createShapeItem(SoapInven inventory) {
     return new ShapeSelItem(
-        inventory.getBsShape().label + (isOutOfStock ? "(품절)" : ""),
+        inventory.getBsShape().label,
         inventory.getStockLevel(),
         priceProvider.getShapePrice(inventory.getBsShape().ordinal())
     );
@@ -38,27 +37,27 @@ public class InvenServ implements InvenServI {
   @Override
   public ShapeSelDto getShapeSelItems() {
     List<SoapInven> soapInventories = soapInvenI.findAll();
-    List<ShapeSelItem> inStockList = new ArrayList<>();
+    List<ShapeSelItem> shapeSelItems = new ArrayList<>();
     List<SoapInven> outOfStockList = new ArrayList<>();
 
     soapInventories.forEach(inventory -> {
       if (inventory.getStockLevel() > 0) {
-        inStockList.add(createShapeItem(inventory, false));
+        shapeSelItems.add(createShapeItem(inventory));
       } else {
         outOfStockList.add(inventory);
       }
     });
 
-    // Add out-of-stock items with sold-out label
+    // Append out-of-stock items at the end of selection list
     outOfStockList.forEach(outOfStockItem -> {
-      inStockList.add(createShapeItem(outOfStockItem, true));
+      shapeSelItems.add(createShapeItem(outOfStockItem));
     });
 
     // 외형 선택 항 중, 재고 있는 첫째 항
-    var firstInStock = inStockList.stream()
+    var firstInStock = shapeSelItems.stream()
         .filter(item -> item.getCount() > 0).findFirst();
 
-    return new ShapeSelDto(inStockList,
+    return new ShapeSelDto(shapeSelItems,
         firstInStock.isPresent() ? firstInStock.get().getShapeLabel() : "");
   }
 
