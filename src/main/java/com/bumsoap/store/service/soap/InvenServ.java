@@ -7,6 +7,7 @@ import com.bumsoap.store.model.SoapInven;
 import com.bumsoap.store.repository.SoapInvenI;
 import com.bumsoap.store.util.BsShape;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.PriceProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,31 +18,41 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InvenServ implements InvenServI {
   private final SoapInvenI soapInvenI;
+  private final PriceProvider priceProvider;
 
   @Override
   public SoapInven add(SoapInven soapInven) {
     return soapInvenI.save(soapInven);
   }
 
+  // Helper method to create ShapeSelItem
+  private ShapeSelItem createShapeItem(SoapInven inventory,
+                                       boolean isOutOfStock) {
+    return new ShapeSelItem(
+        inventory.getBsShape().label + (isOutOfStock ? "(품절)" : ""),
+        inventory.getStockLevel(),
+        priceProvider.getShapePrice(inventory.getBsShape().ordinal())
+    );
+  }
+
   @Override
   public ShapeSelDto getShapeSelItems() {
     List<SoapInven> soapInventories = soapInvenI.findAll();
     List<ShapeSelItem> inStockList = new ArrayList<>();
-    List<SoapInven> ooStockList = new ArrayList<>();
+    List<SoapInven> outOfStockList = new ArrayList<>();
 
-    for (SoapInven inven : soapInventories) {
-      if (inven.getStockLevel() > 0) {
-        inStockList.add(new ShapeSelItem(
-            inven.getBsShape().label, inven.getStockLevel()));
+    soapInventories.forEach(inventory -> {
+      if (inventory.getStockLevel() > 0) {
+        inStockList.add(createShapeItem(inventory, false));
       } else {
-        ooStockList.add(inven);
+        outOfStockList.add(inventory);
       }
-    }
+    });
 
-    for (SoapInven inven : ooStockList) {
-      inStockList.add(new ShapeSelItem(
-          inven.getBsShape().label + "(품절)", 0));
-    }
+    // Add out-of-stock items with sold-out label
+    outOfStockList.forEach(outOfStockItem -> {
+      inStockList.add(createShapeItem(outOfStockItem, true));
+    });
 
     // 외형 선택 항 중, 재고 있는 첫째 항
     var firstInStock = inStockList.stream()
