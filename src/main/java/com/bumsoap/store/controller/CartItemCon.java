@@ -84,9 +84,6 @@ public class CartItemCon {
       @RequestBody AddCartItemReq addCartItemReq) {
 
     String result = null;
-    int countUpdated = 0;
-    int itemInserted = 0;
-    int itemRejected = 0;
 
     try {
       var user = userServ.findById(addCartItemReq.getUserId());
