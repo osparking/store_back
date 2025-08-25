@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -81,19 +82,36 @@ public class CartItemCon {
   @PostMapping(UrlMap.ADD_CART_ITEM)
   public ResponseEntity<ApiResp> addItem(
       @RequestBody AddCartItemReq addCartItemReq) {
+
     try {
       var user = userServ.findById(addCartItemReq.getUserId());
       var item = objMapper.mapToDto(addCartItemReq, CartItem.class);
 
       item.setUser(user);
+      /** 이미 유저 카트에 같은 외형이 들어있으면,
+       *  그 수량을 증가하여 저장한다. 단 증가 후 수량이 재고를 초과하면 거부한다.
+       */
+      var items = cartItemServ.readUserCartItems(addCartItemReq.getUserId());
+      Predicate<CartItemDto> shapeIsInDbCart =
+          dbCartItem -> dbCartItem.getShape() == addCartItemReq.getShape();
+      var itemInDB = items.stream().filter(shapeIsInDbCart).findFirst();
+      CartItem savedItem = null;
+      String result = null;
 
-      CartItem savedItem = cartItemServ.saveItem(item);
-
+      if (itemInDB.isPresent()) {
+        var itemDto = itemInDB.get();
+        int count = itemDto.getCount() + addCartItemReq.getCount();
+        savedItem = cartItemServ.updateShapeCount(itemDto.getId(), count);
+        result = "범이비누 외형 수량 갱신";
+      } else {
+        savedItem = cartItemServ.saveItem(item);
+        result = "범이비누 외형 항목 추가";
+      }
       return ResponseEntity.ok(
-          new ApiResp(Feedback.CART_ITEM_SAVED, savedItem));
+          new ApiResp(result, savedItem));
     } catch (InventoryException e) {
-      return ResponseEntity.status(BAD_REQUEST)
-          .body(new ApiResp(e.getMessage(), null));
+      return ResponseEntity.ok(
+          new ApiResp("갱신/추가 거부-재고 초과", null));
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));
