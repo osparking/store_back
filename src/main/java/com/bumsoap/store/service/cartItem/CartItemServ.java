@@ -7,14 +7,18 @@ import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.CartItem;
 import com.bumsoap.store.repository.CartItemRepo;
+import com.bumsoap.store.request.CartUpdateReq;
 import com.bumsoap.store.service.soap.InvenServI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.SubTotaler;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,21 @@ public class CartItemServ implements CartItemServI {
   private final InvenServI invenServ;
   private final ObjMapper objMapper;
   private final SubTotaler subTotaler;
+
+  @Transactional(rollbackOn =
+      {InventoryException.class, UnauthorizedException.class})
+  @Override
+  public List<CartItemDto> updateUserCart(CartUpdateReq request) {
+    // Process deletions using stream
+    Arrays.stream(request.getDeleteId()).forEach(this::deleteCartItem);
+
+    // Process updates and map to DTOs in a single stream pipeline
+    return Arrays.stream(request.getUpdateCount())
+        .map(itemCount ->
+            this.updateShapeCount(itemCount.getId(), itemCount.getCount()))
+        .map(updatedItem -> objMapper.mapToDto(updatedItem, CartItemDto.class))
+        .collect(Collectors.toList());
+  }
 
   @Override
   public CartItem saveItem(CartItem item) {
