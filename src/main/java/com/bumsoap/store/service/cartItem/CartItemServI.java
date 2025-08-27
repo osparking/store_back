@@ -14,10 +14,6 @@ public interface CartItemServI {
       {InventoryException.class, UnauthorizedException.class})
   List<CartItemDto> updateUserCart(CartUpdateReq request);
 
-  @Transactional(rollbackOn =
-      {InventoryException.class, UnauthorizedException.class})
-  List<CartItemDto> updateUserCart(CartUpdateReq request);
-
   CartItem saveItem(CartItem item);
 
   List<CartItemDto> readUserCartItems(Long uid);
