@@ -17,7 +17,7 @@ import lombok.Setter;
         {"id": 56, "count": 2 }]
    }
 */
-public class CartUpdateReq extends AddItemReq {
+public class CartUpdateReq {
   private Long[] deleteId;
   private CartItemCount[] updateCount;
 }
