@@ -2,10 +2,13 @@ package com.bumsoap.store.service.cartItem;
 
 import com.bumsoap.store.dto.CartItemDto;
 import com.bumsoap.store.model.CartItem;
+import com.bumsoap.store.request.CartUpdateReq;
 
 import java.util.List;
 
 public interface CartItemServI {
+  List<CartItemDto> updateUserCart(CartUpdateReq request);
+
   CartItem saveItem(CartItem item);
 
   List<CartItemDto> readUserCartItems(Long uid);

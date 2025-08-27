@@ -6,6 +6,7 @@ import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.CartItem;
 import com.bumsoap.store.request.AddCartItemReq;
+import com.bumsoap.store.request.CartUpdateReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.cartItem.CartItemServI;
 import com.bumsoap.store.service.user.UserServInt;
@@ -29,6 +30,21 @@ public class CartItemCon {
   private final CartItemServI cartItemServ;
   private final ObjMapper objMapper;
   private final UserServInt userServ;
+
+  @PutMapping(UrlMap.UPDATE2)
+  public ResponseEntity<ApiResp> updateUserCart(
+      @RequestBody CartUpdateReq request) {
+    try {
+      var updatedList = cartItemServ.updateUserCart(request);
+      return ResponseEntity.ok(new ApiResp(Feedback.CART_FIXED, updatedList));
+    } catch (InventoryException e) {
+      return ResponseEntity.status(BAD_REQUEST).body(
+          new ApiResp(e.getMessage(), null));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @DeleteMapping(UrlMap.DELETE_BY_ID)
   public ResponseEntity<ApiResp> deleteCartItem(@PathVariable Long id) {
