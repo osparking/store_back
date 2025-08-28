@@ -39,7 +39,11 @@ public class CartItemServ implements CartItemServI {
     return Arrays.stream(request.getUpdateCount())
         .map(itemCount ->
             this.updateShapeCount(itemCount.getId(), itemCount.getCount()))
-        .map(updatedItem -> objMapper.mapToDto(updatedItem, CartItemDto.class))
+        .map(item -> {
+          var dto = objMapper.mapToDto(item, CartItemDto.class);
+          dto.setSubTotal(subTotaler.getSubtotal(dto));
+          return dto;
+        })
         .collect(Collectors.toList());
   }
 
