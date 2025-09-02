@@ -1,6 +1,5 @@
-package com.bumsoap.store.model;
+package com.bumsoap.store.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,16 +7,10 @@ import lombok.ToString;
 
 @Data
 @AllArgsConstructor
-@Entity
 @NoArgsConstructor
 @ToString
-public class AddressBasis {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class AddressBasisDto {
   private String zipcode;
-  @Column(nullable = false, unique = true)
   private String roadAddress; // 도로명 주소
-  @Column(nullable = false)
   private String zBunAddress; // 지번 주소
 }

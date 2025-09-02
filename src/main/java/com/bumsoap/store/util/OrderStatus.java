@@ -1,8 +1,8 @@
 package com.bumsoap.store.util;
 
 public enum OrderStatus {
-  PAY_WAIT("결재대기"),
-  PAY_MADE("결재완료"),
+  PAY_WAIT("결제대기"),
+  PAID("결제완료"),
   SELLER_RECOGNIZED("발주확인"),
   AT_GS25("GS25 접수"),
   COLLECTED("배송기사수거"),

@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.address;
 
+import com.bumsoap.store.dto.AddressBasisDto;
 import com.bumsoap.store.model.AddressBasis;
 import com.bumsoap.store.model.SearchKey;
 import com.bumsoap.store.util.ZipCode;
@@ -16,16 +17,16 @@ import java.util.List;
 @Service
 public class AddressServ implements AddressServI {
   @Override
-  public Page<AddressBasis> findPaginated(@Valid SearchKey searchKey,
-                                          Pageable pageable) {
+  public Page<AddressBasisDto> findPaginated(@Valid SearchKey searchKey,
+                                             Pageable pageable) {
     int pageSize = pageable.getPageSize();
     int currentPage = pageable.getPageNumber();
-    List<AddressBasis> pageAddresses = new ArrayList<AddressBasis>();
+    var pageAddresses = new ArrayList<AddressBasisDto>();
     int[] result = new int[2];
 
     ZipCode.find(searchKey.getAddrKey(), currentPage + 1, pageSize,
         pageAddresses, result);
-    Page<AddressBasis> addressPage = new PageImpl<AddressBasis>(
+    Page<AddressBasisDto> addressPage = new PageImpl<AddressBasisDto>(
         pageAddresses, PageRequest.of(currentPage, pageSize),
         result[0]);
 
