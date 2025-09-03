@@ -1,6 +1,6 @@
 package com.bumsoap.store.controller;
 
-import com.bumsoap.store.model.AddressBasis;
+import com.bumsoap.store.dto.AddressBasisDto;
 import com.bumsoap.store.model.SearchKey;
 import com.bumsoap.store.model.SearchResult;
 import com.bumsoap.store.response.ApiResp;
@@ -40,7 +40,7 @@ public class AddressCon {
       int currentPage = page.orElse(1);
       int pageSize = size.orElse(10);
       Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-      Page<AddressBasis> addressPage = addressServ.findPaginated(searchKey,
+      Page<AddressBasisDto> addressPage = addressServ.findPaginated(searchKey,
           pageable);
 
       int totalPages = addressPage.getTotalPages();
