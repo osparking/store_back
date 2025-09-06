@@ -76,6 +76,19 @@ public class OrderServ implements OrderServI {
   }
 
   @Override
+  public BigDecimal findDeliveryFee(
+      BigDecimal grandTotal, String zipcode) {
+
+    FeeEtc feeEtc = feeEtcServ.readLatest();
+    BigDecimal delivery =
+        grandTotal.compareTo(feeEtc.getDeliFreeMin()) >= 0
+            ? BigDecimal.ZERO : feeEtc.getDeliBasis();
+
+    return zipcode.startsWith("63")
+        ? delivery.add(feeEtc.getDeliJeju()) : delivery;
+  }
+
+  @Override
   public BsOrder findOrderById(Long id) {
     return orderRepo.findById(id).orElseThrow(
         () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + id));
