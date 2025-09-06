@@ -10,6 +10,7 @@ import com.bumsoap.store.model.Recipient;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.AddOrderReq;
 import com.bumsoap.store.request.AddrBasisAddReq;
+import com.bumsoap.store.request.DeliveryFeeReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
@@ -33,6 +34,24 @@ public class OrderCon {
   private final ObjMapper objMapper;
   private final OrderServI orderServ;
   private final UserRepoI userRepo;
+
+  @GetMapping(UrlMap.GET_DELIVERY_FEE)
+  public ResponseEntity<ApiResp> findDeliveryFee(
+      @RequestBody DeliveryFeeReq feeReq) {
+
+    try {
+      var deliveryFee = orderServ.findDeliveryFee(
+          feeReq.getGrandTotal(), feeReq.getZipcode());
+      return ResponseEntity.ok(
+          new ApiResp(Feedback.DELIVERY_FEE_FOUND, deliveryFee));
+    } catch (InventoryException e) {
+      return ResponseEntity.status(BAD_REQUEST)
+          .body(new ApiResp(e.getMessage(), null));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+          .body(new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @DeleteMapping(UrlMap.DELETE_BY_ID)
   public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
