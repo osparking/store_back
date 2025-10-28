@@ -22,6 +22,12 @@ public class BsOrder {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  /**
+   * id 문자열(0 패딩, 8자리) + 6자리 문자열(영문대소자, 숫자, -, _)
+   */
+  @Column(nullable = false, unique = true)
+  private String orderId;
+
   @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
   @JoinColumn(name="user_id", nullable = false)
   private BsUser user;
