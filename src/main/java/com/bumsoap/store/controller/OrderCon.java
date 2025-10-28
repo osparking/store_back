@@ -16,6 +16,7 @@ import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.OrderStatus;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class OrderCon {
   private final OrderServI orderServ;
   private final UserRepoI userRepo;
 
-  @GetMapping(UrlMap.GET_DELIVERY_FEE)
+  @PostMapping(UrlMap.GET_DELIVERY_FEE)
   public ResponseEntity<ApiResp> findDeliveryFee(
       @RequestBody DeliveryFeeReq feeReq) {
 
@@ -125,6 +126,7 @@ public class OrderCon {
 
       recipient.setAddressBasis(addrBasis);
       BsOrder order = objMapper.mapToDto(addOrderReq, BsOrder.class);
+      order.setOrderStatus(OrderStatus.PAY_WAIT);
       order.setRecipient(recipient);
 
       var user = userRepo.findById(addOrderReq.getUserId()).orElseThrow(
