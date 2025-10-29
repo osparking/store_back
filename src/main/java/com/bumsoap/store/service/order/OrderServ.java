@@ -12,9 +12,11 @@ import com.bumsoap.store.service.orderItem.OrderItemServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.OrderIdGenerator;
 import com.bumsoap.store.util.SubTotaler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,6 +34,9 @@ public class OrderServ implements OrderServI {
   private final AddressBasisServI addressBasisServ;
   private final FeeEtcServI feeEtcServ;
 
+  @Autowired
+  private OrderIdGenerator orderIdGenerator;
+
   @Override
   @Transactional(rollbackOn = InventoryException.class)
   public BsOrder saveOrder(BsOrder order) {
@@ -47,7 +52,12 @@ public class OrderServ implements OrderServI {
         item.setSubTotal(subTotaler.getSubtotal(item)));
     order.setPayment(calculatePayment(order));
 
+    order.setOrderId("");
     BsOrder savedOrder = orderRepo.save(order);
+
+    String orderId = orderIdGenerator.generateOrderId(savedOrder);
+    savedOrder.setOrderId(orderId);
+
     order.getItems().forEach(item -> item.setOrder(savedOrder));
 
     var savedItems = orderItemServ.saveOrderItems(order.getItems());
