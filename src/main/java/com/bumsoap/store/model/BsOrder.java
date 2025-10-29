@@ -28,6 +28,9 @@ public class BsOrder {
   @Column(nullable = false, unique = true)
   private String orderId;
 
+  @Column(nullable = false)
+  private String orderName;
+
   @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
   @JoinColumn(name="user_id", nullable = false)
   private BsUser user;

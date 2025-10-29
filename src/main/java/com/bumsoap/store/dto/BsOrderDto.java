@@ -15,6 +15,8 @@ import java.util.List;
 public class BsOrderDto {
   @Autowired
   private long id;
+  private String orderId;
+  private String orderName;
   private List<OrderItemDto> items;
   private Recipient recipient;
 
