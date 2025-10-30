@@ -29,11 +29,13 @@ public class AddressBasisServ implements AddressBasisServI{
    */
   @Override
   public AddressBasis addGetAddrBasis(AddressBasis addressBasis) {
-    // 테이블에 같은 주소 존재 가능성 타진
-    var addressInDB = addrBasisRepo.findByRoadAddress(
-        addressBasis.getRoadAddress());
-    return addressInDB.isPresent()
-        ? addressInDB.get()
-        : addrBasisRepo.save(addressBasis);
+    try {
+      return addrBasisRepo.findByRoadAddress(addressBasis.getRoadAddress())
+              .orElseGet(() -> addrBasisRepo.save(addressBasis));
+    } catch (Exception e) {
+      // Retry once if unique constraint violation occurs
+      return addrBasisRepo.findByRoadAddress(addressBasis.getRoadAddress())
+              .orElseThrow(() -> new RuntimeException(e.getMessage()));
+    }
   }
 }
