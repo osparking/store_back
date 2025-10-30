@@ -53,17 +53,17 @@ public class OrderServ implements OrderServI {
     order.setPayment(calculatePayment(order));
 
     order.setOrderId("");
-    BsOrder savedOrder = orderRepo.save(order);
+    orderRepo.save(order);
 
-    String orderId = orderIdGenerator.generateOrderId(savedOrder);
-    savedOrder.setOrderId(orderId);
+    String orderId = orderIdGenerator.generateOrderId(order);
 
-    order.getItems().forEach(item -> item.setOrder(savedOrder));
+    order.setOrderId(orderId);
+    order.getItems().forEach(item -> item.setOrder(order));
 
     var savedItems = orderItemServ.saveOrderItems(order.getItems());
     order.setItems(savedItems);
 
-    return savedOrder;
+    return order;
   }
 
   private BigDecimal calculatePayment(BsOrder order) {
