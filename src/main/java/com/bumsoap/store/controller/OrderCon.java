@@ -11,6 +11,7 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.AddOrderReq;
 import com.bumsoap.store.request.AddrBasisAddReq;
 import com.bumsoap.store.request.DeliveryFeeReq;
+import com.bumsoap.store.request.SaveAmountReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
@@ -18,6 +19,7 @@ import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.OrderStatus;
 import com.bumsoap.store.util.UrlMap;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,13 @@ public class OrderCon {
   private final ObjMapper objMapper;
   private final OrderServI orderServ;
   private final UserRepoI userRepo;
+
+  @PostMapping("/saveAmount")
+  public ResponseEntity<?> saveAmountTemporarily(
+          HttpSession session, @RequestBody SaveAmountReq request) {
+    session.setAttribute(request.getOrderId(), request.getAmount());
+    return ResponseEntity.ok("<주문 ID, 결제액> 항목 세션 저장.");
+  }
 
   @PostMapping(UrlMap.GET_DELIVERY_FEE)
   public ResponseEntity<ApiResp> findDeliveryFee(
