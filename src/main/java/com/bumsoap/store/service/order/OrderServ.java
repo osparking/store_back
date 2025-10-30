@@ -14,6 +14,8 @@ import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.OrderIdGenerator;
 import com.bumsoap.store.util.SubTotaler;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class OrderServ implements OrderServI {
   @Autowired
   private OrderIdGenerator orderIdGenerator;
 
+  @PersistenceContext
+  private EntityManager entityManager;
+
   @Override
   @Transactional(rollbackOn = InventoryException.class)
   public BsOrder saveOrder(BsOrder order) {
@@ -53,7 +58,8 @@ public class OrderServ implements OrderServI {
     order.setPayment(calculatePayment(order));
 
     order.setOrderId("");
-    orderRepo.save(order);
+    entityManager.persist(order);
+    entityManager.flush();
 
     String orderId = orderIdGenerator.generateOrderId(order);
 
