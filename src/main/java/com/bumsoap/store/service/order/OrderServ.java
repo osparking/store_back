@@ -2,6 +2,7 @@ package com.bumsoap.store.service.order;
 
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
+import com.bumsoap.store.exception.OrderIdNotFoundEx;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.OrderItem;
@@ -41,6 +42,18 @@ public class OrderServ implements OrderServI {
 
   @PersistenceContext
   private EntityManager entityManager;
+
+  @Override
+  public BsOrder getOrderByOrderId(String orderId)
+          throws OrderIdNotFoundEx {
+    var optionalOrder = orderRepo.findByOrderId(orderId);
+
+    if (optionalOrder.isPresent()) {
+      return optionalOrder.get();
+    } else {
+      throw new OrderIdNotFoundEx(Feedback.NOT_FOUND_ORDER_ID + orderId);
+    }
+  }
 
   @Override
   @Transactional(rollbackOn = InventoryException.class)
