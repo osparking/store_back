@@ -94,4 +94,7 @@ public class UrlMap {
     public static final String FEE_ETC = API + "/fee_etc";
     public static final String GET_LATEST = "/get_latest";
     public static final String GET_DELIVERY_FEE = "/get_delivery_fee";
+
+    /*== 결제 관련 항목 ======*/
+    public static final String PAYMENTS = API + "/payments";
 }
