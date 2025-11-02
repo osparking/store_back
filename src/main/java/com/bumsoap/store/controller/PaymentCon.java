@@ -14,6 +14,13 @@ import java.math.BigDecimal;
 @RequestMapping(UrlMap.PAYMENTS)
 public class PaymentCon {
 
+    @PostMapping("/saveAmount")
+    public ResponseEntity<?> saveAmountTemporarily(
+            HttpSession session, @RequestBody SaveAmountReq request) {
+        session.setAttribute(request.getOrderId(), request.getAmount());
+        return ResponseEntity.ok("<주문 ID, 결제액> 항목 세션 저장.");
+    }
+
     @PostMapping("/checkAmount")
     public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
             HttpSession session,
