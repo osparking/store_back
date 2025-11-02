@@ -23,9 +23,23 @@ public class PaymentCon {
         if (savedAmount==null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new CheckAmountResult(false));
-        } else
+        } else {
+            boolean result = orderAmount.getAmount().equals(savedAmount);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new CheckAmountResult(orderAmount.getAmount()
                             .equals(savedAmount)));
+        }
+    }
+
+    @PostMapping("/saveAmount")
+    public ResponseEntity<?> saveAmountTemporarily(
+            HttpSession session, @RequestBody SaveAmountReq request) {
+        session.setAttribute(request.getOrderId(), request.getAmount());
+        return ResponseEntity.ok("<주문 ID, 결제액> 항목 세션 저장.");
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<?> confirmPayment() {
+        return ResponseEntity.ok("결제 최종 승인됨.");
     }
 }
