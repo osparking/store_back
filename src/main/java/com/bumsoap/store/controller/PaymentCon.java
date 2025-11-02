@@ -7,9 +7,10 @@ import com.bumsoap.store.util.UrlMap;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(UrlMap.PAYMENTS)
@@ -24,18 +25,19 @@ public class PaymentCon {
     }
 
     @PostMapping("/checkAmount")
-    public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
-            HttpSession session,
-            @RequestBody SaveAmountReq orderAmount) {
-        var savedAmount = (BigDecimal) session
-                .getAttribute(orderAmount.getOrderId());
-        if (savedAmount==null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new CheckAmountResult(false, "결제 정보 부재"));
-        } else
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new CheckAmountResult(orderAmount.getAmount()
-                            .equals(savedAmount), orderAmount.getOrderName()));
+public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
+        HttpSession session, @RequestBody SaveAmountReq req) {
+
+    var order = (OrderInfo) session.getAttribute(req.getOrderId());
+
+    if (order==null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new CheckAmountResult(false, "결제 정보 부재"));
+    } else {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new CheckAmountResult(req.getAmount().equals(
+                        order.getAmount()), order.getOrderName()));
+    }
     }
 
     @PostMapping("/confirm")
