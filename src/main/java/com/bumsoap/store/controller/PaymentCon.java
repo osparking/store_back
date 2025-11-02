@@ -35,4 +35,9 @@ public class PaymentCon {
                     new CheckAmountResult(orderAmount.getAmount()
                             .equals(savedAmount)));
     }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<?> confirmPayment() {
+        return ResponseEntity.ok("결제 최종 승인됨.");
+    }
 }
