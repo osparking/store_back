@@ -12,4 +12,5 @@ import java.math.BigDecimal;
 public class SaveAmountReq {
     private String orderId;
     private BigDecimal amount;
+    private String orderName;
 }
