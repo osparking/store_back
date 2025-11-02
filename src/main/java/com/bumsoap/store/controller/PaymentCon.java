@@ -31,11 +31,11 @@ public class PaymentCon {
                 .getAttribute(orderAmount.getOrderId());
         if (savedAmount==null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new CheckAmountResult(false));
+                    new CheckAmountResult(false, "결제 정보 부재"));
         } else
             return ResponseEntity.status(HttpStatus.OK).body(
                     new CheckAmountResult(orderAmount.getAmount()
-                            .equals(savedAmount)));
+                            .equals(savedAmount), orderAmount.getOrderName()));
     }
 
     @PostMapping("/confirm")
