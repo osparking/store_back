@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CheckAmountResult {
     private boolean matches;
+    private String orderName;
 }
