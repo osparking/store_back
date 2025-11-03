@@ -33,6 +33,8 @@ public class PaymentCon {
     private static final Logger logger =
             LoggerFactory.getLogger(PaymentCon.class);
 
+    @Autowired
+    private PaymentService paymentService;
 
     @PostMapping("/saveAmount")
     public ResponseEntity<?> saveAmountTemporarily(
@@ -59,8 +61,27 @@ public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> confirmPayment() {
-        return ResponseEntity.ok("결제 최종 승인됨.");
+    public ResponseEntity<String> confirmPayment(
+            @RequestBody @NonNull ConfirmPaymentReq confirmPaymentReq)
+            throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String request = objectMapper.writeValueAsString(confirmPaymentReq);
+
+        if (request==null) {
+            throw new Exception("결제 요청 객체 널 오류 발생");
+        }
+
+        JSONObject response = sendRequest(request,
+                System.getenv("WIDGET_SECRET_KEY"),
+                "https://api.tosspayments.com/v1/payments/confirm");
+
+        paymentService.createPayment(response);
+
+//        var recentSome = paymentService.getRecentSome(1);
+        int statusCode = response.containsKey("error") ? 400:200;
+
+        return ResponseEntity.status(statusCode).body("결제 최종 확인 완료.");
+    }
 
     private JSONObject sendRequest(String confirmStr, String secretKey,
                                    String urlString) throws IOException {
