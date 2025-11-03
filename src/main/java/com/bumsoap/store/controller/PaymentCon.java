@@ -2,15 +2,30 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.CheckAmountResult;
 import com.bumsoap.store.dto.OrderInfo;
+import com.bumsoap.store.request.ConfirmPaymentReq;
 import com.bumsoap.store.request.SaveAmountReq;
+import com.bumsoap.store.service.PaymentService;
 import com.bumsoap.store.util.UrlMap;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @RestController
 @RequestMapping(UrlMap.PAYMENTS)
@@ -43,5 +58,17 @@ public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
     @PostMapping("/confirm")
     public ResponseEntity<?> confirmPayment() {
         return ResponseEntity.ok("결제 최종 승인됨.");
+
+    private HttpURLConnection createConnection(
+            String secretKey, String urlString) throws IOException {
+        URL url = new URL(urlString);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Authorization", "Basic " +
+                Base64.getEncoder().encodeToString(
+                        (secretKey + ":").getBytes(StandardCharsets.UTF_8)));
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+        return connection;
     }
 }
