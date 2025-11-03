@@ -45,19 +45,19 @@ public class PaymentCon {
     }
 
     @PostMapping("/checkAmount")
-public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
-        HttpSession session, @RequestBody SaveAmountReq req) {
+    public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
+            HttpSession session, @RequestBody SaveAmountReq req) {
 
-    var order = (OrderInfo) session.getAttribute(req.getOrderId());
+        var order = (OrderInfo) session.getAttribute(req.getOrderId());
 
-    if (order==null) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new CheckAmountResult(false, "결제 정보 부재"));
-    } else {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new CheckAmountResult(req.getAmount().equals(
-                        order.getAmount()), order.getOrderName()));
-    }
+        if (order==null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new CheckAmountResult(false, "결제 정보 부재"));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new CheckAmountResult(req.getAmount().equals(
+                            order.getAmount()), order.getOrderName()));
+        }
     }
 
     @PostMapping("/confirm")
