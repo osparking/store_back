@@ -30,6 +30,9 @@ import java.util.Base64;
 @RestController
 @RequestMapping(UrlMap.PAYMENTS)
 public class PaymentCon {
+    private static final Logger logger =
+            LoggerFactory.getLogger(PaymentCon.class);
+
 
     @PostMapping("/saveAmount")
     public ResponseEntity<?> saveAmountTemporarily(
@@ -58,6 +61,27 @@ public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
     @PostMapping("/confirm")
     public ResponseEntity<?> confirmPayment() {
         return ResponseEntity.ok("결제 최종 승인됨.");
+
+    private JSONObject sendRequest(String confirmStr, String secretKey,
+                                   String urlString) throws IOException {
+        HttpURLConnection connection = createConnection(secretKey, urlString);
+        try (OutputStream os = connection.getOutputStream()) {
+            os.write(confirmStr.getBytes(StandardCharsets.UTF_8));
+        }
+
+        try (InputStream responseStream = connection.getResponseCode()==200 ?
+                connection.getInputStream():
+                connection.getErrorStream();
+             Reader reader = new InputStreamReader(responseStream,
+                     StandardCharsets.UTF_8)) {
+            return (JSONObject) new JSONParser().parse(reader);
+        } catch (Exception e) {
+            logger.error("Error reading response", e);
+            JSONObject errorResponse = new JSONObject();
+            errorResponse.put("error", "Error reading response");
+            return errorResponse;
+        }
+    }
 
     private HttpURLConnection createConnection(
             String secretKey, String urlString) throws IOException {
