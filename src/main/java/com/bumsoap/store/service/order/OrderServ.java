@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.order;
 
+import com.bumsoap.store.dto.MyOrderDto;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
@@ -20,6 +21,8 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -42,6 +45,11 @@ public class OrderServ implements OrderServI {
 
   @PersistenceContext
   private EntityManager entityManager;
+
+  @Override
+  public Page<MyOrderDto> serviceMyOrders(long userId, Pageable pageable) {
+    return orderRepo.findMyOrders(pageable);
+  }
 
   public BsOrder getOrderByOrderId(String orderId)
           throws OrderIdNotFoundEx {
