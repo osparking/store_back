@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -23,7 +24,9 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
             FROM bs_order bo
             INNER JOIN toss_payment tp ON bo.order_id = tp.order_id
             INNER JOIN recipient r ON bo.recipient_id = r.id
+            where bo.user_id = :user_id
             ORDER BY tp.approved_at DESC
             """, nativeQuery = true)
-    Page<MyOrderDto> findMyOrders(Pageable pageable);
+    Page<MyOrderDto> findMyOrders(@Param("user_id") Long user_id,
+                                  Pageable pageable);
 }

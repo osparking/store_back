@@ -48,7 +48,7 @@ public class OrderServ implements OrderServI {
 
   @Override
   public Page<MyOrderDto> serviceMyOrders(long userId, Pageable pageable) {
-    return orderRepo.findMyOrders(pageable);
+    return orderRepo.findMyOrders(userId, pageable);
   }
 
   public BsOrder getOrderByOrderId(String orderId)
