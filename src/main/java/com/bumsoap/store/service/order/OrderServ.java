@@ -177,4 +177,10 @@ public class OrderServ implements OrderServI {
   public void deleteById(Long id) {
     orderRepo.deleteById(id);
   }
+
+  @Override
+  public int deleteOrdersByUserIdWithoutPayments(String email) {
+    return orderRepo.deleteOrdersByUserEmailWithoutPayments(email);
+  }
+
 }
