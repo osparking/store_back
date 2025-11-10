@@ -1,6 +1,7 @@
 package com.bumsoap.store.service.order;
 
 import com.bumsoap.store.dto.MyOrderDto;
+import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
@@ -21,12 +22,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +49,25 @@ public class OrderServ implements OrderServI {
   private EntityManager entityManager;
 
   @Override
-  public Page<MyOrderDto> serviceMyOrders(long userId, Pageable pageable) {
-    return orderRepo.findMyOrders(userId, pageable);
+  public SearchResult<MyOrderDto> serviceMyOrders(
+          long userId, int currentPage, int pageSize) {
+    Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+    Page<MyOrderDto> myOrderPage = orderRepo.findMyOrders(userId, pageable);
+    int totalPages = myOrderPage.getTotalPages();
+
+    List<Integer> pageNumbers = null;
+    if (totalPages > 0) {
+      pageNumbers = IntStream.rangeClosed(1, totalPages)
+              .boxed()
+              .collect(Collectors.toList());
+    }
+
+    var result = new SearchResult<MyOrderDto>(myOrderPage,
+            myOrderPage.getNumber() + 1,
+            totalPages,
+            pageNumbers
+    );
+    return result;
   }
 
   public BsOrder getOrderByOrderId(String orderId)
