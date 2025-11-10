@@ -21,7 +21,7 @@ public class OrderItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name="order_id", nullable = false)
   private BsOrder order;
 
