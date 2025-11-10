@@ -1,9 +1,7 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.BsOrderDto;
-import com.bumsoap.store.dto.MyOrderDto;
 import com.bumsoap.store.dto.ObjMapper;
-import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.AddressBasis;
@@ -22,16 +20,10 @@ import com.bumsoap.store.util.OrderStatus;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -131,28 +123,10 @@ public class OrderCon {
             @RequestParam("size") Optional<Integer> size) {
 
         try {
-            int currentPage = page.orElse(1);
-            int pageSize = size.orElse(10);
-            Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-            Page<MyOrderDto> myOrderPage =
-                    orderServ.serviceMyOrders(userId, pageable);
-
-            int totalPages = myOrderPage.getTotalPages();
-
-            List<Integer> pageNumbers = null;
-            if (totalPages > 0) {
-                pageNumbers = IntStream.rangeClosed(1, totalPages)
-                        .boxed()
-                        .collect(Collectors.toList());
-            }
-
-            var result = new SearchResult<MyOrderDto>(myOrderPage,
-                    myOrderPage.getNumber() + 1,
-                    totalPages,
-                    pageNumbers
-            );
-
-            return ResponseEntity.ok(new ApiResp(Feedback.MY_ORDERS_FOUND, result));
+            var result = orderServ.serviceMyOrders(
+                    userId, page.orElse(1), size.orElse(10));
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.MY_ORDERS_FOUND, result));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
                     new ApiResp(Feedback.MY_ORDERS_FAILURE, null));
