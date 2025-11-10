@@ -10,7 +10,6 @@ import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.service.address.AddressBasisServI;
-import com.bumsoap.store.service.orderItem.OrderItemServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.util.Feedback;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderServ implements OrderServI {
   private final OrderRepo orderRepo;
-  private final OrderItemServI orderItemServ;
   private final OrderItemRepo orderItemRepo;
   private final SubTotaler subTotaler;
   private final RecipientServI recipientServ;
@@ -75,19 +73,15 @@ public class OrderServ implements OrderServI {
     order.setRecipient(recipientSaved);
     order.getItems().forEach(item ->
         item.setSubTotal(subTotaler.getSubtotal(item)));
+    order.getItems().forEach(item -> item.setOrder(order));
+
     order.setPayment(calculatePayment(order));
 
     order.setOrderId("");
     entityManager.persist(order);
     entityManager.flush();
 
-    String orderId = orderIdGenerator.generateOrderId(order);
-
-    order.setOrderId(orderId);
-    order.getItems().forEach(item -> item.setOrder(order));
-
-    var savedItems = orderItemServ.saveOrderItems(order.getItems());
-    order.setItems(savedItems);
+    order.setOrderId(orderIdGenerator.generateOrderId(order));
 
     return order;
   }
