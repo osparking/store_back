@@ -5,6 +5,7 @@ import com.bumsoap.store.dto.OrderInfo;
 import com.bumsoap.store.request.ConfirmPaymentReq;
 import com.bumsoap.store.request.SaveAmountReq;
 import com.bumsoap.store.service.PaymentService;
+import com.bumsoap.store.service.order.OrderServ;
 import com.bumsoap.store.util.UrlMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
@@ -25,6 +26,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.Base64;
 
 @RestController
@@ -35,6 +37,9 @@ public class PaymentCon {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private OrderServ orderServ;
 
     @PostMapping("/saveAmount")
     public ResponseEntity<?> saveAmountTemporarily(
@@ -62,7 +67,8 @@ public class PaymentCon {
 
     @PostMapping("/confirm")
     public ResponseEntity<String> confirmPayment(
-            @RequestBody @NonNull ConfirmPaymentReq confirmPaymentReq)
+            @RequestBody @NonNull ConfirmPaymentReq confirmPaymentReq,
+            Principal principal)
             throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String request = objectMapper.writeValueAsString(confirmPaymentReq);
@@ -79,6 +85,13 @@ public class PaymentCon {
 
 //        var recentSome = paymentService.getRecentSome(1);
         int statusCode = response.containsKey("error") ? 400:200;
+
+        if (statusCode==200) {
+            String email = principal.getName();
+            int del = orderServ.deleteOrdersByUserIdWithoutPayments(email);
+            logger.info("{} 유저의 주문 중 결제하지 않아 삭제된 건수: {}",
+                    email, del);
+        }
 
         return ResponseEntity.status(statusCode).body("결제 최종 확인 완료.");
     }
