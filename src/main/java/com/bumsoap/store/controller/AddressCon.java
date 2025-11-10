@@ -1,8 +1,8 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.AddressBasisDto;
+import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.model.SearchKey;
-import com.bumsoap.store.model.SearchResult;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressServI;
 import com.bumsoap.store.util.Feedback;
@@ -27,40 +27,40 @@ import java.util.stream.IntStream;
 @RequestMapping(UrlMap.ORDER)
 public class AddressCon {
 
-  @Autowired
-  private AddressServI addressServ;
+    @Autowired
+    private AddressServI addressServ;
 
-  @GetMapping(UrlMap.ADDRESS_SEARCH)
-  public ResponseEntity<ApiResp> addressSearch(
-      @Valid @RequestParam("searchKey") SearchKey searchKey,
-      @RequestParam("page") Optional<Integer> page,
-      @RequestParam("size") Optional<Integer> size) {
+    @GetMapping(UrlMap.ADDRESS_SEARCH)
+    public ResponseEntity<ApiResp> addressSearch(
+            @Valid @RequestParam("searchKey") SearchKey searchKey,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
 
-    try {
-      int currentPage = page.orElse(1);
-      int pageSize = size.orElse(10);
-      Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
-      Page<AddressBasisDto> addressPage = addressServ.findPaginated(searchKey,
-          pageable);
+        try {
+            int currentPage = page.orElse(1);
+            int pageSize = size.orElse(10);
+            Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+            Page<AddressBasisDto> addressPage = addressServ.findPaginated(searchKey,
+                    pageable);
 
-      int totalPages = addressPage.getTotalPages();
+            int totalPages = addressPage.getTotalPages();
 
-      List<Integer> pageNumbers = null;
-      if (totalPages > 0) {
-        pageNumbers = IntStream.rangeClosed(1, totalPages)
-            .boxed()
-            .collect(Collectors.toList());
-      }
+            List<Integer> pageNumbers = null;
+            if (totalPages > 0) {
+                pageNumbers = IntStream.rangeClosed(1, totalPages)
+                        .boxed()
+                        .collect(Collectors.toList());
+            }
 
-      var result = new SearchResult(addressPage,
-          addressPage.getNumber() + 1,
-          totalPages,
-          pageNumbers
-      );
-      return ResponseEntity.ok(new ApiResp(Feedback.ADDRESS_FOUND, result));
-    } catch (Exception e) {
-      return ResponseEntity.internalServerError().body(
-          new ApiResp(Feedback.DEPTS_READ_FAILURE, null ));
+            var result = new SearchResult<AddressBasisDto>(addressPage,
+                    addressPage.getNumber() + 1,
+                    totalPages,
+                    pageNumbers
+            );
+            return ResponseEntity.ok(new ApiResp(Feedback.ADDRESS_FOUND, result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.DEPTS_READ_FAILURE, null));
+        }
     }
-  }
 }

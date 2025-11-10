@@ -8,8 +8,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class SearchResultOrder {
-    private Page<MyOrderDto> addressPage;
+public class SearchResult<T> {
+    private Page<T> pageContent;
     private int currentPage;
     private int totalPages;
     private List<Integer> pageNumbers;
