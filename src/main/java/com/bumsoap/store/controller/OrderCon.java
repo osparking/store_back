@@ -123,8 +123,7 @@ public class OrderCon {
             @RequestParam("size") Optional<Integer> size) {
 
         try {
-            var result = orderServ.serviceMyOrders(
-                    userId, page.orElse(1), size.orElse(10));
+            var result = orderServ.serviceMyOrders(userId, page, size);
             return ResponseEntity.ok(
                     new ApiResp(Feedback.MY_ORDERS_FOUND, result));
         } catch (Exception e) {

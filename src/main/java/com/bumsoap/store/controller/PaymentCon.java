@@ -4,8 +4,10 @@ import com.bumsoap.store.dto.CheckAmountResult;
 import com.bumsoap.store.dto.OrderInfo;
 import com.bumsoap.store.request.ConfirmPaymentReq;
 import com.bumsoap.store.request.SaveAmountReq;
+import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.PaymentService;
-import com.bumsoap.store.service.order.OrderServ;
+import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.util.UrlMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Base64;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(UrlMap.PAYMENTS)
@@ -39,7 +43,7 @@ public class PaymentCon {
     private PaymentService paymentService;
 
     @Autowired
-    private OrderServ orderServ;
+    private OrderServI orderServ;
 
     @PostMapping("/saveAmount")
     public ResponseEntity<?> saveAmountTemporarily(
@@ -66,9 +70,9 @@ public class PaymentCon {
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<String> confirmPayment(
+    public ResponseEntity<ApiResp> confirmPayment(
             @RequestBody @NonNull ConfirmPaymentReq confirmPaymentReq,
-            Principal principal)
+            Principal principal, Authentication authentication)
             throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String request = objectMapper.writeValueAsString(confirmPaymentReq);
@@ -83,17 +87,24 @@ public class PaymentCon {
 
         paymentService.createPayment(response);
 
-//        var recentSome = paymentService.getRecentSome(1);
         int statusCode = response.containsKey("error") ? 400:200;
 
         if (statusCode==200) {
             String email = principal.getName();
             int del = orderServ.deleteOrdersByUserIdWithoutPayments(email);
-            logger.info("{} 유저의 주문 중 결제하지 않아 삭제된 건수: {}",
+            logger.info("'{}'가 결제하지 않아 삭제된 주문 수: {}",
                     email, del);
-        }
 
-        return ResponseEntity.status(statusCode).body("결제 최종 확인 완료.");
+            var userDetails = (BsUserDetails) authentication.getPrincipal();
+            var myOrdersPage = orderServ.serviceMyOrders(userDetails.getId(),
+                    Optional.empty(), Optional.empty());
+
+            return ResponseEntity.status(statusCode).body(
+                    new ApiResp("나의 주문 페이지", myOrdersPage));
+        } else {
+            return ResponseEntity.status(statusCode).body(
+                    new ApiResp("결제 확정 실패", null));
+        }
     }
 
     private JSONObject sendRequest(String confirmStr, String secretKey,

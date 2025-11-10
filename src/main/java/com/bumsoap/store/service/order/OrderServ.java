@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -49,9 +50,10 @@ public class OrderServ implements OrderServI {
   private EntityManager entityManager;
 
   @Override
-  public SearchResult<MyOrderDto> serviceMyOrders(
-          long userId, int currentPage, int pageSize) {
-    Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+  public SearchResult<MyOrderDto> serviceMyOrders(long userId,
+                                                  Optional<Integer> page,
+                                                  Optional<Integer> size) {
+    Pageable pageable = PageRequest.of(page.orElse(1) - 1, size.orElse(10));
     Page<MyOrderDto> myOrderPage = orderRepo.findMyOrders(userId, pageable);
     int totalPages = myOrderPage.getTotalPages();
 
