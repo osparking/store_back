@@ -15,6 +15,7 @@ import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.OrderIdGenerator;
+import com.bumsoap.store.util.BsParameters;
 import com.bumsoap.store.util.SubTotaler;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -46,6 +47,9 @@ public class OrderServ implements OrderServI {
   @Autowired
   private OrderIdGenerator orderIdGenerator;
 
+  @Autowired
+  private BsParameters provider;
+
   @PersistenceContext
   private EntityManager entityManager;
 
@@ -53,7 +57,8 @@ public class OrderServ implements OrderServI {
   public SearchResult<MyOrderDto> serviceMyOrders(long userId,
                                                   Optional<Integer> page,
                                                   Optional<Integer> size) {
-    Pageable pageable = PageRequest.of(page.orElse(1) - 1, size.orElse(10));
+    int pageSize = size.orElse(provider.getPageSize());
+    Pageable pageable = PageRequest.of(page.orElse(1) - 1, pageSize);
     Page<MyOrderDto> myOrderPage = orderRepo.findMyOrders(userId, pageable);
     int totalPages = myOrderPage.getTotalPages();
 
@@ -66,6 +71,7 @@ public class OrderServ implements OrderServI {
 
     var result = new SearchResult<MyOrderDto>(myOrderPage,
             myOrderPage.getNumber() + 1,
+            pageSize,
             totalPages,
             pageNumbers
     );

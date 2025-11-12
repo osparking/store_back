@@ -6,6 +6,7 @@ import com.bumsoap.store.model.SearchKey;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressServI;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.BsParameters;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class AddressCon {
     @Autowired
     private AddressServI addressServ;
 
+    @Autowired
+    private BsParameters provider;
+
     @GetMapping(UrlMap.ADDRESS_SEARCH)
     public ResponseEntity<ApiResp> addressSearch(
             @Valid @RequestParam("searchKey") SearchKey searchKey,
@@ -38,7 +42,7 @@ public class AddressCon {
 
         try {
             int currentPage = page.orElse(1);
-            int pageSize = size.orElse(10);
+            int pageSize = size.orElse(provider.getPageSize());
             Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
             Page<AddressBasisDto> addressPage = addressServ.findPaginated(searchKey,
                     pageable);
@@ -54,6 +58,7 @@ public class AddressCon {
 
             var result = new SearchResult<AddressBasisDto>(addressPage,
                     addressPage.getNumber() + 1,
+                    pageSize,
                     totalPages,
                     pageNumbers
             );

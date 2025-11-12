@@ -6,7 +6,7 @@ import com.bumsoap.store.model.SoapInven;
 import com.bumsoap.store.repository.SoapInvenI;
 import com.bumsoap.store.util.BsShape;
 import com.bumsoap.store.util.Feedback;
-import com.bumsoap.store.util.PriceProvider;
+import com.bumsoap.store.util.BsParameters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InvenServ implements InvenServI {
   private final SoapInvenI soapInvenI;
-  private final PriceProvider priceProvider;
+  private final BsParameters priceProvider;
 
   @Override
   public SoapInven add(SoapInven soapInven) {
