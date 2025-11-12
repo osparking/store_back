@@ -11,6 +11,7 @@ import java.util.List;
 public class SearchResult<T> {
     private Page<T> pageContent;
     private int currentPage;
+    private int pageSize;
     private int totalPages;
     private List<Integer> pageNumbers;
 }
