@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class PriceProvider {
+public class BsParameters {
   private final Map<Integer, BigDecimal> priceMap;
 
-  public PriceProvider(SoapPriceRepo soapPriceRepo) {
+  public BsParameters(SoapPriceRepo soapPriceRepo) {
     List<SoapPriceDto> soapPrices = soapPriceRepo.findSoapPrices();
     priceMap = soapPrices.stream()
         .collect(Collectors.toMap(
@@ -24,5 +24,9 @@ public class PriceProvider {
 
   public BigDecimal getShapePrice(int ordinal) {
     return priceMap.get(ordinal);
+  }
+
+  public int getPageSize() {
+    return 5;
   }
 }
