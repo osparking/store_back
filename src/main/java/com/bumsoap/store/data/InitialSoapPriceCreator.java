@@ -3,24 +3,19 @@ package com.bumsoap.store.data;
 import com.bumsoap.store.model.SoapPrice;
 import com.bumsoap.store.repository.SoapPriceRepo;
 import com.bumsoap.store.util.BsShape;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
 @Component
 @RequiredArgsConstructor
-public class InitialSoapPriceCreator implements ApplicationListener<ApplicationReadyEvent> {
+public class InitialSoapPriceCreator {
   private final SoapPriceRepo soapPriceRepo;
 
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-    insertSoapInvensIfNotExists();
-  }
-
-  private void insertSoapInvensIfNotExists() {
+  @PostConstruct
+  public void insertSoapPriceIfNotExists() {
     int insertCount = 0;
     // Check if there's no existing inventory for soap with the NORMAL shape
     if (soapPriceRepo.countByBsShape(BsShape.NORMAL) == 0) {

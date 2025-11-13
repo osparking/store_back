@@ -3,22 +3,17 @@ package com.bumsoap.store.data;
 import com.bumsoap.store.model.SoapInven;
 import com.bumsoap.store.repository.SoapInvenI;
 import com.bumsoap.store.util.BsShape;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class InitialSoapInvenCreator implements ApplicationListener<ApplicationReadyEvent> {
+public class InitialSoapInvenCreator {
     private final SoapInvenI soapInvenI;
 
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
-        insertSoapInvensIfNotExists();
-    }
-
-    private void insertSoapInvensIfNotExists() {
+    @PostConstruct
+    public void insertSoapInvensIfNotExists() {
         int insertCount = 0;
         // Check if there's no existing inventory for soap with the NORMAL shape
         if (soapInvenI.findByBsShape(BsShape.NORMAL).isEmpty()) {
