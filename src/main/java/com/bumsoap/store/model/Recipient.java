@@ -40,7 +40,7 @@ public class Recipient {
   private DoroZbun doroZbun = DoroZbun.ROAD;
   private String addressDetail; // Detailed address
 
-  @OneToMany(mappedBy = "recipient", cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "recipient")
   private List<BsOrder> bsOrders = new ArrayList<>();
 
   public Recipient(String fullName,
