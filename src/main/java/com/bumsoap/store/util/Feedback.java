@@ -80,6 +80,8 @@ public class Feedback {
     public static final String RECIP_ID_NOT_FOUND = "없는 수취인 ID: ";
     public static final String RECIPIENT_UPDATED = "수취인 정보 수정됨";
     public static final String DELETEED_RECI_NAME = "삭제된 수취인명: ";
+    public static final String DEFAULT_RECIPIENT = "기본 수신처 발견됨";
+    public static final String NO_DEFAULT_RECIPIENT = "기본 수신처 없음";
 
     /*************** 주문 관련 메시지 ********************************/
     public static final String ORDER_ITEM_SAVED = "주문 항목 저장됨";

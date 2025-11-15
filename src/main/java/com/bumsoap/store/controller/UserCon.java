@@ -1,6 +1,7 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
+import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.exception.ExistingEmailEx;
@@ -59,11 +60,11 @@ public class UserCon {
         try {
             String email = userServ.findDummyEmailWithMaxNum();
             String suffix = null;
-            if (email != null) {
+            if (email!=null) {
                 suffix = email.substring(5, 9);
             }
-            return ResponseEntity.ok(new ApiResp(email == null ?
-                    Feedback.NOT_FOUND_EMAIL + "dummy email" : Feedback.FOUND,
+            return ResponseEntity.ok(new ApiResp(email==null ?
+                    Feedback.NOT_FOUND_EMAIL + "dummy email":Feedback.FOUND,
                     suffix));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND)
@@ -108,6 +109,21 @@ public class UserCon {
         }
     }
 
+    @GetMapping(UrlMap.GET_RECIPIENT)
+    public ResponseEntity<ApiResp> getRecipientById(@PathVariable("id") Long id) {
+        try {
+            RecipientDto recipient = userServ.getRecipientById(id);
+
+            return ResponseEntity.ok(new ApiResp(recipient==null ?
+                    Feedback.NO_DEFAULT_RECIPIENT:
+                    Feedback.DEFAULT_RECIPIENT,
+                    recipient));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @GetMapping(UrlMap.GET_ALL)
     public ResponseEntity<ApiResp> getAllUser() {
         try {
@@ -128,7 +144,7 @@ public class UserCon {
                         new ApiResp(Feedback.DELETEED_USER_NAME + deletedName, null));
             } else {
                 return ResponseEntity.status(UNAUTHORIZED).body(
-                    new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
+                        new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
             }
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND)
@@ -140,7 +156,7 @@ public class UserCon {
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
         try {
             BsUser user = userServ.getUserById(id);
-            if (user == null) {
+            if (user==null) {
                 String msg = "존재하지 않는 아이디: " + id;
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
                         .body(new ApiResp(msg, null));
@@ -155,10 +171,10 @@ public class UserCon {
 
     @GetMapping(UrlMap.GET_DETAILS)
     public ResponseEntity<ApiResp> getUserDetails(@AuthenticationPrincipal
-                                                      UserDetails userDetails) {
+                                                  UserDetails userDetails) {
         try {
             var details = bsUserDetailsService.loadUserByUsername(
-                userDetails.getUsername());
+                    userDetails.getUsername());
             return ResponseEntity.ok(new ApiResp("유저 발견됨", details));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
