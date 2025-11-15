@@ -1,6 +1,7 @@
 package com.bumsoap.store.service.user;
 
 import com.bumsoap.store.dto.ObjMapper;
+import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
@@ -24,6 +25,11 @@ public class UserServ implements UserServInt {
     private final UserRepoI userRepo;
     private final ObjMapper mapper;
     private final TotpService totpService;
+
+    @Override
+    public RecipientDto getRecipientById(Long id) {
+        return userRepo.getRecipientById(id).orElse(null);
+    }
 
     @Override
     public void enable2FA(Long id) {
