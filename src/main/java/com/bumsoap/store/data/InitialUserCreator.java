@@ -76,13 +76,16 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
 
         for (int i = 1; i <= 10; i++) {
             String defaultEmail = "customer" + i + "@email.com";
+            if (i == 1) {
+                defaultEmail = "jbpark03@naver.com";
+            }
             if (userRepo.existsByEmail(defaultEmail)) {
                 continue;
             }
             Customer customer = new Customer();
             customer.setFullName("고객" + i);
             customer.setMbPhone("0104567890" + (i - 1));
-            customer.setEmail((i == 1) ? "jbpark03@naver.com" : defaultEmail);
+            customer.setEmail(defaultEmail);
             customer.setPassword(passwordEncoder.encode("1234"));
             customer.setUserType(UserType.CUSTOMER);
             customer.setRoles(Set.of(customerRole));
