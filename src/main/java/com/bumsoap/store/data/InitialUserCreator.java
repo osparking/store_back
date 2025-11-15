@@ -58,7 +58,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
 
             worker.setFullName("직원" + i);
             worker.setMbPhone("0104567880" + (i - 1));
-            worker.setEmail((i == 1) ? "jbpark03@naver.com" : workerEmail);
+            worker.setEmail(workerEmail);
             worker.setPassword(passwordEncoder.encode("1234"));
             worker.setUserType(UserType.WORKER);
             worker.setRoles(Set.of(workerRole));
@@ -82,7 +82,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             Customer customer = new Customer();
             customer.setFullName("고객" + i);
             customer.setMbPhone("0104567890" + (i - 1));
-            customer.setEmail(defaultEmail);
+            customer.setEmail((i == 1) ? "jbpark03@naver.com" : defaultEmail);
             customer.setPassword(passwordEncoder.encode("1234"));
             customer.setUserType(UserType.CUSTOMER);
             customer.setRoles(Set.of(customerRole));
