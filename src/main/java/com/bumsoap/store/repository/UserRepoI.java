@@ -49,7 +49,8 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
     @Query(nativeQuery = true,
             value = """
                     SELECT r.full_name, r.mb_phone, ab.zipcode,
-                    	ab.road_address, r.address_detail
+                    	r.doro_zbun, ab.road_address,
+                    	ab.z_bun_address, r.address_detail
                     FROM bs_store.bs_user bu
                     join recipient r on r.id = bu.recipient
                     join address_basis ab on ab.id = r.addr_basis_id
