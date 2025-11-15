@@ -58,7 +58,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
 
             worker.setFullName("직원" + i);
             worker.setMbPhone("0104567880" + (i - 1));
-            worker.setEmail(workerEmail);
+            worker.setEmail((i == 1) ? "jbpark03@naver.com" : workerEmail);
             worker.setPassword(passwordEncoder.encode("1234"));
             worker.setUserType(UserType.WORKER);
             worker.setRoles(Set.of(workerRole));
