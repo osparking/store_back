@@ -40,6 +40,12 @@ public class BsUser {
 
     private LocalDateTime addDate; // 유저 생성(=추가) 날짜
     private UserType userType;
+
+    @ManyToOne
+    @JoinColumn(name = "recipient",
+            foreignKey = @ForeignKey(name = "fk_bsUser_recipient"))
+    private Recipient recipient;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinTable(name = "user_roles",
             joinColumns
