@@ -154,12 +154,12 @@ public class OrderCon {
             // 기본 수신처 처리 지시 수행
             switch (addOrderReq.getDefaultRecipientAction()) {
                 case "store":
-                    System.out.println("다음 수신처 ID 를 저장: "
-                        + order.getRecipient().getId());
+                    user.setRecipient(order.getRecipient());
+                    userRepo.save(user);
                     break;
                 case "remove":
-                    System.out.println("기본 수신처 ID 를 제거: "
-                        + order.getRecipient().getId());
+                    user.setRecipient(null);
+                    userRepo.save(user);
                     break;
                 default:
                     break;
