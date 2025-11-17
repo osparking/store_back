@@ -150,6 +150,21 @@ public class OrderCon {
                     () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND));
             order.setUser(user);
             BsOrder orderSaved = orderServ.saveOrder(order);
+
+            // 기본 수신처 처리 지시 수행
+            switch (addOrderReq.getDefaultRecipientAction()) {
+                case "store":
+                    System.out.println("다음 수신처 ID 를 저장: "
+                        + order.getRecipient().getId());
+                    break;
+                case "remove":
+                    System.out.println("기본 수신처 ID 를 제거: "
+                        + order.getRecipient().getId());
+                    break;
+                default:
+                    break;
+            }
+
             var orderDto = objMapper.mapToDto(orderSaved, BsOrderDto.class);
             return ResponseEntity.ok(new ApiResp(Feedback.SOAP_ORDER_SAVED,
                     orderDto));

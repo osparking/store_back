@@ -15,6 +15,7 @@ public class AddOrderReq {
   private List<AddItemReq> items; // 예, 백설공주 2개
   private RecipRegiReq recipRegiReq;
   private String orderStatus;
+  private String defaultRecipientAction;
 
   public OrderStatus getOrderStatus() {
     return OrderStatus.valueOfLabel(orderStatus);
