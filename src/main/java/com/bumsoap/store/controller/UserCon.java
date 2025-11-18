@@ -124,6 +124,19 @@ public class UserCon {
         }
     }
 
+    @GetMapping(UrlMap.GET_RECIPIENTS)
+    public ResponseEntity<ApiResp> getRecipientsById(@PathVariable("id") Long id) {
+        try {
+            var recipients = userRepo.getPastRecipients(id);
+
+            return ResponseEntity.ok(new ApiResp(null,
+                    recipients));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @GetMapping(UrlMap.GET_ALL)
     public ResponseEntity<ApiResp> getAllUser() {
         try {
