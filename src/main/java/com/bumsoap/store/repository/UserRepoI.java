@@ -57,4 +57,18 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     where bu.id = :id;
                     """)
     Optional<RecipientDto> getRecipientById(@Param("id") long id);
+
+    @Query(nativeQuery = true,
+            value = """
+                    SELECT r.full_name, r.mb_phone, ab.zipcode,
+                    	r.doro_zbun, ab.road_address,
+                    	ab.z_bun_address, r.address_detail
+                    FROM bs_user bu
+                    join bs_order bo on bo.user_id = bu.id
+                    join recipient r on r.id = bo.recipient_id
+                    join address_basis ab on ab.id = r.addr_basis_id
+                    where bu.id = :id
+                    order by bo.order_time desc
+                    """)
+    List<RecipientDto> getPastRecipients(@Param("id") long id);
 }
