@@ -2,6 +2,7 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.RecipientDto;
+import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.exception.ExistingEmailEx;
@@ -20,13 +21,14 @@ import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
-import com.bumsoap.store.util.BsUtils;
-import com.bumsoap.store.util.Feedback;
-import com.bumsoap.store.util.UrlMap;
-import com.bumsoap.store.util.UserType;
+import com.bumsoap.store.util.*;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,8 +36,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -54,6 +60,7 @@ public class UserCon {
     private final ApplicationEventPublisher publisher;
     private final RoleServInt roleServ;
     private final BsUserDetailsService bsUserDetailsService;
+    private final BsParameters provider;
 
     @GetMapping(UrlMap.GET_MAX_SUFFIX)
     public ResponseEntity<ApiResp> getMaxDummyEmailSuffix() {
@@ -125,12 +132,32 @@ public class UserCon {
     }
 
     @GetMapping(UrlMap.GET_RECIPIENTS)
-    public ResponseEntity<ApiResp> getRecipientsById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResp> getRecipientsById(
+            @Valid @RequestParam("id") Long id,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
         try {
-            var recipients = userRepo.getPastRecipients(id);
+            int currentPage = page.orElse(1);
+            int pageSize = size.orElse(provider.getPageSize());
+            Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+            Page<RecipientDto> myRecipientPage = userRepo.getPastRecipients(id, pageable);
+            int totalPages = myRecipientPage.getTotalPages();
+            List<Integer> pageNumbers = null;
+            
+            if (totalPages > 0) {
+                pageNumbers = IntStream.rangeClosed(1, totalPages)
+                        .boxed()
+                        .collect(Collectors.toList());
+            }
 
-            return ResponseEntity.ok(new ApiResp(null,
-                    recipients));
+            var result = new SearchResult<RecipientDto>(myRecipientPage,
+                    myRecipientPage.getNumber() + 1,
+                    pageSize,
+                    totalPages,
+                    pageNumbers
+            );
+            return ResponseEntity.ok(new ApiResp(Feedback.MY_RECIPIENTS_FOUND,
+                    result));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
