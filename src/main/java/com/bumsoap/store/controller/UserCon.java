@@ -143,7 +143,7 @@ public class UserCon {
             Page<RecipientDto> myRecipientPage = userRepo.getPastRecipients(id, pageable);
             int totalPages = myRecipientPage.getTotalPages();
             List<Integer> pageNumbers = null;
-            
+
             if (totalPages > 0) {
                 pageNumbers = IntStream.rangeClosed(1, totalPages)
                         .boxed()

@@ -3,6 +3,8 @@ package com.bumsoap.store.repository;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -70,5 +72,6 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     where bu.id = :id
                     order by bo.order_time desc
                     """)
-    List<RecipientDto> getPastRecipients(@Param("id") long id);
+    Page<RecipientDto> getPastRecipients(@Param("id") long id,
+                                         Pageable pageable);
 }

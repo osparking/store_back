@@ -20,6 +20,7 @@ public class Feedback {
     public static final String CUR_PASSWORD_WRONG = "기존 비밀번호 불일치";
     public static final String PASSWORD_CHANGED = "비밀번호 변경 완료";
     public static final String NOT_QUALIFIED_FOR = "당신에게 접근권없는 유저ID:";
+    public static final String MY_RECIPIENTS_FOUND = "내 수신처 페이지 발견됨";
 
     /********************** 사진 처리 관련 메시지 ********************/
     public static final String PHOTO_UPLOAD_OK = "사진 올리기 성공";
