@@ -62,15 +62,11 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     @Query(nativeQuery = true,
             value = """
-                    SELECT distinct r.full_name, r.mb_phone, ab.zipcode,
-                    	r.doro_zbun, ab.road_address,
-                    	ab.z_bun_address, r.address_detail
-                    FROM bs_user bu
-                    join bs_order bo on bo.user_id = bu.id
-                    join recipient r on r.id = bo.recipient_id
-                    join address_basis ab on ab.id = r.addr_basis_id
-                    where bu.id = :id
-                    order by bo.order_time desc;
+                    SELECT mr.full_name, mr.mb_phone, mr.zipcode,
+                        mr.doro_zbun, mr.road_address,
+                        mr.z_bun_address,mr.address_detail
+                    FROM my_recipients mr
+                    WHERE mr.user_id = :id;
                     """)
     Page<RecipientDto> getPastRecipients(@Param("id") long id,
                                          Pageable pageable);
