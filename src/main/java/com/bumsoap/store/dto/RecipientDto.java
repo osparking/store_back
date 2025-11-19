@@ -1,7 +1,6 @@
 package com.bumsoap.store.dto;
 
 import com.bumsoap.store.util.DoroZbun;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
