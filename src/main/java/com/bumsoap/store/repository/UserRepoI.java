@@ -62,7 +62,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     @Query(nativeQuery = true,
             value = """
-                    SELECT r.full_name, r.mb_phone, ab.zipcode,
+                    SELECT distinct r.full_name, r.mb_phone, ab.zipcode,
                     	r.doro_zbun, ab.road_address,
                     	ab.z_bun_address, r.address_detail
                     FROM bs_user bu
@@ -70,7 +70,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     join recipient r on r.id = bo.recipient_id
                     join address_basis ab on ab.id = r.addr_basis_id
                     where bu.id = :id
-                    order by bo.order_time desc
+                    order by bo.order_time desc;
                     """)
     Page<RecipientDto> getPastRecipients(@Param("id") long id,
                                          Pageable pageable);
