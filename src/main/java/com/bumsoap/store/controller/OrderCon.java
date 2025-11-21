@@ -132,6 +132,21 @@ public class OrderCon {
         }
     }
 
+    @GetMapping(UrlMap.ORDER_PAGE)
+    public ResponseEntity<ApiResp> getBsRows(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
+
+        try {
+            var result = orderServ.serviceOrderPage(page, size);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.ORDER_PAGE_FOUND, result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.ORDER_PAGE_FAILURE, null));
+        }
+    }
+
     @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> addOrder(
             @RequestBody AddOrderReq addOrderReq) {

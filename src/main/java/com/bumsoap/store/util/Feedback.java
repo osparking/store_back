@@ -103,4 +103,6 @@ public class Feedback {
     public static final String DELIVERY_FEE_FOUND = "배송비 계산 성공";
     public static final String MY_ORDERS_FOUND = "내 주문 목록 발견";
     public static final String MY_ORDERS_FAILURE = "주문 목록 검색 실패";
+    public static final String ORDER_PAGE_FOUND = "주문 페이지 발견";
+    public static final String ORDER_PAGE_FAILURE = "주문 페이지 읽기 실패";
 }
