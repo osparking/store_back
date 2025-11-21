@@ -1,6 +1,7 @@
 package com.bumsoap.store.service.order;
 
 import com.bumsoap.store.dto.MyOrderDto;
+import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
@@ -72,6 +73,28 @@ public class OrderServ implements OrderServI {
     var result = new SearchResult<MyOrderDto>(myOrderPage,
             myOrderPage.getNumber() + 1,
             pageSize,
+            totalPages,
+            pageNumbers
+    );
+    return result;
+  }
+
+  @Override
+  public SearchResult<OrderPageRow> serviceOrderPage(Integer page, Integer size) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    Page<OrderPageRow> myOrderPage = orderRepo.findOrderPage(pageable);
+    int totalPages = myOrderPage.getTotalPages();
+
+    List<Integer> pageNumbers = null;
+    if (totalPages > 0) {
+      pageNumbers = IntStream.rangeClosed(1, totalPages)
+              .boxed()
+              .collect(Collectors.toList());
+    }
+
+    var result = new SearchResult<OrderPageRow>(myOrderPage,
+            myOrderPage.getNumber() + 1,
+            size,
             totalPages,
             pageNumbers
     );
