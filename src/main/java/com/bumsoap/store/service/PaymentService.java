@@ -5,6 +5,7 @@ import com.bumsoap.store.exception.PaymentArgException;
 import com.bumsoap.store.model.TossPayment;
 import com.bumsoap.store.service.order.OrderServ;
 import com.bumsoap.store.util.CardInfo;
+import com.bumsoap.store.util.OrderStatus;
 import com.bumsoap.store.util.TossPaymentMethod;
 import com.bumsoap.store.util.TossPaymentStatus;
 import jakarta.persistence.EntityManager;
@@ -37,7 +38,8 @@ public class PaymentService {
          * 일단 orderId 를 사용하여 bsOrder 객체를 읽고, 이를 배정한다.
          */
         String orderId = (String) paymentJSON.get("orderId");
-        payment.setOrder(orderService.getOrderByOrderId(orderId));
+        var soapOrder = orderService.getOrderByOrderId(orderId);
+        payment.setOrder(soapOrder);
 
         payment.setSuppliedAmount(BigDecimal.valueOf(
                 (Long) paymentJSON.get("suppliedAmount")));
@@ -80,6 +82,9 @@ public class PaymentService {
 
         try {
             entityManager.persist(payment);
+            if (status == TossPaymentStatus.DONE) {
+                soapOrder.setOrderStatus(OrderStatus.PAID);
+            }
         } catch (IllegalArgumentException e) {
             throw new PaymentArgException(e.getMessage() + " - 결제정보");
         } finally {
