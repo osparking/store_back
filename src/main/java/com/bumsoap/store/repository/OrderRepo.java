@@ -1,6 +1,7 @@
 package com.bumsoap.store.repository;
 
 import com.bumsoap.store.dto.MyOrderDto;
+import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.model.BsOrder;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,20 @@ import java.util.Optional;
 
 public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     Optional<BsOrder> findByOrderId(String orderId);
+
+    @Query(value = """
+            select bo.order_id, bo.order_time,
+            	bo.order_status, bo.order_name,
+            	bu.full_name as customer,
+            	r.full_name as recipient,
+            	bo.user_id, bo.payment
+            from bs_order bo
+            join bs_user bu on bu.id = bo.user_id
+            join recipient r on r.id = bo.recipient_id
+            where bo.order_status != 0
+            order by bo.order_time desc
+            """, nativeQuery = true)
+    Page<OrderPageRow> findOrderPage(Pageable pageable);
 
     @Query(value = """
             SELECT
