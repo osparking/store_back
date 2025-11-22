@@ -100,7 +100,7 @@ public class PaymentCon {
         var payment = paymentService.createPayment(response);
         if (payment.getOrder().getOrderStatus() == OrderStatus.PAID) {
             // 직원에게 이메일(worker1@email.com) 전송
-            sendOrderPaidEmail("jbpark03@naver.com",
+            sendOrderPaidEmail("jbpark103@hanmail.net",
                     payment.getOrder().getOrderName(),
                     BsUtils.getMoneyString(payment.getTotalAmount()));
 
@@ -139,7 +139,7 @@ public class PaymentCon {
                     <li>주문명칭: %s</li>
                     <li>결제금액: %s원</li>
                 </ul>
-                <br>- 범이비누 등록 서비스""";
+                <br>- 범이비누 주문/결제 체계""";
 
         String content = String.format(EMAIL_TEMPLATE,
                 user.getFullName(), orderName, payment);
