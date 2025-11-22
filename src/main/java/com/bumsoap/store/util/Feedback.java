@@ -105,4 +105,5 @@ public class Feedback {
     public static final String MY_ORDERS_FAILURE = "주문 목록 검색 실패";
     public static final String ORDER_PAGE_FOUND = "주문 페이지 발견";
     public static final String ORDER_PAGE_FAILURE = "주문 페이지 읽기 실패";
+    public static final String ORDER_STATUS_LIST = "주문 상태 라벨 목록";
 }

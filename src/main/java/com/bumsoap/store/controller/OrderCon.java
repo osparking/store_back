@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
@@ -145,6 +147,15 @@ public class OrderCon {
             return ResponseEntity.internalServerError().body(
                     new ApiResp(Feedback.ORDER_PAGE_FAILURE, null));
         }
+    }
+
+    @GetMapping(UrlMap.STATUS_LIST)
+    public ResponseEntity<ApiResp> getStatusList() {
+        List<String> labels = Arrays.stream(OrderStatus.values())
+                .map(OrderStatus::toString)
+                .toList();
+        return ResponseEntity.ok(
+                new ApiResp(Feedback.ORDER_STATUS_LIST, labels));
     }
 
     @PostMapping(UrlMap.ADD)
