@@ -29,7 +29,7 @@ public class PaymentService {
     private OrderServ orderService;
 
     public TossPayment createPayment(JSONObject paymentJSON)
-            throws OrderIdNotFoundEx {
+            throws OrderIdNotFoundEx, PaymentArgException {
 
         var payment = new TossPayment();
         payment.setPaymentKey((String) paymentJSON.get("paymentKey"));
@@ -87,9 +87,8 @@ public class PaymentService {
             }
         } catch (IllegalArgumentException e) {
             throw new PaymentArgException(e.getMessage() + " - 결제정보");
-        } finally {
-            return null;
         }
+        return payment;
     }
 
     private CardInfo getCardInfo(JSONObject cardJSON) {
