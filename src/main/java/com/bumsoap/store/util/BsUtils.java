@@ -3,6 +3,9 @@ package com.bumsoap.store.util;
 import com.bumsoap.store.security.user.BsUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -68,5 +71,22 @@ public class BsUtils {
         Long loginId = ((BsUserDetails)auth.getPrincipal()).getId();
 
         return isAdmin || Objects.equals(writerId, loginId);
+    }
+
+    public static String getMoneyString(BigDecimal money) {
+        DecimalFormat formatter =
+                (DecimalFormat) DecimalFormat.getInstance(Locale.KOREA);
+
+        // Customize the grouping separator (optional,
+        // if you want a different one than the locale default)
+        DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
+        symbols.setGroupingSeparator(','); // Set the thousands separator
+        formatter.setDecimalFormatSymbols(symbols);
+
+        // Set whether grouping (thousands separators) should be used
+        formatter.setGroupingUsed(true);
+
+        // Format the BigDecimal to a String
+        return formatter.format(money);
     }
 }
