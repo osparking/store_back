@@ -2,14 +2,20 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.CheckAmountResult;
 import com.bumsoap.store.dto.OrderInfo;
+import com.bumsoap.store.email.EmailManager;
+import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.request.ConfirmPaymentReq;
 import com.bumsoap.store.request.SaveAmountReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.PaymentService;
 import com.bumsoap.store.service.order.OrderServI;
+import com.bumsoap.store.service.user.UserServInt;
+import com.bumsoap.store.util.BsUtils;
+import com.bumsoap.store.util.OrderStatus;
 import com.bumsoap.store.util.UrlMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -44,6 +50,12 @@ public class PaymentCon {
 
     @Autowired
     private OrderServI orderServ;
+
+    @Autowired
+    private EmailManager emailManager;
+
+    @Autowired
+    private UserServInt userServ;
 
     @PostMapping("/saveAmount")
     public ResponseEntity<?> saveAmountTemporarily(
@@ -85,7 +97,14 @@ public class PaymentCon {
                 System.getenv("WIDGET_SECRET_KEY"),
                 "https://api.tosspayments.com/v1/payments/confirm");
 
-        paymentService.createPayment(response);
+        var payment = paymentService.createPayment(response);
+        if (payment.getOrder().getOrderStatus() == OrderStatus.PAID) {
+            // 직원에게 이메일(worker1@email.com) 전송
+            sendOrderPaidEmail("jbpark03@naver.com",
+                    payment.getOrder().getOrderName(),
+                    BsUtils.getMoneyString(payment.getTotalAmount()));
+
+        }
 
         int statusCode = response.containsKey("error") ? 400:200;
 
@@ -107,6 +126,27 @@ public class PaymentCon {
         }
     }
 
+    private void sendOrderPaidEmail(String email,
+                                    String orderName, String payment)
+            throws MessagingException, UnsupportedEncodingException {
+        BsUser user = userServ.getByEmail(email);
+        String subject = "비누 주문/결제완료 안내";
+        String senderName = "범이비누";
+        String EMAIL_TEMPLATE = """
+                <p>안녕하세요? '%s' 발주 담당 직원님</p>
+                <p>범이비누 주문 건을 알려드립니다. 주문 내역:</p>
+                <ul>
+                    <li>주문명칭: %s</li>
+                    <li>결제금액: %s원</li>
+                </ul>
+                <br>- 범이비누 등록 서비스""";
+
+        String content = String.format(EMAIL_TEMPLATE,
+                user.getFullName(), orderName, payment);
+
+        emailManager.sendMail(user.getEmail(), subject, senderName,
+                content);
+    }
 
     private JSONObject sendRequest(String confirmStr, String secretKey,
                                    String urlString) throws IOException {
