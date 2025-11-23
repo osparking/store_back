@@ -118,6 +118,19 @@ public class OrderCon {
         }
     }
 
+    @GetMapping(UrlMap.GET_ORDER_DETAIL)
+    public ResponseEntity<ApiResp> getOrderDetails(@PathVariable Long id) {
+        try {
+            // id 로 주문을 읽고 그 주문을 낸 유저의 id 를 uid 로 저장
+            var orderDetailDto = orderServ.serviceOrderDetail(id);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.ORDER_FOUND, orderDetailDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @GetMapping(UrlMap.MY_ROWS)
     public ResponseEntity<ApiResp> getMyRows(
             @RequestParam("userId") int userId,

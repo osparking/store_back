@@ -87,6 +87,7 @@ public class UrlMap {
     public static final String ADD_ORDER_ITEM = "/item/add";
     public static final String ORDER_PAGE = "/order_page";
     public static final String STATUS_LIST = "/status_list";
+    public static final String GET_ORDER_DETAIL = "/{id}/get_details";
 
     /*== 카트 관련 항목 시작 ================================= */
     public static final String CART = API + "/cart";
