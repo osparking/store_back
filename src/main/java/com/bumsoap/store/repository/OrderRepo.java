@@ -1,6 +1,7 @@
 package com.bumsoap.store.repository;
 
 import com.bumsoap.store.dto.MyOrderDto;
+import com.bumsoap.store.dto.OrderField;
 import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.model.BsOrder;
 import jakarta.transaction.Transactional;
@@ -15,6 +16,22 @@ import java.util.Optional;
 
 public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     Optional<BsOrder> findByOrderId(String orderId);
+
+    @Query(value = """
+            select bo.id, bo.order_id, bo.order_time,
+                    bo.order_status, bo.order_name,
+                    bu.full_name as customer,
+                    r.full_name as recipient,
+                    bo.user_id, bo.payment,
+                    ab.zipcode, ab.road_address,
+                    r.address_detail, r.mb_phone
+            from bs_order bo
+            join bs_user bu on bu.id = bo.user_id
+            join recipient r on r.id = bo.recipient_id
+            join address_basis ab on ab.id = r.addr_basis_id
+            where bo.id = :id;
+            """, nativeQuery = true)
+    Optional<OrderField> findOrderDetail(@Param("id") Long id);
 
     @Query(value = """
             select bo.id, bo.order_id, bo.order_time,
