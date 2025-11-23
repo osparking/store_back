@@ -1,7 +1,6 @@
 package com.bumsoap.store.dto;
 
 import com.bumsoap.store.util.OrderStatus;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class OrderPageRow {
+  private Long id;
   private String orderId;
   private LocalDateTime orderTime;
   private OrderStatus orderStatus;
@@ -21,10 +21,11 @@ public class OrderPageRow {
   private Long user_id;
   private BigDecimal payment;
 
-  public OrderPageRow(String orderId, Timestamp orderTime,
+  public OrderPageRow(Long id, String orderId, Timestamp orderTime,
                       int orderStatus, String orderName,
                       String customer, String recipient,
                       Long user_id, BigDecimal payment) {
+    this.id = id;
     this.orderId = orderId;
     this.orderTime = orderTime.toLocalDateTime();
     this.orderStatus = OrderStatus.values()[orderStatus];
