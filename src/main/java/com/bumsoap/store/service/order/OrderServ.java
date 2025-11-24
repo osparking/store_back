@@ -1,9 +1,6 @@
 package com.bumsoap.store.service.order;
 
-import com.bumsoap.store.dto.MyOrderDto;
-import com.bumsoap.store.dto.OrderDetailDto;
-import com.bumsoap.store.dto.OrderPageRow;
-import com.bumsoap.store.dto.SearchResult;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
@@ -61,7 +58,12 @@ public class OrderServ implements OrderServI {
         var orderItems = orderItemRepo.findByOrderId(orderId);
         var orderDto = orderInfoDto.orElseThrow(
                 () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + orderId));
-        return new OrderDetailDto(orderDto, orderItems);
+
+        int totalSoapCount = 0;
+        for (var item : orderItems) {
+            totalSoapCount += item.getCount();
+        }
+        return new OrderDetailDto(orderDto, orderItems, totalSoapCount);
     }
 
     @Override

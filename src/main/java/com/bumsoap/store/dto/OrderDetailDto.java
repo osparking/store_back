@@ -12,4 +12,5 @@ import java.util.List;
 public class OrderDetailDto {
     private OrderField order;
     private List<ItemsField> items;
+    private int totalSoapCount;
 }
