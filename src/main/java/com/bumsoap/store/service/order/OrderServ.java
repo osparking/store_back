@@ -1,6 +1,9 @@
 package com.bumsoap.store.service.order;
 
-import com.bumsoap.store.dto.*;
+import com.bumsoap.store.dto.MyOrderDto;
+import com.bumsoap.store.dto.OrderDetailDto;
+import com.bumsoap.store.dto.OrderPageRow;
+import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
@@ -12,10 +15,7 @@ import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
-import com.bumsoap.store.util.BsParameters;
-import com.bumsoap.store.util.Feedback;
-import com.bumsoap.store.util.OrderIdGenerator;
-import com.bumsoap.store.util.SubTotaler;
+import com.bumsoap.store.util.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -51,6 +51,13 @@ public class OrderServ implements OrderServI {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Override
+    @Transactional
+    public boolean updateOrderStatus(Long id, OrderStatus status) {
+        int updateCount = orderRepo.updateOrderStatusByOrderId(id, status);
+        return (updateCount==1);
+    }
 
     @Override
     public OrderDetailDto serviceOrderDetail(Long orderId) {

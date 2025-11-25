@@ -5,6 +5,7 @@ import com.bumsoap.store.dto.OrderDetailDto;
 import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.util.OrderStatus;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import java.util.Optional;
 public interface OrderServI {
     SearchResult<OrderPageRow> serviceOrderPage(Integer page,
                                                 Integer size);
+
+    boolean updateOrderStatus(Long id, OrderStatus status);
 
     OrderDetailDto serviceOrderDetail(Long orderId);
 

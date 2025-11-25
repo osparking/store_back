@@ -2,7 +2,6 @@ package com.bumsoap.store.request;
 
 import com.bumsoap.store.util.OrderStatus;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class OrderStatusUpdateReq {
