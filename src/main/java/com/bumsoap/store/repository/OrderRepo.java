@@ -4,10 +4,12 @@ import com.bumsoap.store.dto.MyOrderDto;
 import com.bumsoap.store.dto.OrderField;
 import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.util.OrderStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,6 +18,14 @@ import java.util.Optional;
 
 public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     Optional<BsOrder> findByOrderId(String orderId);
+
+    @Modifying
+    @Query(value = """
+            UPDATE BsOrder o SET o.orderStatus = :status
+            WHERE o.id = :id
+            """)
+    int updateOrderStatusByOrderId(@Param("id") Long id,
+                                   @Param("status") OrderStatus status);
 
     @Query(value = """
             select bo.id, bo.order_id, bo.order_time,
