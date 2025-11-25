@@ -11,6 +11,7 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.AddOrderReq;
 import com.bumsoap.store.request.AddrBasisAddReq;
 import com.bumsoap.store.request.DeliveryFeeReq;
+import com.bumsoap.store.request.OrderStatusUpdateReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
@@ -38,6 +39,25 @@ public class OrderCon {
     private final ObjMapper objMapper;
     private final OrderServI orderServ;
     private final UserRepoI userRepo;
+
+    @PatchMapping(UrlMap.UPDATE_STATUS)
+    public ResponseEntity<ApiResp> update_status(
+            @RequestBody OrderStatusUpdateReq updateReq) {
+        try {
+            var result = orderServ.updateOrderStatus(
+                    updateReq.getId(), updateReq.getStatus());
+            if (result) {
+                return ResponseEntity.ok(new ApiResp(
+                        Feedback.ORDER_STATUS_UPDATED, null));
+            } else {
+                return ResponseEntity.ok(new ApiResp(
+                        Feedback.STATUS_UPDATED_FAILED, null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @PostMapping(UrlMap.GET_DELIVERY_FEE)
     public ResponseEntity<ApiResp> findDeliveryFee(

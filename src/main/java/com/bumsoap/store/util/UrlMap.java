@@ -84,6 +84,7 @@ public class UrlMap {
     public static final String ADDRESS_SEARCH = "/address/search";
     public static final String SAVE_RECIPIENT = "/save_recipient";
     public static final String UPDATE2 = "/update";
+    public static final String UPDATE_STATUS = "/update_status";
     public static final String ADD_ORDER_ITEM = "/item/add";
     public static final String ORDER_PAGE = "/order_page";
     public static final String STATUS_LIST = "/status_list";
