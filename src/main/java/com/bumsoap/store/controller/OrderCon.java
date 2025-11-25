@@ -48,10 +48,10 @@ public class OrderCon {
                     updateReq.getId(), updateReq.getStatus());
             if (result) {
                 return ResponseEntity.ok(new ApiResp(
-                        Feedback.ORDER_STATUS_UPDATED, null));
+                        Feedback.ORDER_STATUS_UPDATED, result));
             } else {
-                return ResponseEntity.ok(new ApiResp(
-                        Feedback.STATUS_UPDATED_FAILED, null));
+                return ResponseEntity.status(BAD_REQUEST).body(
+                        new ApiResp(Feedback.STATUS_UPDATED_FAILED, result));
             }
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
