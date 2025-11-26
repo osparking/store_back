@@ -8,10 +8,7 @@ import com.bumsoap.store.model.AddressBasis;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.Recipient;
 import com.bumsoap.store.repository.UserRepoI;
-import com.bumsoap.store.request.AddOrderReq;
-import com.bumsoap.store.request.AddrBasisAddReq;
-import com.bumsoap.store.request.DeliveryFeeReq;
-import com.bumsoap.store.request.OrderStatusUpdateReq;
+import com.bumsoap.store.request.*;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
@@ -52,6 +49,25 @@ public class OrderCon {
             } else {
                 return ResponseEntity.status(BAD_REQUEST).body(
                         new ApiResp(Feedback.STATUS_UPDATED_FAILED, result));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
+    @PatchMapping(UrlMap.UPDATE_WAYBILL_NO)
+    public ResponseEntity<ApiResp> update_waybill_no(
+            @RequestBody UpdateWaybillNoReq updateReq) {
+        try {
+            var result = orderServ.updateWaybillNoOfId(
+                    updateReq.getId(), updateReq.getWaybillNo());
+            if (result) {
+                return ResponseEntity.ok(new ApiResp(
+                        Feedback.WAYBILL_NO_STORED, result));
+            } else {
+                return ResponseEntity.status(BAD_REQUEST).body(new ApiResp
+                        (Feedback.WAYBILL_NO_STORE_FAILED, result));
             }
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)

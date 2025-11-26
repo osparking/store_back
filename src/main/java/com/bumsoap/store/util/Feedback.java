@@ -107,5 +107,7 @@ public class Feedback {
     public static final String ORDER_PAGE_FAILURE = "주문 페이지 읽기 실패";
     public static final String ORDER_STATUS_LIST = "주문 상태 라벨 목록";
     public static final String ORDER_STATUS_UPDATED = "주문 상태 갱신됨";
+    public static final String WAYBILL_NO_STORED = "운송장번호 저장됨";
     public static final String STATUS_UPDATED_FAILED = "주문 상태 갱신 실패";
+    public static final String WAYBILL_NO_STORE_FAILED = "운송장번호 저장 실패";
 }
