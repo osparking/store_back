@@ -12,6 +12,7 @@ import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
+import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
@@ -61,9 +62,12 @@ public class OrderServ implements OrderServI {
 
     @Transactional
     @Override
-    public boolean updateWaybillNoOfId(Long id, String waybillNo) {
-        int updateCount = orderRepo.updateWaybillNoById(id, waybillNo);
-        return (updateCount==1);
+    public boolean updateWaybillNoOfId(UpdateWaybillNoReq request) {
+        int count1 = orderRepo.updateWaybillNoById(request.getId(),
+                request.getWaybillNo());
+        int count2 = orderRepo.updateOrderStatusByOrderId(request.getId(),
+                request.getStatus());
+        return (count1==1 && count2 ==1);
     }
 
     @Override

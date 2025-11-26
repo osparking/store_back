@@ -5,6 +5,7 @@ import com.bumsoap.store.dto.OrderDetailDto;
 import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.util.OrderStatus;
 import jakarta.transaction.Transactional;
 
@@ -18,7 +19,7 @@ public interface OrderServI {
     boolean updateOrderStatus(Long id, OrderStatus status);
 
     @Transactional
-    boolean updateWaybillNoOfId(Long id, String waybillNo);
+    boolean updateWaybillNoOfId(UpdateWaybillNoReq req);
 
     OrderDetailDto serviceOrderDetail(Long orderId);
 
