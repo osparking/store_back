@@ -55,4 +55,7 @@ public class BsOrder {
 
   @OneToOne(mappedBy = "order")
   private TossPayment tossPayment;
+
+  @Column(unique = true)
+  private String waybillNo;
 }
