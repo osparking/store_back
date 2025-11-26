@@ -59,6 +59,13 @@ public class OrderServ implements OrderServI {
         return (updateCount==1);
     }
 
+    @Transactional
+    @Override
+    public boolean updateWaybillNoOfId(Long id, String waybillNo) {
+        int updateCount = orderRepo.updateWaybillNoById(id, waybillNo);
+        return (updateCount==1);
+    }
+
     @Override
     public OrderDetailDto serviceOrderDetail(Long orderId) {
         var orderInfoDto = orderRepo.findOrderDetail(orderId);

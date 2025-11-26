@@ -6,6 +6,7 @@ import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.util.OrderStatus;
+import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -15,6 +16,9 @@ public interface OrderServI {
                                                 Integer size);
 
     boolean updateOrderStatus(Long id, OrderStatus status);
+
+    @Transactional
+    boolean updateWaybillNoOfId(Long id, String waybillNo);
 
     OrderDetailDto serviceOrderDetail(Long orderId);
 
