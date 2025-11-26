@@ -27,6 +27,14 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     int updateOrderStatusByOrderId(@Param("id") Long id,
                                    @Param("status") OrderStatus status);
 
+    @Modifying
+    @Query(value = """
+            UPDATE BsOrder o SET o.waybillNo = :waybillNo
+            WHERE o.id = :id
+            """)
+    int updateWaybillNoById(@Param("id") Long id,
+                                   @Param("waybillNo") String waybillNo);
+
     @Query(value = """
             select bo.id, bo.order_id, bo.order_time,
                     bo.order_status, bo.order_name,
