@@ -60,8 +60,7 @@ public class OrderCon {
     public ResponseEntity<ApiResp> update_waybill_no(
             @RequestBody UpdateWaybillNoReq updateReq) {
         try {
-            var result = orderServ.updateWaybillNoOfId(
-                    updateReq.getId(), updateReq.getWaybillNo());
+            var result = orderServ.updateWaybillNoOfId(updateReq);
             if (result) {
                 return ResponseEntity.ok(new ApiResp(
                         Feedback.WAYBILL_NO_STORED, result));
