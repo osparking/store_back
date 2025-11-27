@@ -7,7 +7,6 @@ import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.request.ConfirmPaymentReq;
 import com.bumsoap.store.request.SaveAmountReq;
 import com.bumsoap.store.response.ApiResp;
-import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.PaymentService;
 import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.service.user.UserServInt;
@@ -37,7 +36,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Base64;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(UrlMap.PAYMENTS)
@@ -114,12 +112,8 @@ public class PaymentCon {
             logger.info("'{}'가 결제하지 않아 삭제된 주문 수: {}",
                     email, del);
 
-            var userDetails = (BsUserDetails) authentication.getPrincipal();
-            var myOrdersPage = orderServ.serviceMyOrders(userDetails.getId(),
-                    Optional.empty(), Optional.empty());
-
             return ResponseEntity.status(statusCode).body(
-                    new ApiResp("나의 주문 페이지", myOrdersPage));
+                    new ApiResp("나의 주문 페이지", null));
         } else {
             return ResponseEntity.status(statusCode).body(
                     new ApiResp("결제 확정 실패", null));
