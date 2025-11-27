@@ -40,7 +40,7 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
                     bo.order_status, bo.order_name,
                     bu.full_name as customer,
                     r.full_name as recipient,
-                    bo.user_id, bo.payment,
+                    bo.user_id, bo.payment, bo.waybill_no,
                     ab.zipcode, ab.road_address,
                     r.address_detail, r.mb_phone
             from bs_order bo
