@@ -8,16 +8,17 @@ import java.sql.Timestamp;
 
 @Getter
 @NoArgsConstructor
-public class OrderField extends OrderPageRow{
+public class OrderField extends OrderPageRow {
     private String zipcode;
     private String roadAddress;
     private String addressDetail;
     private String mbPhone;
+    private String waybillNo;
 
     public OrderField(Long id, String orderId, Timestamp orderTime,
                       int orderStatus, String orderName, String customer,
                       String recipient, Long user_id, BigDecimal payment,
-                      String zipcode, String roadAddress,
+                      String waybillNo, String zipcode, String roadAddress,
                       String addressDetail, String mbPhone) {
         super(id, orderId, orderTime, orderStatus, orderName, customer,
                 recipient, user_id, payment);
@@ -25,5 +26,6 @@ public class OrderField extends OrderPageRow{
         this.roadAddress = roadAddress;
         this.addressDetail = addressDetail;
         this.mbPhone = mbPhone;
+        this.waybillNo = waybillNo;
     }
 }
