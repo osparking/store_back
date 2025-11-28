@@ -8,6 +8,7 @@ public enum OrderStatus {
   COLLECTED("배송기사수거"),
   IN_DELIVERY("배송 중"),
   DELIVERED("배송 완료"),
+  RECEIVED("수취 확인"),
   PURCHASE_CONFIRMED("구매 확정"),
   CANCELLED("취소됨"),
   REFUNDED("환불됨");
