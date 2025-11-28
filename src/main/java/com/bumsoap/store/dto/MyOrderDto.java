@@ -16,15 +16,17 @@ public class MyOrderDto {
     private String recipientName;
     private BigDecimal paymentAmount;
     private String receiptUrl;
+    private Long id;
 
     public MyOrderDto(Timestamp payTime, String orderId,
                       String orderName, String recipientName,
-                      BigDecimal paymentAmount, String receiptUrl) {
+                      BigDecimal paymentAmount, String receiptUrl, Long id) {
         this.paymentTime = payTime.toLocalDateTime();
         this.orderId = orderId;
         this.orderName = orderName;
         this.recipientName = recipientName;
         this.paymentAmount = paymentAmount;
         this.receiptUrl = receiptUrl;
+        this.id = id;
     }
 }
