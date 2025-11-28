@@ -72,7 +72,7 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
                 bo.order_name as orderName,
                 r.full_name as recipientName,
                 bo.payment as paymentAmount,
-                tp.receipt_url as receiptUrl
+                tp.receipt_url as receiptUrl, bo.id
             FROM bs_order bo
             INNER JOIN toss_payment tp ON bo.order_id = tp.order_id
             INNER JOIN recipient r ON bo.recipient_id = r.id
