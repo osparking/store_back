@@ -1,14 +1,12 @@
 package com.bumsoap.store.security.jwt;
 
 import com.bumsoap.store.security.user.BsUserDetails;
-import com.bumsoap.store.util.LoginSource;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -47,6 +45,7 @@ public class JwtUtilBean {
                 .claim("id", userDetails.getId())
                 .claim("email", userDetails.getEmail())
                 .claim("fullName", userDetails.getFullName())
+                .claim("mbPhone", userDetails.getMbPhone())
                 .claim("roles", roles)
                 .claim("signUpMethod",userDetails.getSignUpMethod())
                 .claim("loginMethod", userDetails.getLoginMethod())
