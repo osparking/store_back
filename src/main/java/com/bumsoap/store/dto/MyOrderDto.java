@@ -32,4 +32,8 @@ public class MyOrderDto {
         this.receiptUrl = receiptUrl;
         this.id = id;
     }
+
+    public String getOrderStatus() {
+        return orderStatus.label;
+    }
 }
