@@ -172,7 +172,7 @@ public class OAuth2LoginSuccessHandler
     BsUserDetails userDetails = new BsUserDetails(
         user.getId(), user.getEmail(), null, user.getFullName(),
         true, authorities, signUpSource.toString(),
-        loginSource.getLabel(), user.isTwoFaEnabled());
+        loginSource.getLabel(), user.isTwoFaEnabled(), user.getMbPhone());
 
     this.setAlwaysUseDefaultTargetUrl(true);
 
