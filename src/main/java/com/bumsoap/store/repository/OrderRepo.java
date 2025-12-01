@@ -70,6 +70,7 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
                 tp.approved_at as paymentTime,
                 bo.order_id as orderId,
                 bo.order_name as orderName,
+                bo.order_status,
                 r.full_name as recipientName,
                 bo.payment as paymentAmount,
                 tp.receipt_url as receiptUrl, bo.id
