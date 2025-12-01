@@ -34,6 +34,7 @@ public class BsUserDetails implements UserDetails {
     private String signUpMethod;
     private String loginMethod;
     private boolean twoFaAEnabled;
+    private String mbPhone;
 
     public static BsUserDetails buildUserDetails(BsUser user) {
         List<GrantedAuthority> authorities = user.getRoles()
@@ -43,7 +44,7 @@ public class BsUserDetails implements UserDetails {
         return new BsUserDetails(user.getId(), user.getEmail(),
             user.getPassword(), user.getFullName(), user.isEnabled(),
             authorities, user.getSignUpMethod(), null,
-            user.isTwoFaEnabled());
+            user.isTwoFaEnabled(), user.getMbPhone());
     }
 
     /**
