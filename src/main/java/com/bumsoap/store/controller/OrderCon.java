@@ -10,6 +10,7 @@ import com.bumsoap.store.model.Recipient;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.*;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.util.BsUtils;
@@ -19,6 +20,8 @@ import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -36,6 +39,26 @@ public class OrderCon {
     private final ObjMapper objMapper;
     private final OrderServI orderServ;
     private final UserRepoI userRepo;
+
+    @PatchMapping(UrlMap.UPDATE_REVIEW)
+    public ResponseEntity<ApiResp> update_review(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody ReviewUpdateReq updateReq) {
+        try {
+            var user = (BsUserDetails) userDetails;
+            var result = orderServ.updateReview(updateReq, user.getId());
+            if (result) {
+                return ResponseEntity.ok(new ApiResp(
+                        Feedback.REVIEW_UPDATED, result));
+            } else {
+                return ResponseEntity.status(BAD_REQUEST).body(
+                        new ApiResp(Feedback.REVIEW_UPDATE_FAILED, result));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @PatchMapping(UrlMap.UPDATE_STATUS)
     public ResponseEntity<ApiResp> update_status(
