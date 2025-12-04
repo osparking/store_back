@@ -20,6 +20,10 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     Optional<BsOrder> findByOrderId(String orderId);
 
     @Modifying
+    @Query("UPDATE BsOrder o SET o.review = :review WHERE o.id = :id")
+    int updateReviewById(@Param("id") Long id, @Param("review") String review);
+
+    @Modifying
     @Query(value = """
             UPDATE BsOrder o SET o.orderStatus = :status
             WHERE o.id = :id
