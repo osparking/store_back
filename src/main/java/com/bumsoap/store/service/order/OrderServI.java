@@ -5,6 +5,7 @@ import com.bumsoap.store.dto.OrderDetailDto;
 import com.bumsoap.store.dto.OrderPageRow;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.util.OrderStatus;
 import jakarta.transaction.Transactional;
@@ -15,6 +16,9 @@ import java.util.Optional;
 public interface OrderServI {
     SearchResult<OrderPageRow> serviceOrderPage(Integer page,
                                                 Integer size);
+
+    @Transactional
+    boolean updateReview(ReviewUpdateReq reqeust, Long userId);
 
     boolean updateOrderStatus(Long id, OrderStatus status);
 

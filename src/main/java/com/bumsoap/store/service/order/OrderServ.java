@@ -7,11 +7,13 @@ import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
+import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
+import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
@@ -52,6 +54,22 @@ public class OrderServ implements OrderServI {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Transactional
+    @Override
+    public boolean updateReview(ReviewUpdateReq reqeust, Long userId) {
+        Long orderId = reqeust.getId();
+        var theOrder = orderRepo.findById(orderId).orElseThrow(
+                () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
+        if (userId==theOrder.getUser().getId()) {
+            int updateCount = orderRepo.updateReviewById(orderId,
+                    reqeust.getReview());
+            return (updateCount==1);
+        } else {
+            throw new UnauthorizedException(
+                    Feedback.NOT_BELONG_TO_YOU + orderId);
+        }
+    }
 
     @Override
     @Transactional
