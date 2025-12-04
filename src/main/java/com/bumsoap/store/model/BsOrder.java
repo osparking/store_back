@@ -58,4 +58,7 @@ public class BsOrder {
 
   @Column(unique = true)
   private String waybillNo;
+
+  @Lob
+  private String review;
 }
