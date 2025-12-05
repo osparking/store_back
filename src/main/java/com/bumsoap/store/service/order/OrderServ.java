@@ -64,7 +64,12 @@ public class OrderServ implements OrderServI {
         if (userId==theOrder.getUser().getId()) {
             int updateCount = orderRepo.updateReviewById(orderId,
                     reqeust.getReview());
-            return (updateCount==1);
+            var nextStatus = reqeust.getReview()==null ?
+                    OrderStatus.PURCHASE_CONFIRMED:OrderStatus.REVIEWED;
+            int statusCount = orderRepo.updateOrderStatusByOrderId(orderId,
+                    nextStatus);
+
+            return (updateCount==1 && statusCount==1);
         } else {
             throw new UnauthorizedException(
                     Feedback.NOT_BELONG_TO_YOU + orderId);
