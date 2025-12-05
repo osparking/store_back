@@ -10,7 +10,7 @@ public enum OrderStatus {
   DELIVERED("배송 완료"),
   RECEIVED("수취 확인"),
   PURCHASE_CONFIRMED("구매 확정"),
-  REVIEWED("후기 존재"),
+  REVIEWED("후기 남김"),
   CANCELLED("취소됨"),
   REFUNDED("환불됨");
 
