@@ -61,4 +61,6 @@ public class BsOrder {
 
   @Lob
   private String review;
+
+  private LocalDateTime reviewTime;
 }
