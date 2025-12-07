@@ -1,9 +1,6 @@
 package com.bumsoap.store.service.order;
 
-import com.bumsoap.store.dto.MyOrderDto;
-import com.bumsoap.store.dto.OrderDetailDto;
-import com.bumsoap.store.dto.OrderPageRow;
-import com.bumsoap.store.dto.SearchResult;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
@@ -147,6 +144,29 @@ public class OrderServ implements OrderServI {
 
         var result = new SearchResult<OrderPageRow>(myOrderPage,
                 myOrderPage.getNumber() + 1,
+                size,
+                totalPages,
+                pageNumbers
+        );
+        return result;
+    }
+
+    @Override
+    public SearchResult<MyReviewRow> serviceMyReviewPage(
+            Long uid, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<MyReviewRow> myReviewPage = orderRepo.myReviews(uid, pageable);
+        int totalPages = myReviewPage.getTotalPages();
+
+        List<Integer> pageNumbers = null;
+        if (totalPages > 0) {
+            pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+        }
+
+        var result = new SearchResult<MyReviewRow>(myReviewPage,
+                myReviewPage.getNumber() + 1,
                 size,
                 totalPages,
                 pageNumbers

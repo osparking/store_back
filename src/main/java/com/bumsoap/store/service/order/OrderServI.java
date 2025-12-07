@@ -1,9 +1,6 @@
 package com.bumsoap.store.service.order;
 
-import com.bumsoap.store.dto.MyOrderDto;
-import com.bumsoap.store.dto.OrderDetailDto;
-import com.bumsoap.store.dto.OrderPageRow;
-import com.bumsoap.store.dto.SearchResult;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
@@ -29,6 +26,9 @@ public interface OrderServI {
 
     SearchResult<MyOrderDto> serviceMyOrders(
             long userId, Optional<Integer> currentPage, Optional<Integer> pageSize);
+
+    SearchResult<MyReviewRow> serviceMyReviewPage(
+            Long uid, Integer page, Integer size);
 
     BsOrder saveOrder(BsOrder order);
 
