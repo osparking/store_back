@@ -41,7 +41,29 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
             WHERE o.id = :id
             """)
     int updateWaybillNoById(@Param("id") Long id,
-                                   @Param("waybillNo") String waybillNo);
+                            @Param("waybillNo") String waybillNo);
+
+    @Query(value = """
+            select rv.order_name, rv.order_time,
+                IF(
+                    CHAR_LENGTH(rv.review_preview) > 15,
+                    CONCAT(SUBSTRING(rv.review_preview, 1, 12), '...'),
+                    rv.review_preview
+                ) as review_preview,
+                CHAR_LENGTH(rv.review_preview) as review_length,
+                rv.review_time, rv.id
+            from (
+                select bo.order_name, bo.order_time,
+                    REGEXP_REPLACE(bo.review, '<[^>]*>', '')
+                        as review_preview,
+                    bo.review_time, bo.id
+                from bs_order bo
+                where bo.user_id = :uid and
+                    bo.order_status = 9
+                order by bo.order_time desc
+            ) rv;
+            """, nativeQuery = true)
+    List<OrderField> myReviews(@Param("uid") Long uid);
 
     @Query(value = """
             select bo.id, bo.order_id, bo.order_time,
