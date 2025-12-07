@@ -205,6 +205,23 @@ public class OrderCon {
         }
     }
 
+    @GetMapping(UrlMap.MY_REVIEWS)
+    public ResponseEntity<ApiResp> getMyReviews(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
+
+        try {
+            var user = (BsUserDetails) userDetails;
+            var result = orderServ.serviceMyReviewPage(user.getId(), page, size);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.MY_ORDERS_FOUND, result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.MY_ORDERS_FAILURE, null));
+        }
+    }
+
     @GetMapping(UrlMap.ORDER_PAGE)
     public ResponseEntity<ApiResp> getBsRows(
             @RequestParam("page") Integer page,
