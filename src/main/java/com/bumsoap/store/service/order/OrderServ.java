@@ -12,6 +12,7 @@ import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
@@ -87,7 +88,7 @@ public class OrderServ implements OrderServI {
                 request.getWaybillNo());
         int count2 = orderRepo.updateOrderStatusByOrderId(request.getId(),
                 request.getStatus());
-        return (count1==1 && count2 ==1);
+        return (count1==1 && count2==1);
     }
 
     @Override
@@ -102,6 +103,19 @@ public class OrderServ implements OrderServI {
             totalSoapCount += item.getCount();
         }
         return new OrderDetailDto(orderDto, orderItems, totalSoapCount);
+    }
+
+    @Override
+    public ReviewInfo serviceReviewInfo(BsUserDetails user, Long oId) {
+        var reviewInfoOpt = orderRepo.findReviewInfo(oId);
+        var reviewInfo = reviewInfoOpt.orElseThrow(
+                () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + oId));
+        if (reviewInfo.getUserId().equals(user.getId())) {
+            return reviewInfo;
+        } else {
+            throw new UnauthorizedException(
+                    Feedback.NOT_BELONG_TO_YOU + oId);
+        }
     }
 
     @Override
