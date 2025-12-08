@@ -1,9 +1,6 @@
 package com.bumsoap.store.repository;
 
-import com.bumsoap.store.dto.MyOrderDto;
-import com.bumsoap.store.dto.MyReviewRow;
-import com.bumsoap.store.dto.OrderField;
-import com.bumsoap.store.dto.OrderPageRow;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.util.OrderStatus;
 import jakarta.transaction.Transactional;
@@ -65,6 +62,13 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
             ) rv;
             """, nativeQuery = true)
     Page<MyReviewRow> myReviews(@Param("uid") Long uid, Pageable pageable);
+
+    @Query(value = """
+            select bo.order_name, bo.review, bo.user_id
+            from bs_order bo
+            where bo.id = :oId
+            """, nativeQuery = true)
+    Optional<ReviewInfo> findReviewInfo(@Param("oId") Long oId);
 
     @Query(value = """
             select bo.id, bo.order_id, bo.order_time,
