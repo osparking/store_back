@@ -58,8 +58,8 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
                 from bs_order bo
                 where bo.user_id = :uid and
                     bo.order_status = 9
-                order by bo.order_time desc
-            ) rv;
+            ) rv
+            order by rv.order_time desc;
             """, nativeQuery = true)
     Page<MyReviewRow> myReviews(@Param("uid") Long uid, Pageable pageable);
 
