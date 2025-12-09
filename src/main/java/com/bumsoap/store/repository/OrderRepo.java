@@ -42,25 +42,27 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
                             @Param("waybillNo") String waybillNo);
 
     @Query(value = """
-            select rv.order_name, rv.order_time,
+            select
+                bo.order_name, 
+                bo.order_time,
                 IF(
-                    CHAR_LENGTH(rv.review_preview) > 15,
-                    CONCAT(SUBSTRING(rv.review_preview, 1, 12), '...'),
-                    rv.review_preview
-                ) as review_preview,
-                CHAR_LENGTH(rv.review_preview) as review_length,
-                rv.review_time, rv.id
-            from (
-                select bo.order_name, bo.order_time,
+                    CHAR_LENGTH(REGEXP_REPLACE(bo.review, '<[^>]*>', '')) > 15,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(bo.review, '<[^>]*>', ''), 1, 12), '...'),
                     REGEXP_REPLACE(bo.review, '<[^>]*>', '')
-                        as review_preview,
-                    bo.review_time, bo.id
-                from bs_order bo
-                where bo.user_id = :uid and
-                    bo.order_status = 9
-            ) rv
-            order by rv.order_time desc;
-            """, nativeQuery = true)
+                ) as review_preview,
+                CHAR_LENGTH(REGEXP_REPLACE(bo.review, '<[^>]*>', '')) as review_length,
+                bo.review_time, 
+                bo.id
+            from bs_order bo
+            where bo.user_id = :uid and bo.order_status = 9
+            order by bo.order_time desc
+            """,
+            countQuery = """
+                    select count(*)
+                    from bs_order bo
+                    where bo.user_id = :uid and bo.order_status = 9
+                    """,
+            nativeQuery = true)
     Page<MyReviewRow> myReviews(@Param("uid") Long uid, Pageable pageable);
 
     @Query(value = """
