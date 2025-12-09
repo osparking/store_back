@@ -89,7 +89,6 @@ public class Feedback {
     public static final String SOAP_ORDER_SAVED = "비누 주문 저장됨";
     public static final String ORDER_UPDATED = "비누 주문 갱신됨";
     public static final String SHORT_INVENTORY = "주문 수량 - 최소: 1, 최대: ";
-    public static final String CART_ITEM_SAVED = "카트 항목 저장됨";
     public static final String CART_FOUND = "카트 항목(들) 읽음";
     public static final String CART_FIXED = "카트 비누 수량 변경";
     public static final String NO_CART_ITEM = "없는 카트 항목 ID: ";
@@ -98,7 +97,7 @@ public class Feedback {
     public static final String ORDER_FOUND = "주문 정보 읽음";
     public static final String ORDER_ID_NOT_FOUND = "없는 주문 ID: ";
     public static final String NOT_BELONG_TO_YOU = "소유하지 않은 주문 ID: ";
-    public static final String DELETEED_ORDER_ID = "삭제된 주문 ID: ";
+    public static final String DELETED_ORDER_ID = "삭제된 주문 ID: ";
     public static final String FEE_ETC_INSERTED = "배송비 등 숫자 삽입됨";
     public static final String DELIVERY_FEE_FOUND = "배송비 계산 성공";
     public static final String MY_ORDERS_FOUND = "내 주문 목록 발견";

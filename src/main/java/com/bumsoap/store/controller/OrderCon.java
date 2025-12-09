@@ -122,7 +122,7 @@ public class OrderCon {
             if (BsUtils.isQualified(order.getUser().getId(), false, null)) {
                 orderServ.deleteById(id);
                 return ResponseEntity.ok(
-                        new ApiResp(Feedback.DELETEED_ORDER_ID + id, null));
+                        new ApiResp(Feedback.DELETED_ORDER_ID + id, null));
             } else {
                 return ResponseEntity.status(UNAUTHORIZED).body(
                         new ApiResp(Feedback.NOT_BELONG_TO_YOU + id, null));
