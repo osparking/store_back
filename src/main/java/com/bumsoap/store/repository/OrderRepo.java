@@ -66,6 +66,31 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     Page<MyReviewRow> myReviews(@Param("uid") Long uid, Pageable pageable);
 
     @Query(value = """
+            select bo.order_name, bo.order_time,
+                IF(
+                    CHAR_LENGTH(REGEXP_REPLACE(bo.review, '<[^>]*>', '')) > 23,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(bo.review, '<[^>]*>', ''),
+                                     1, 20), '...'),
+                    REGEXP_REPLACE(bo.review, '<[^>]*>', '')
+                ) as review_preview,
+                bo.review_time, bo.id,
+                CONCAT(SUBSTRING(bu.full_name, 1, 1), '**') as customer_name,
+                GROUP_CONCAT(oi.shape) as shapes_list,
+            	bo.review LIKE '%youtube.com/%'
+            	   OR bo.review LIKE '%youtu.be/%'
+            	   as has_video,
+            	bo.review like '%<img src=%' as has_image
+            from bs_order bo
+            join order_item oi on oi.order_id = bo.id
+            join bs_user bu on bu.id = bo.user_id
+            WHERE bo.order_status = 9
+            group by bo.id
+            order by bo.order_time desc;
+            """,
+            nativeQuery = true)
+    Page<ReviewRow> getReviewPage(Pageable pageable);
+
+    @Query(value = """
             select bo.order_name, bo.review, bo.user_id
             from bs_order bo
             where bo.id = :oId
