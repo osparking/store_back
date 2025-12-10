@@ -37,7 +37,7 @@ public class ReviewRow {
     this.hasImage = hasImage == 1;
   }
 
-  public String getShapeList() {
+  public String getShapesList() {
     return ordinalsToLabels(shapesList);
   }
 
