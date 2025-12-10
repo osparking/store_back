@@ -33,6 +33,9 @@ public interface OrderServI {
     SearchResult<MyReviewRow> serviceMyReviewPage(
             Long uid, Integer page, Integer size);
 
+    SearchResult<ReviewRow> serviceReviewPage(
+            Integer page, Integer size);
+
     BsOrder saveOrder(BsOrder order);
 
     BigDecimal findDeliveryFee(BigDecimal grandTotal, String zipcode);

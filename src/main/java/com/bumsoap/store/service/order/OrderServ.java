@@ -188,6 +188,30 @@ public class OrderServ implements OrderServI {
         return result;
     }
 
+    @Override
+    public SearchResult<ReviewRow> serviceReviewPage(
+            Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ReviewRow> myReviewPage = orderRepo.getReviewPage(pageable);
+        int totalPages = myReviewPage.getTotalPages();
+
+        List<Integer> pageNumbers = null;
+
+        if (totalPages > 0) {
+            pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+        }
+
+        return new SearchResult<ReviewRow>(myReviewPage,
+                myReviewPage.getNumber() + 1,
+                size,
+                totalPages,
+
+                pageNumbers
+        );
+    }
+
     public BsOrder getOrderByOrderId(String orderId)
             throws OrderIdNotFoundEx {
         var optionalOrder = orderRepo.findByOrderId(orderId);
