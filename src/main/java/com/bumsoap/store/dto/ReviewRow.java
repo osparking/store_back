@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,10 @@ public class ReviewRow {
 
   public String getShapesList() {
     return ordinalsToLabels(shapesList);
+  }
+
+  public Long getOrderTime() {
+    return ChronoUnit.DAYS.between(orderTime, reviewTime);
   }
 
   private String ordinalsToLabels(String ordinals) {
