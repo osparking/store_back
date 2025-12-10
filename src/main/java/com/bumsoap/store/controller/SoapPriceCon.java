@@ -2,8 +2,10 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.request.SoapPriceReq;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.util.BsShape;
+import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequiredArgsConstructor
 public class SoapPriceCon {
   private final PriceServI priceServ;
+  private final OrderServI orderServ;
 
   @GetMapping(UrlMap.SOAP_PRICE)
   public ResponseEntity<ApiResp> getSoapPrice(@RequestBody SoapPriceReq request) {
@@ -50,6 +53,21 @@ public class SoapPriceCon {
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));
+    }
+  }
+
+  @GetMapping(UrlMap.REVIEW_PAGE)
+  public ResponseEntity<ApiResp> getReviewPage(
+          @RequestParam("page") Integer page,
+          @RequestParam("size") Integer size) {
+
+    try {
+      var result = orderServ.serviceReviewPage(page, size);
+      return ResponseEntity.ok(
+              new ApiResp(Feedback.REVIEW_PAGE_FOUND, result));
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().body(
+              new ApiResp(Feedback.REVIEW_PAGE_FAILURE, e.getMessage()));
     }
   }
 }

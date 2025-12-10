@@ -111,4 +111,6 @@ public class Feedback {
     public static final String WAYBILL_NO_STORED = "운송장번호 저장됨";
     public static final String STATUS_UPDATED_FAILED = "주문 상태 갱신 실패";
     public static final String WAYBILL_NO_STORE_FAILED = "운송장번호 저장 실패";
+    public static final String REVIEW_PAGE_FOUND = "후기 목록 페이지 읽음";
+    public static final String REVIEW_PAGE_FAILURE = "후기 목록 읽기 실패";
 }
