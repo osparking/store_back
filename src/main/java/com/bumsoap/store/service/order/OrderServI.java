@@ -4,7 +4,6 @@ import com.bumsoap.store.dto.*;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
-import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.util.OrderStatus;
 import jakarta.transaction.Transactional;
 
@@ -25,7 +24,7 @@ public interface OrderServI {
 
     OrderDetailDto serviceOrderDetail(Long orderId);
 
-    ReviewInfo serviceReviewInfo(BsUserDetails user, Long orderId);
+    ReviewInfo serviceReviewInfo(Long orderId);
 
     SearchResult<MyOrderDto> serviceMyOrders(
             long userId, Optional<Integer> currentPage, Optional<Integer> pageSize);

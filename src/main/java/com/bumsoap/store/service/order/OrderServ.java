@@ -12,7 +12,6 @@ import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
-import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
@@ -106,16 +105,11 @@ public class OrderServ implements OrderServI {
     }
 
     @Override
-    public ReviewInfo serviceReviewInfo(BsUserDetails user, Long oId) {
+    public ReviewInfo serviceReviewInfo(Long oId) {
         var reviewInfoOpt = orderRepo.findReviewInfo(oId);
         var reviewInfo = reviewInfoOpt.orElseThrow(
                 () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + oId));
-        if (reviewInfo.getUserId().equals(user.getId())) {
-            return reviewInfo;
-        } else {
-            throw new UnauthorizedException(
-                    Feedback.NOT_BELONG_TO_YOU + oId);
-        }
+        return reviewInfo;
     }
 
     @Override
