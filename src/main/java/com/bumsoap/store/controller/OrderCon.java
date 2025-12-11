@@ -191,13 +191,10 @@ public class OrderCon {
 
     @GetMapping(UrlMap.GET_REVIEW_INFO)
     public ResponseEntity<ApiResp> getReviewInfo(
-            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("oId") Long oId) {
         try {
-            var user = (BsUserDetails) userDetails;
-
-            // id 로 주문을 읽고 그 주문을 낸 유저의 id 를 uid 로 저장
-            var orderDetailDto = orderServ.serviceReviewInfo(user, oId);
+            // 주문 id 로 주문 후기를 읽음
+            var orderDetailDto = orderServ.serviceReviewInfo(oId);
             return ResponseEntity.ok(
                     new ApiResp(Feedback.ORDER_FOUND, orderDetailDto));
         } catch (Exception e) {
