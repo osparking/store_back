@@ -5,8 +5,10 @@ import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.util.OrderStatus;
+import com.trackingmore.exception.TrackingMoreException;
 import jakarta.transaction.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
@@ -20,7 +22,8 @@ public interface OrderServI {
     boolean updateOrderStatus(Long id, OrderStatus status);
 
     @Transactional
-    boolean updateWaybillNoOfId(UpdateWaybillNoReq req);
+    boolean updateWaybillNoOfId(UpdateWaybillNoReq req)
+            throws TrackingMoreException, IOException;
 
     OrderDetailDto serviceOrderDetail(Long orderId);
 

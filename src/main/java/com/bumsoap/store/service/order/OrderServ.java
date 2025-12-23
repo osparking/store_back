@@ -16,16 +16,24 @@ import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.util.*;
+import com.trackingmore.TrackingMore;
+import com.trackingmore.exception.TrackingMoreException;
+import com.trackingmore.model.tracking.CreateTrackingParams;
+import com.trackingmore.model.tracking.Tracking;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +44,8 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class OrderServ implements OrderServI {
+    private static final Logger logger =
+            LoggerFactory.getLogger(OrderServ.class);
     private final OrderRepo orderRepo;
     private final OrderItemRepo orderItemRepo;
     private final SubTotaler subTotaler;
@@ -51,6 +61,9 @@ public class OrderServ implements OrderServI {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Value("${trackingmore.api-key}")
+    private String trackingmoreApiKey;
 
     @Transactional
     @Override
@@ -82,12 +95,41 @@ public class OrderServ implements OrderServI {
 
     @Transactional
     @Override
-    public boolean updateWaybillNoOfId(UpdateWaybillNoReq request) {
+    public boolean updateWaybillNoOfId(UpdateWaybillNoReq request)
+            throws TrackingMoreException, IOException {
+
         int count1 = orderRepo.updateWaybillNoById(request.getId(),
                 request.getWaybillNo());
         int count2 = orderRepo.updateOrderStatusByOrderId(request.getId(),
                 request.getStatus());
-        return (count1==1 && count2==1);
+        boolean result = count1==1 && count2==1;
+
+        if (result) {
+            createTrackingMore(request.getWaybillNo());
+        }
+        return result;
+    }
+
+    private void createTrackingMore(String waybillNo)
+            throws TrackingMoreException, IOException {
+
+        TrackingMore trackingMore = new TrackingMore(trackingmoreApiKey);
+        var createTrackingParams = new CreateTrackingParams();
+
+        createTrackingParams.setTrackingNumber(waybillNo);
+        createTrackingParams.setCourierCode("cjlogistics");
+
+        var tMoreResponse =
+                trackingMore.trackings.CreateTracking(createTrackingParams);
+
+        logger.debug("TrackingMore 배송 추적 요청 반응 코드: {}",
+                tMoreResponse.getMeta().getCode());
+
+        if (tMoreResponse.getData()!=null) {
+            Tracking tracking = (Tracking) tMoreResponse.getData();
+            logger.debug("추적: {}", tracking.toString());
+            logger.debug("추적번호: {}", tracking.getTrackingNumber());
+        }
     }
 
     @Override
