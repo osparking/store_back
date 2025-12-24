@@ -79,7 +79,6 @@ public class UrlMap {
 
     /*== 주문-배송 주소 관련 항목 시작 ================================= */
     public static final String ORDER = API + "/order";
-    public static final String TRACK_MORE_WEBHOOK = "/track";
     public static final String RECIPIENT = API + "/order/recipient";
     public static final String MY_ROWS = "/myrows";
     public static final String MY_REVIEWS = "/my_reviews";
@@ -110,4 +109,8 @@ public class UrlMap {
 
     /*== 결제 관련 항목 ======*/
     public static final String PAYMENTS = API + "/payments";
+
+    /*== 웹훅 관련 항목 ======*/
+    public static final String WEBHOOK = API + "/webhook";
+    public static final String TRACK_MORE = "/track_more";
 }
