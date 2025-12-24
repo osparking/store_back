@@ -105,18 +105,20 @@ public class OrderServ implements OrderServI {
         boolean result = count1==1 && count2==1;
 
         if (result) {
-            createTrackingMore(request.getWaybillNo());
+            createTrackingMore(request);
         }
         return result;
     }
 
-    private void createTrackingMore(String waybillNo)
+    private void createTrackingMore(UpdateWaybillNoReq request)
             throws TrackingMoreException, IOException {
 
         TrackingMore trackingMore = new TrackingMore(trackingmoreApiKey);
         var createTrackingParams = new CreateTrackingParams();
+        String orderNumber = String.valueOf(request.getId());
 
-        createTrackingParams.setTrackingNumber(waybillNo);
+        createTrackingParams.setOrderNumber(orderNumber);
+        createTrackingParams.setTrackingNumber(request.getWaybillNo());
         createTrackingParams.setCourierCode("cjlogistics");
 
         var tMoreResponse =
