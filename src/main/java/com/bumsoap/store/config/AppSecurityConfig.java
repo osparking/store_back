@@ -72,6 +72,8 @@ public class AppSecurityConfig {
                         .hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/s1/store_ingred/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_WORKER")
+                        .requestMatchers("/api/s1/webhook/**")
+                        .permitAll()
                         .requestMatchers(URLS)
                         .authenticated()
                         .anyRequest().permitAll())
