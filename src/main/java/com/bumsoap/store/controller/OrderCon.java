@@ -13,11 +13,14 @@ import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
+import com.bumsoap.store.track.TrackingRequest;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.OrderStatus;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,6 +42,36 @@ public class OrderCon {
     private final ObjMapper objMapper;
     private final OrderServI orderServ;
     private final UserRepoI userRepo;
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(OrderCon.class);
+
+    @PostMapping(UrlMap.TRACK_MORE_WEBHOOK)
+    public ResponseEntity<ApiResp> trackingMoreWebhook(
+            @RequestBody TrackingRequest deliveryTracking) {
+        boolean result = true;
+
+        try {
+            String status = deliveryTracking.getData().getDelivery_status();
+            logger.debug("배송상태: {}, 주문번호: {}, 운송장번호: {}.", status,
+                    deliveryTracking.getData().getOrder_number(),
+                    deliveryTracking.getData().getTracking_number());
+
+            if ("delivered".equals(status)) {
+                // 주문 상태 '배송완료'로 갱신.
+                String oIdStr = deliveryTracking.getData().getOrder_number();
+
+                result = orderServ.updateOrderStatus(
+                        Long.parseLong(oIdStr), OrderStatus.DELIVERED);
+            }
+
+            return ResponseEntity.ok(new ApiResp(Feedback.DELIVERY_STATUS,
+                    result));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), false));
+        }
+    }
 
     @PatchMapping(UrlMap.UPDATE_REVIEW)
     public ResponseEntity<ApiResp> update_review(
