@@ -40,19 +40,17 @@ public class WebhookCon {
         boolean result = true;
 
         try {
-            verifySignature(request);
+            String oId = deliveryTracking.getData().getOrder_number();
+            verifySignature(request, oId);
             String status = deliveryTracking.getData().getDelivery_status();
 
             logger.debug("배송상태: {}, 주문번호: {}, 운송장번호: {}.", status,
-                    deliveryTracking.getData().getOrder_number(),
-                    deliveryTracking.getData().getTracking_number());
+                    oId, deliveryTracking.getData().getTracking_number());
 
             if ("delivered".equals(status)) {
                 // 주문 상태 '배송완료'로 갱신.
-                String oIdStr = deliveryTracking.getData().getOrder_number();
-
                 result = orderServ.updateOrderStatus(
-                        Long.parseLong(oIdStr), OrderStatus.DELIVERED);
+                        Long.parseLong(oId), OrderStatus.DELIVERED);
             }
 
             return ResponseEntity.ok(new ApiResp(Feedback.DELIVERY_STATUS,
@@ -63,12 +61,14 @@ public class WebhookCon {
         }
     }
 
-    private void verifySignature(HttpServletRequest request) throws Exception {
+    private void verifySignature(HttpServletRequest request, String oId)
+            throws Exception {
         String signature = request.getHeader("Signature");
         String timestamp = request.getHeader("Timestamp");
         String signatureRight = AuthUtil.generateSignature(timestamp,
                 trackingmoreWebhookSecret);
         if (!signatureRight.equals(signature)) {
+            logger.warn("트래킹모어 서명 오류 - 주문 ID: {}", oId);
             throw new WrongSignatureException("트래킹모어 서명이 잘못되었음");
         }
     }
