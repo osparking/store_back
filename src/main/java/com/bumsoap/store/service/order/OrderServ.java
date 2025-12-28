@@ -60,7 +60,7 @@ public class OrderServ implements OrderServI {
                 () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
         if (userId==theOrder.getUser().getId()) {
             int updateCount = orderRepo.updateReviewById(orderId,
-                    reqeust.getReview());
+                    reqeust.getReview(), reqeust.getStars());
             var nextStatus = reqeust.getReview()==null ?
                     OrderStatus.PURCHASE_CONFIRMED:OrderStatus.REVIEWED;
             int statusCount = orderRepo.updateOrderStatusByOrderId(orderId,
