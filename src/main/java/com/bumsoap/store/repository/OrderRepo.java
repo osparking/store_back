@@ -20,10 +20,13 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     @Modifying
     @Query(value = """
             UPDATE BsOrder o
-            SET o.review = :review, o.reviewTime = CURRENT_TIMESTAMP
+            SET o.review = :review, o.reviewTime = CURRENT_TIMESTAMP,
+                o.stars = :stars
             WHERE o.id = :id
             """)
-    int updateReviewById(@Param("id") Long id, @Param("review") String review);
+    int updateReviewById(@Param("id") Long id,
+                         @Param("review") String review,
+                         @Param("stars") byte stars);
 
     @Modifying
     @Query(value = """
