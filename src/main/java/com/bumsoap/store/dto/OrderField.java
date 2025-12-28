@@ -15,10 +15,11 @@ public class OrderField extends OrderPageRow {
     private String mbPhone;
     private String waybillNo;
     private String review;
+    private byte stars;
 
     public OrderField(Long id, String orderId, Timestamp orderTime,
                       int orderStatus, String orderName, String review,
-                      String customer,
+                      byte stars, String customer,
                       String recipient, Long user_id, BigDecimal payment,
                       String waybillNo, String zipcode, String roadAddress,
                       String addressDetail, String mbPhone) {
@@ -30,5 +31,6 @@ public class OrderField extends OrderPageRow {
         this.mbPhone = mbPhone;
         this.waybillNo = waybillNo;
         this.review = review;
+        this.stars = stars;
     }
 }
