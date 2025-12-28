@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class ReviewInfo {
     private String orderName;
     private String review;
+    private byte stars;
     private Long userId;
 }

@@ -94,7 +94,7 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     Page<ReviewRow> getReviewPage(Pageable pageable);
 
     @Query(value = """
-            select bo.order_name, bo.review, bo.user_id
+            select bo.order_name, bo.review, bo.stars, bo.user_id
             from bs_order bo
             where bo.id = :oId
             """, nativeQuery = true)
