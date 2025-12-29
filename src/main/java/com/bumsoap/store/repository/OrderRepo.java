@@ -76,8 +76,7 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
                                      1, 20), '...'),
                     REGEXP_REPLACE(bo.review, '<[^>]*>', '')
                 ) as review_preview,
-                bo.review_time, bo.id,
-                CONCAT(SUBSTRING(bu.full_name, 1, 1), '**') as customer_name,
+                bo.review_time, bo.stars, bo.id,
                 GROUP_CONCAT(oi.shape) as shapes_list,
             	bo.review LIKE '%youtube.com/%'
             	   OR bo.review LIKE '%youtu.be/%'
