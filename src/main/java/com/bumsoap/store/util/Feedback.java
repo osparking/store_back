@@ -113,4 +113,5 @@ public class Feedback {
     public static final String WAYBILL_NO_STORE_FAILED = "운송장번호 저장 실패";
     public static final String REVIEW_PAGE_FOUND = "후기 목록 페이지 읽음";
     public static final String REVIEW_PAGE_FAILURE = "후기 목록 읽기 실패";
+    public static final String AVERAGE_STARS_FOUND = "후기 별점 평균값 계산됨";
 }

@@ -260,6 +260,13 @@ public class OrderCon {
                 new ApiResp(Feedback.ORDER_STATUS_LIST, labels));
     }
 
+    @GetMapping(UrlMap.AVERAGE_STARS)
+    public ResponseEntity<ApiResp> getAverageStars() {
+        Float averageStars = orderServ.getAverageStars();
+        return ResponseEntity.ok(
+                new ApiResp(Feedback.AVERAGE_STARS_FOUND, averageStars));
+    }
+
     @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> addOrder(
             @RequestBody AddOrderReq addOrderReq) {
