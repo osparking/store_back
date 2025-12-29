@@ -46,15 +46,15 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
 
     @Query(value = """
             select
-                bo.order_name, 
+                bo.order_name,
                 bo.order_time,
                 IF(
                     CHAR_LENGTH(REGEXP_REPLACE(bo.review, '<[^>]*>', '')) > 15,
                     CONCAT(SUBSTRING(REGEXP_REPLACE(bo.review, '<[^>]*>', ''), 1, 12), '...'),
                     REGEXP_REPLACE(bo.review, '<[^>]*>', '')
                 ) as review_preview,
-                CHAR_LENGTH(REGEXP_REPLACE(bo.review, '<[^>]*>', '')) as review_length,
-                bo.review_time, 
+                bo.stars,
+                bo.review_time,
                 bo.id
             from bs_order bo
             where bo.user_id = :uid and bo.order_status = 9

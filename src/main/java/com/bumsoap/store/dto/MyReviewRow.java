@@ -12,17 +12,17 @@ public class MyReviewRow {
   private String orderName;
   private LocalDateTime orderTime;
   private String reviewPreview;
-  private Integer reviewLength;
+  private byte stars;
   private LocalDateTime reviewTime;
   private Long id; // 주문 ID
 
   public MyReviewRow(String orderName, Timestamp orderTime,
-                     String reviewPreview, Integer reviewLength,
+                     String reviewPreview, byte stars,
                      Timestamp reviewTime, Long id) {
     this.orderName = orderName;
     this.orderTime = orderTime.toLocalDateTime();
     this.reviewPreview = reviewPreview;
-    this.reviewLength = reviewLength;
+    this.stars = stars;
     this.reviewTime = reviewTime.toLocalDateTime();
     this.id = id;
   }
