@@ -46,4 +46,6 @@ public interface OrderServI {
     void deleteById(Long id);
 
     int deleteOrdersByUserIdWithoutPayments(String email);
+
+    Float getAverageStars();
 }

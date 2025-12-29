@@ -201,7 +201,6 @@ public class OrderServ implements OrderServI {
                 myReviewPage.getNumber() + 1,
                 size,
                 totalPages,
-
                 pageNumbers
         );
     }
@@ -338,6 +337,11 @@ public class OrderServ implements OrderServI {
     @Override
     public int deleteOrdersByUserIdWithoutPayments(String email) {
         return orderRepo.deleteOrdersByUserEmailWithoutPayments(email);
+    }
+
+    @Override
+    public Float getAverageStars() {
+        return orderRepo.getAverageStars();
     }
 
 }
