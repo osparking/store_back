@@ -164,4 +164,10 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
         deleteAll(ordersToDelete);
         return ordersToDelete.size();
     }
+
+    @Query("""
+            SELECT AVG(o.stars) as averageStars
+            FROM BsOrder o where o.review is not null
+            """)
+    Float getAverageStars();
 }
