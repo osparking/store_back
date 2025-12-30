@@ -70,4 +70,11 @@ public class SoapPriceCon {
               new ApiResp(Feedback.REVIEW_PAGE_FAILURE, e.getMessage()));
     }
   }
+
+  @GetMapping(UrlMap.AVERAGE_STARS)
+  public ResponseEntity<ApiResp> getAverageStars() {
+    Float averageStars = orderServ.getAverageStars();
+    return ResponseEntity.ok(
+            new ApiResp(Feedback.AVERAGE_STARS_FOUND, averageStars));
+  }
 }
