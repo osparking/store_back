@@ -22,20 +22,22 @@ public class ReviewRow {
   private LocalDateTime reviewTime;
   private byte stars;
   private Long id; // 주문 ID
+  private String customerName;
   private String shapesList;
   private Boolean hasVideo;
   private Boolean hasImage;
 
   public ReviewRow(String orderName, Timestamp orderTime,
                    String reviewPreview, Timestamp reviewTime,
-                   byte stars, Long id, String shapesList,
-                   int hasVideo, int hasImage) {
+                   byte stars, Long id, String customerName,
+                   String shapesList, int hasVideo, int hasImage) {
     this.orderName = orderName;
     this.orderTime = orderTime.toLocalDateTime();
     this.orderTimeStr = formatKoreanDateTime(orderTime.toLocalDateTime());
     this.reviewPreview = reviewPreview;
     this.reviewTime = reviewTime.toLocalDateTime();;
     this.id = id;
+    this.customerName = customerName;
     this.stars = stars;
     this.shapesList = shapesList;
     this.hasVideo = hasVideo == 1;
