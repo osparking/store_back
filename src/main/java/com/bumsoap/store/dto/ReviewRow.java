@@ -6,8 +6,10 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Data
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class ReviewRow {
   private String orderName;
   private LocalDateTime orderTime;
+  private String orderTimeStr;
   private String reviewPreview;
   private LocalDateTime reviewTime;
   private byte stars;
@@ -28,7 +31,8 @@ public class ReviewRow {
                    byte stars, Long id, String shapesList,
                    int hasVideo, int hasImage) {
     this.orderName = orderName;
-    this.orderTime = orderTime.toLocalDateTime();;
+    this.orderTime = orderTime.toLocalDateTime();
+    this.orderTimeStr = formatKoreanDateTime(orderTime.toLocalDateTime());
     this.reviewPreview = reviewPreview;
     this.reviewTime = reviewTime.toLocalDateTime();;
     this.id = id;
@@ -38,11 +42,21 @@ public class ReviewRow {
     this.hasImage = hasImage == 1;
   }
 
+  public static String formatKoreanDateTime(LocalDateTime dateTime) {
+    // DateTimeFormatter를 사용하여 포맷 지정
+    var formatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일 HH:mm");
+
+    // 한국어 로케일 적용 (선택사항)
+    formatter = formatter.withLocale(Locale.KOREAN);
+
+    return "'" + dateTime.format(formatter);
+  }
+
   public String getShapesList() {
     return ordinalsToLabels(shapesList);
   }
 
-  public Long getOrderTime() {
+  public Long getReviewDayDelay() {
     return ChronoUnit.DAYS.between(orderTime, reviewTime);
   }
 
