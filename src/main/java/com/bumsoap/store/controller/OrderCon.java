@@ -189,20 +189,6 @@ public class OrderCon {
         }
     }
 
-    @GetMapping(UrlMap.GET_REVIEW_INFO)
-    public ResponseEntity<ApiResp> getReviewInfo(
-            @PathVariable("oId") Long oId) {
-        try {
-            // 주문 id 로 주문 후기를 읽음
-            var orderDetailDto = orderServ.serviceReviewInfo(oId);
-            return ResponseEntity.ok(
-                    new ApiResp(Feedback.ORDER_FOUND, orderDetailDto));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-                    .body(new ApiResp(e.getMessage(), null));
-        }
-    }
-
     @GetMapping(UrlMap.MY_ROWS)
     public ResponseEntity<ApiResp> getMyRows(
             @RequestParam("userId") int userId,
