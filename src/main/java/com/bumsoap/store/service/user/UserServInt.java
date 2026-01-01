@@ -42,4 +42,6 @@ public interface UserServInt {
     long countAll();
 
     RecipientDto getRecipientById(Long id);
+
+    List<Map<String, Object>> getSoapsMonthOfUser(Long id);
 }

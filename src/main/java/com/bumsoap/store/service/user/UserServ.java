@@ -32,6 +32,18 @@ public class UserServ implements UserServInt {
     }
 
     @Override
+    public List<Map<String, Object>> getSoapsMonthOfUser(Long id) {
+        List<Object[]> results = userRepo.soapsMonthOfUser(id);
+
+        return results.stream()
+                .map(result -> Map.of("soaps", result[0],
+                        "month", result[1],
+                        "color", Math.abs(result[0].hashCode() % 360))
+                )
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void enable2FA(Long id) {
         BsUser user = userRepo.findById(id).orElseThrow(
             () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
