@@ -192,6 +192,18 @@ public class UserCon {
         }
     }
 
+    @GetMapping(UrlMap.SOAPS_MONTH)
+    public ResponseEntity<ApiResp> getSoapsMonth(@PathVariable("id") Long id) {
+        try {
+            var results = userServ.getSoapsMonthOfUser(id);
+
+            return ResponseEntity.ok(new ApiResp("월별 구매량 읽음", results));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @GetMapping(UrlMap.GET_BY_ID)
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
         try {
