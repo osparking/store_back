@@ -70,4 +70,18 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     """)
     Page<RecipientDto> getPastRecipients(@Param("id") long id,
                                          Pageable pageable);
+
+    @Query(nativeQuery = true,
+            value = """
+                    select 	sum(oi.count ) soaps,
+                    	DATE_FORMAT(bo.order_time , '%Y-%m') month
+                    from bs_order bo, order_item oi
+                    where bo.user_id = 2 and
+                    	(bo.order_status = 8 or
+                    		bo.order_status = 9) and
+                    	oi.order_id = bo.id and
+                    	bo.order_time >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)
+                    group by month;
+                    """)
+    List<Object[]> soapsMonthOfUser(@Param("id") long id);
 }
