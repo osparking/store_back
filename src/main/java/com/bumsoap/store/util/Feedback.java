@@ -114,4 +114,5 @@ public class Feedback {
     public static final String REVIEW_PAGE_FOUND = "후기 목록 페이지 읽음";
     public static final String REVIEW_PAGE_FAILURE = "후기 목록 읽기 실패";
     public static final String AVERAGE_STARS_FOUND = "후기 별점 평균값 계산됨";
+    public static final String SHAPE_COUNT_FOUND = "외형별 구매량 읽음";
 }

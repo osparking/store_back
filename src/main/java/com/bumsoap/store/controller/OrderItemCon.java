@@ -10,9 +10,7 @@ import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -34,6 +32,19 @@ public class OrderItemCon {
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));
+    }
+  }
+
+  @GetMapping(UrlMap.GET_SHAPE_COUNT)
+  public ResponseEntity<ApiResp> findShapeCount(@PathVariable Long userId) {
+    try {
+      var shapeCounts = orderItemServ.findSoapCountByShapeForUser(userId);
+
+      return ResponseEntity.ok(
+              new ApiResp(Feedback.SHAPE_COUNT_FOUND, shapeCounts));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+              .body(new ApiResp(e.getMessage(), null));
     }
   }
 }
