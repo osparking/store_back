@@ -76,7 +76,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     select 	sum(oi.count ) soaps,
                     	DATE_FORMAT(bo.order_time , '%Y-%m') month
                     from bs_order bo, order_item oi
-                    where bo.user_id = 2 and
+                    where bo.user_id = :id and
                     	(bo.order_status = 8 or
                     		bo.order_status = 9) and
                     	oi.order_id = bo.id and
