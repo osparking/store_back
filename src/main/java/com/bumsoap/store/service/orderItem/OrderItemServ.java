@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.orderItem;
 
+import com.bumsoap.store.dto.ShapeCountDTO;
 import com.bumsoap.store.dto.ShapeLabelCount;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,17 +47,22 @@ public class OrderItemServ implements OrderItemServI {
 
         var results = orderItemRepo.
                 findSoapCountByShapeForUser(userId, fiveMonthsAgo);
-        List<ShapeLabelCount> countList = null;
+        // 모든 BsShape 값을 가져와서 Map으로 변환 (더 효율적)
+        Map<BsShape, Long> resultMap = results.stream()
+                .collect(Collectors.toMap(
+                        ShapeCountDTO::getShape,
+                        ShapeCountDTO::getSoaps
+                ));
 
-        if (results.isEmpty()) {
-            countList = Arrays.stream(BsShape.values()).map(shape ->
-                    new ShapeLabelCount(shape.label, 0.001f)
-            ).collect(Collectors.toList());
-        } else {
-            countList = results.stream().map(result -> new ShapeLabelCount(
-                            result.getShape().label, result.getSoaps()))
-                    .collect(Collectors.toList());
-        }
+        // 모든 BsShape 값에 대해 데이터 생성
+        List<ShapeLabelCount> countList = Arrays.stream(BsShape.values())
+                .map(shape -> {
+                    Long count = resultMap.getOrDefault(shape, 0L);
+                    // count가 0이면 0.001f, 아니면 원래 값
+                    float displayCount = count == 0L ? 0.001f : count.floatValue();
+                    return new ShapeLabelCount(shape.label, displayCount);
+                })
+                .collect(Collectors.toList());
         return countList;
     }
 }
