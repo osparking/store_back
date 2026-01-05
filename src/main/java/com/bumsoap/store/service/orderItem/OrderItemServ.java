@@ -3,6 +3,7 @@ package com.bumsoap.store.service.orderItem;
 import com.bumsoap.store.dto.ShapeLabelCount;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
+import com.bumsoap.store.util.BsShape;
 import com.bumsoap.store.util.SubTotaler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,9 +45,17 @@ public class OrderItemServ implements OrderItemServI {
 
         var results = orderItemRepo.
                 findSoapCountByShapeForUser(userId, fiveMonthsAgo);
+        List<ShapeLabelCount> countList = null;
 
-        return results.stream().map(result -> new ShapeLabelCount(
-                        result.getShape().label, result.getSoaps()))
-                .collect(Collectors.toList());
+        if (results.isEmpty()) {
+            countList = Arrays.stream(BsShape.values()).map(shape ->
+                    new ShapeLabelCount(shape.label, 0.001f)
+            ).collect(Collectors.toList());
+        } else {
+            countList = results.stream().map(result -> new ShapeLabelCount(
+                            result.getShape().label, result.getSoaps()))
+                    .collect(Collectors.toList());
+        }
+        return countList;
     }
 }

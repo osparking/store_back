@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 public class ShapeLabelCount {
     private String shapeLabel;
-    private Long count;
+    private float count;
 }
