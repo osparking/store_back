@@ -112,4 +112,7 @@ public class UrlMap {
 
     /*== 결제 관련 항목 ======*/
     public static final String PAYMENTS = API + "/payments";
+
+    /*== 질의 및 답변 관련 항목 ======*/
+    public static final String QUESTION = API + "/question";
 }
