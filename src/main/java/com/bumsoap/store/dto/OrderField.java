@@ -20,11 +20,11 @@ public class OrderField extends OrderPageRow {
     public OrderField(Long id, String orderId, Timestamp orderTime,
                       int orderStatus, String orderName, String review,
                       byte stars, String customer,
-                      String recipient, Long user_id, BigDecimal payment,
+                      String recipient, Long userId, BigDecimal payment,
                       String waybillNo, String zipcode, String roadAddress,
                       String addressDetail, String mbPhone) {
         super(id, orderId, orderTime, orderStatus, orderName, customer,
-                recipient, user_id, payment);
+                recipient, userId, payment);
         this.zipcode = zipcode;
         this.roadAddress = roadAddress;
         this.addressDetail = addressDetail;

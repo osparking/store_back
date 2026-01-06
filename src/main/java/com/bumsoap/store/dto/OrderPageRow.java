@@ -18,13 +18,13 @@ public class OrderPageRow {
   private String orderName;
   private String customer;
   private String recipient;
-  private Long user_id;
+  private Long userId;
   private BigDecimal payment;
 
   public OrderPageRow(Long id, String orderId, Timestamp orderTime,
                       int orderStatus, String orderName,
                       String customer, String recipient,
-                      Long user_id, BigDecimal payment) {
+                      Long userId, BigDecimal payment) {
     this.id = id;
     this.orderId = orderId;
     this.orderTime = orderTime.toLocalDateTime();
@@ -32,7 +32,7 @@ public class OrderPageRow {
     this.orderName = orderName;
     this.customer = customer;
     this.recipient = recipient;
-    this.user_id = user_id;
+    this.userId = userId;
     this.payment = payment;
   }
 
