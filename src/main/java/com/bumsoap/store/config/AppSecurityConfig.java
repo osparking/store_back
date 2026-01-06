@@ -88,6 +88,7 @@ public class AppSecurityConfig {
         "/api/s1/user/**",
         "/api/s1/photo/**",
         "/api/s1/order/**",
+        "/api/s1/question/**",
         "/api/s1/cart/**"
     };
 
