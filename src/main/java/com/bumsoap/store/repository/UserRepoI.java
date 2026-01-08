@@ -3,6 +3,7 @@ package com.bumsoap.store.repository;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.util.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -84,4 +85,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     group by month;
                     """)
     List<Object[]> soapsMonthOfUser(@Param("id") long id);
+
+    @Query("SELECT b.email FROM BsUser b WHERE b.userType = :userType")
+    Optional<String> findEmailByUserType(@Param("userType") UserType userType);
 }
