@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -33,6 +34,7 @@ public class QuestionCon {
         try {
             var savedOne = questionServ.handleSaveQuestion(addOrderReq);
             var mappedOne = objMapper.mapToDto(savedOne, QuestionDto.class);
+
             emailAdmin(addOrderReq.getUserId(), mappedOne);
             return ResponseEntity.ok(new ApiResp(Feedback.QUESTION_SAVED,
                     mappedOne));
@@ -47,6 +49,11 @@ public class QuestionCon {
 
     private void emailAdmin(Long userId, QuestionDto mappedOne) {
         System.out.println("고객 이메일: " + userRepoI.getEmailById(userId));
+        System.out.println("등록 시각: "
+                + formatKoreanDateTime(mappedOne.getInsertTime()));
+        System.out.println("질문 제목: " + mappedOne.getTitle());
+    }
+
     }
 
 }
