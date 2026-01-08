@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,9 +36,9 @@ public class Question {
     @JoinColumn(name = "user_id", nullable = false)
     private BsUser user;
 
-    @OneToOne
-    @JoinColumn(name = "follow_up_id")
-    private FollowUp followUp;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OrderBy("insertTime ASC") // Ensures follow-ups are in chronological order
+    private List<FollowUp> followUps = new ArrayList<>();
 
     /**
      * 제목 및 질문 내용 배정
@@ -45,5 +47,24 @@ public class Question {
     public Question(QuestionSaveReq request) {
         this.title = request.getTitle();
         this.question = request.getQuestion();
+    }
+
+    // Helper method to add follow-up
+    public void addFollowUp(FollowUp followUp) {
+        followUps.add(followUp);
+        followUp.setQuestion(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", question='" + question + '\'' +
+                ", insertTime=" + insertTime +
+                ", updateTime=" + updateTime +
+                ", user=" + user +
+                ", followUps=" + followUps +
+                '}';
     }
 }
