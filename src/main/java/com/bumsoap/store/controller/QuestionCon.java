@@ -2,6 +2,8 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.QuestionDto;
+import com.bumsoap.store.email.EmailManager;
+import com.bumsoap.store.exception.UserTypeNotFouncEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.QuestionSaveReq;
@@ -9,12 +11,16 @@ import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.question.QuestionServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
+import com.bumsoap.store.util.UserType;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.UnsupportedEncodingException;
 
 import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -27,6 +33,7 @@ public class QuestionCon {
     private final ObjMapper objMapper;
     private final QuestionServI questionServ;
     private final UserRepoI userRepoI;
+    private final EmailManager emailManager;
 
     @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> addQuestion(
@@ -47,13 +54,35 @@ public class QuestionCon {
         }
     }
 
-    private void emailAdmin(Long userId, QuestionDto mappedOne) {
-        System.out.println("고객 이메일: " + userRepoI.getEmailById(userId));
-        System.out.println("등록 시각: "
-                + formatKoreanDateTime(mappedOne.getInsertTime()));
-        System.out.println("질문 제목: " + mappedOne.getTitle());
-        System.out.println("내용 처음 100 자: "
-                + getPlainContent(mappedOne.getQuestion(), 100));
+    private void emailAdmin(Long userId, QuestionDto mappedOne)
+            throws MessagingException, UnsupportedEncodingException {
+
+        var adminEmail = userRepoI.findEmailByUserType(UserType.ADMIN)
+                .orElseThrow(() -> new UserTypeNotFouncEx(
+                        "부재 유저 유형: " + UserType.ADMIN.toString()));
+        String subject = "고객 질문 접수 안내";
+        String senderName = "범이비누";
+        String EMAIL_TEMPLATE = """
+                <p>안녕하세요? 범이비누 Q&A 담당 직원님</p>
+                <p>범이비누 고객님이 질문을 올리셔서 알려드립니다. 질문 요약:</p>
+                <ul>
+                    <li>질문 제목: %s</li>
+                    <li>등록 시각: %s</li>
+                    <li>고객 메일: %s</li>
+                    <li>질문 서두: %s</li>
+                </ul>
+                <br>- 범이비누 질문 등록 알림 체계""";
+
+        String content = String.format(EMAIL_TEMPLATE,
+                mappedOne.getTitle(),
+                formatKoreanDateTime(mappedOne.getInsertTime()),
+                userRepoI.getEmailById(userId),
+                getPlainContent(mappedOne.getQuestion(), 100));
+
+        emailManager.sendMail(adminEmail,
+                subject,
+                senderName,
+                content);
     }
 
     public static String getPlainContent(String htmlContent, int maxLength) {
