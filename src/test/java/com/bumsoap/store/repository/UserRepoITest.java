@@ -21,4 +21,11 @@ class UserRepoITest {
         assertTrue(adminEmail.isPresent());
         assertEquals("jbpark03@gmail.com", adminEmail.get());
     }
+
+    @Test
+    void getEmailById() {
+        var email = userRepoI.getEmailById(2L);
+        System.out.println(email);
+        assertEquals("jbpark03@naver.com", email);
+    }
 }
