@@ -18,6 +18,10 @@ public class FollowUp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "user_id", nullable = false)
     private BsUser user;
@@ -28,7 +32,14 @@ public class FollowUp {
     private LocalDateTime insertTime;
     private LocalDateTime updateTime;
 
-    @OneToOne
-    @JoinColumn(name = "follow_up_id")
-    private FollowUp followUp;
+    @Override
+    public String toString() {
+        return "FollowUp{" +
+                "id=" + id +
+                ", user=" + user +
+                ", content='" + content + '\'' +
+                ", insertTime=" + insertTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }
