@@ -88,4 +88,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     @Query("SELECT b.email FROM BsUser b WHERE b.userType = :userType")
     Optional<String> findEmailByUserType(@Param("userType") UserType userType);
+
+    @Query("SELECT b.email FROM BsUser b WHERE b.id = :id")
+    String getEmailById(@Param("id") Long id);
 }
