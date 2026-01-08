@@ -52,8 +52,27 @@ public class QuestionCon {
         System.out.println("등록 시각: "
                 + formatKoreanDateTime(mappedOne.getInsertTime()));
         System.out.println("질문 제목: " + mappedOne.getTitle());
+        System.out.println("내용 처음 100 자: "
+                + getPlainContent(mappedOne.getQuestion(), 100));
     }
 
+    public static String getPlainContent(String htmlContent, int maxLength) {
+        if (htmlContent == null) {
+            return "";
+        }
+
+        String plainContent = stripHtmlTags(htmlContent);
+        return truncateWithEllipsis(plainContent, maxLength);
     }
 
+    private static String stripHtmlTags(String html) {
+        return html.replaceAll("<[^>]*>", "").trim();
+    }
+
+    private static String truncateWithEllipsis(String text, int maxLength) {
+        if (text.length() <= maxLength) {
+            return text;
+        }
+        return text.substring(0, maxLength) + "...";
+    }
 }
