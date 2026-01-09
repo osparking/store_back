@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.question;
 
+import com.bumsoap.store.dto.QuestionTableRowAdmin;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.Question;
 import com.bumsoap.store.repository.QuestionRepo;
@@ -9,11 +10,18 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class QuestionServ implements QuestionServI {
     private final QuestionRepo questionRepo;
     private final UserRepoI userRepo;
+
+    @Override
+    public List<QuestionTableRowAdmin> getAllQuestions() {
+        return questionRepo.listQuestionTableRowForAdmin();
+    }
 
     @Transactional
     @Override
