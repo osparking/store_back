@@ -8,9 +8,10 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.QuestionSaveReq;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +20,10 @@ public class QuestionServ implements QuestionServI {
     private final UserRepoI userRepo;
 
     @Override
-    public List<QuestionTableRowAdmin> getAllQuestions() {
-        return questionRepo.listQuestionTableRowForAdmin();
+    public Page<QuestionTableRowAdmin> getQuestionsPage(Integer page,
+                                                        Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return questionRepo.listQuestionTableRowForAdmin(pageable);
     }
 
     @Transactional
