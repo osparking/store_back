@@ -20,15 +20,24 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
 
     @Query(nativeQuery = true, value =
             """
-            SELECT q.title, q.insert_time,
-            	   left(REGEXP_REPLACE(q.question, '<[^>]*>', ''), 30)
-            	   	 as question,
-            	   CASE
-                     WHEN latest_fu.user_id = 1 THEN '답변함'
-                     ELSE '미답변'
-                   END AS answered,
-                   latest_fu.user_id as last_writer_id,
-                   latest_fu.id as followUpId
+            SELECT
+                IF(
+                    CHAR_LENGTH(REGEXP_REPLACE(q.title, '<[^>]*>', '')) > 18,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(q.title, '<[^>]*>', ''), 1, 15), '...'),
+                    REGEXP_REPLACE(q.title, '<[^>]*>', '')
+                ) as title,
+                q.insert_time,
+                IF(
+                    CHAR_LENGTH(REGEXP_REPLACE(q.question, '<[^>]*>', '')) > 23,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(q.question, '<[^>]*>', ''), 1, 20), '...'),
+                    REGEXP_REPLACE(q.question, '<[^>]*>', '')
+                ) as question,
+               CASE
+                 WHEN latest_fu.user_id = 1 THEN '답변함'
+                 ELSE '미답변'
+               END AS answered,
+               latest_fu.user_id as last_writer_id,
+               latest_fu.id as followUpId
             FROM question q
             LEFT OUTER JOIN (
                 SELECT f1.*
