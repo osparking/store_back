@@ -19,4 +19,10 @@ class QuestionRepoTest {
         assertTrue(question.isPresent());
         System.out.println(question.get().toString());
     }
+
+    @Test
+    void listQuestionTableRowForAdmin() {
+        var list = questionRepo.listQuestionTableRowForAdmin();
+        assertEquals(4, list.size());
+    }
 }
