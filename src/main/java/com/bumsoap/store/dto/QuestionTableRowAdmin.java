@@ -4,13 +4,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+
+import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
 
 @Data
 @NoArgsConstructor
 public class QuestionTableRowAdmin {
     private String title;
-    private LocalDateTime insertTime;
+    private String insertTime;
     private String question;
     private String answered;
     private Long lastWriterId;
@@ -20,7 +21,7 @@ public class QuestionTableRowAdmin {
                                  String question, String answered,
                                  Long lastWriterId, Long followUpId) {
         this.title = title;
-        this.insertTime = insertTime.toLocalDateTime();
+        this.insertTime = formatKoreanDateTime(insertTime.toLocalDateTime());
         this.question = question;
         this.answered = answered;
         this.lastWriterId = lastWriterId;
