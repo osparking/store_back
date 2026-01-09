@@ -2,11 +2,12 @@ package com.bumsoap.store.repository;
 
 import com.bumsoap.store.dto.QuestionTableRowAdmin;
 import com.bumsoap.store.model.Question;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface QuestionRepo extends JpaRepository<Question, Long> {
@@ -42,5 +43,5 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
             order by q.insert_time desc
             """
     )
-    List<QuestionTableRowAdmin> listQuestionTableRowForAdmin();
+    Page<QuestionTableRowAdmin> listQuestionTableRowForAdmin(Pageable pageable);
 }
