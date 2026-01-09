@@ -39,9 +39,11 @@ public class AdminCon {
     private final QuestionServI questionServ;
 
     @GetMapping(UrlMap.ALL_QUESTIONS)
-    public ResponseEntity<ApiResp> getAllQuestions() {
+    public ResponseEntity<ApiResp> getQuestionsPage(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
         try {
-            var allQuestions = questionServ.getAllQuestions();
+            var allQuestions = questionServ.getQuestionsPage(page, size);
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, allQuestions));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
