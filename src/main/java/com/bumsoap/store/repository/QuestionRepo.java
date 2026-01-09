@@ -39,6 +39,7 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
                 ) f2 ON f1.question_id = f2.question_id and
                         f1.id = f2.max_id
             ) latest_fu ON q.id = latest_fu.question_id
+            order by q.insert_time desc
             """
     )
     List<QuestionTableRowAdmin> listQuestionTableRowForAdmin();
