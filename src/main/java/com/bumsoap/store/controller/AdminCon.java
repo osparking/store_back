@@ -9,6 +9,7 @@ import com.bumsoap.store.request.SoapPriceAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServInt;
+import com.bumsoap.store.service.question.QuestionServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.service.user.UserServInt;
@@ -35,6 +36,18 @@ public class AdminCon {
     private final PriceServI priceServ;
     private final ObjMapper objMapper;
     private final FeeEtcServI feeEtcServ;
+    private final QuestionServI questionServ;
+
+    @GetMapping(UrlMap.ALL_QUESTIONS)
+    public ResponseEntity<ApiResp> getAllQuestions() {
+        try {
+            var allQuestions = questionServ.getAllQuestions();
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND, allQuestions));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.NOT_FOUND, null ));
+        }
+    }
 
     @PostMapping(UrlMap.ADD_FEE_ETC)
     public ResponseEntity<ApiResp> addFeeEtc(@RequestBody FeeEtcAddReq request) {

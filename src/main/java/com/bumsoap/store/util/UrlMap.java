@@ -31,6 +31,7 @@ public class UrlMap {
     public static final String TOGGLE_ENABLED = "/worker/{id}/toggle" ;
     public static final String ADD_PRICE = "/add_price";
     public static final String ADD_FEE_ETC = "/add_fee_etc";
+    public static final String ALL_QUESTIONS = "/all_questions";
     /*== ADMIN / 관리자 끝 ==================================*/
 
     /*== PHOTO / 사진 시작 ====================================================*/
