@@ -51,7 +51,7 @@ public class ReviewRow {
     // 한국어 로케일 적용 (선택사항)
     formatter = formatter.withLocale(Locale.KOREAN);
 
-    return "'" + dateTime.format(formatter);
+    return dateTime == null ? "(없음)" : "'" + dateTime.format(formatter);
   }
 
   public String getShapesList() {
