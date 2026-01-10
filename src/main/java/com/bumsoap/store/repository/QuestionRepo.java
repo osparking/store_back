@@ -21,6 +21,7 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
     @Query(nativeQuery = true, value =
             """
             SELECT
+                q.id,
                 IF(
                     CHAR_LENGTH(REGEXP_REPLACE(q.title, '<[^>]*>', '')) > 18,
                     CONCAT(SUBSTRING(REGEXP_REPLACE(q.title, '<[^>]*>', ''), 1, 15), '...'),
