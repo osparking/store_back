@@ -4,7 +4,7 @@ import com.bumsoap.store.model.Question;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
 
 @Data
 @NoArgsConstructor
@@ -13,8 +13,8 @@ public class QuestionRow {
     private long userId;
     private String title;
     private String question;
-    private LocalDateTime insertTime;
-    private LocalDateTime updateTime;
+    private String insertTime;
+    private String updateTime;
     private String customerEmail;
 
     public QuestionRow(Question question) {
@@ -22,8 +22,8 @@ public class QuestionRow {
         this.userId = question.getUser().getId();
         this.title = question.getTitle();
         this.question = question.getQuestion();
-        this.insertTime = question.getInsertTime();
-        this.updateTime = question.getUpdateTime();
+        this.insertTime = formatKoreanDateTime(question.getInsertTime());
+        this.updateTime = formatKoreanDateTime(question.getUpdateTime());
         this.customerEmail = question.getUser().getEmail();
     }
 }
