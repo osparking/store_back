@@ -2,8 +2,10 @@ package com.bumsoap.store.service.question;
 
 import com.bumsoap.store.dto.QuestionTableRowAdmin;
 import com.bumsoap.store.dto.SearchResult;
+import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.Question;
+import com.bumsoap.store.question.QuestionRow;
 import com.bumsoap.store.repository.QuestionRepo;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.QuestionSaveReq;
@@ -57,6 +59,13 @@ public class QuestionServ implements QuestionServI {
         question.setUser(user);
 
         return questionRepo.save(question);
+    }
+
+    @Override
+    public QuestionRow findById(Long id) {
+        var question = questionRepo.findById(id).orElseThrow(() ->
+                new DataNotFoundException("부재 질문 ID: " + id));
+        return new QuestionRow(question);
     }
 
 }
