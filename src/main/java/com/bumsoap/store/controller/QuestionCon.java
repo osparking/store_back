@@ -3,8 +3,10 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.QuestionDto;
 import com.bumsoap.store.email.EmailManager;
-import com.bumsoap.store.exception.UserTypeNotFouncEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.exception.UnauthorizedException;
+import com.bumsoap.store.exception.UserTypeNotFouncEx;
+import com.bumsoap.store.question.QuestionRow;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.QuestionSaveReq;
 import com.bumsoap.store.response.ApiResp;
@@ -15,14 +17,12 @@ import com.bumsoap.store.util.UserType;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 
 import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
+import static com.bumsoap.store.util.BsUtils.isQualified;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -34,6 +34,26 @@ public class QuestionCon {
     private final QuestionServI questionServ;
     private final UserRepoI userRepoI;
     private final EmailManager emailManager;
+
+    /**
+     * 현 로그인 유저가 읽으려는 질문에 유자격 자이면 질문 자료를 반응함.
+     * @param id 질문 ID
+     * @return 질문 상세 정보
+     */
+    @GetMapping(UrlMap.GET_QUESTION)
+    public ResponseEntity<ApiResp> getQuestionInfo(@PathVariable("id") Long id) {
+        try {
+            QuestionRow question = questionServ.findById(id);
+            if (isQualified(question.getUserId(), false, null)) {
+                return ResponseEntity.ok(new ApiResp("질문 읽어옴", question));
+            } else {
+                throw new UnauthorizedException(Feedback.NOT_MY_QUESTION);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> addQuestion(

@@ -116,4 +116,5 @@ public class UrlMap {
 
     /*== 질의 및 답변 관련 항목 ======*/
     public static final String QUESTION = API + "/question";
+    public static final String GET_QUESTION = "/{id}/read";
 }

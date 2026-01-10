@@ -116,4 +116,5 @@ public class Feedback {
     public static final String AVERAGE_STARS_FOUND = "후기 별점 평균값 계산됨";
     public static final String SHAPE_COUNT_FOUND = "외형별 구매량 읽음";
     public static final String QUESTION_SAVED = "고객 질문 저장됨";
+    public static final String NOT_MY_QUESTION = "당신의 질문이 아님";
 }
