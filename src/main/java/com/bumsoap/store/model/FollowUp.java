@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -29,6 +30,8 @@ public class FollowUp {
     @Lob
     private String content; // answer or following question
 
+    @CreationTimestamp
+    @Column(name = "insert_time", updatable = false, nullable = false)
     private LocalDateTime insertTime;
     private LocalDateTime updateTime;
 
