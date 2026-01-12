@@ -42,4 +42,10 @@ public class FollowUp {
                 ", updateTime=" + updateTime +
                 '}';
     }
+
+    public FollowUp(Question question, BsUser user, String content) {
+        this.question = question;
+        this.user = user;
+        this.content = content;
+    }
 }
