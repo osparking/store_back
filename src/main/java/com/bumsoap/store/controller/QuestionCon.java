@@ -1,5 +1,6 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.dto.FollowUpDto;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.QuestionDto;
 import com.bumsoap.store.email.EmailManager;
@@ -8,8 +9,10 @@ import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.exception.UserTypeNotFouncEx;
 import com.bumsoap.store.question.QuestionRow;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.request.FollowUpData;
 import com.bumsoap.store.request.QuestionSaveReq;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.question.QuestionServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
@@ -17,6 +20,8 @@ import com.bumsoap.store.util.UserType;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -35,6 +40,28 @@ public class QuestionCon {
     private final UserRepoI userRepoI;
     private final EmailManager emailManager;
 
+    @PostMapping(value = UrlMap.FOLLOW_UP)
+    public ResponseEntity<ApiResp> addFollowUp(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody FollowUpData answerData) {
+        try {
+            var user = (BsUserDetails) userDetails;
+            answerData.setWriterId(user.getId());
+
+            var savedOne = questionServ.handleSaveFollowUp(answerData);
+            var mappedOne = objMapper.mapToDto(savedOne, FollowUpDto.class);
+
+//            emailAdmin(addOrderReq.getUserId(), mappedOne);
+            return ResponseEntity.ok(new ApiResp(Feedback.FOLLOW_UP_SAVED,
+                    mappedOne));
+        } catch (IdNotFoundEx e) {
+            return ResponseEntity.status(BAD_REQUEST)
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
     /**
      * 현 로그인 유저가 읽으려는 질문에 유자격 자이면 질문 자료를 반응함.
      * @param id 질문 ID
