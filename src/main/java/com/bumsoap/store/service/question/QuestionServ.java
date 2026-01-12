@@ -4,10 +4,13 @@ import com.bumsoap.store.dto.QuestionTableRowAdmin;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.model.FollowUp;
 import com.bumsoap.store.model.Question;
 import com.bumsoap.store.question.QuestionRow;
+import com.bumsoap.store.repository.FollowUpRepo;
 import com.bumsoap.store.repository.QuestionRepo;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.request.FollowUpData;
 import com.bumsoap.store.request.QuestionSaveReq;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,23 @@ import java.util.stream.IntStream;
 public class QuestionServ implements QuestionServI {
     private final QuestionRepo questionRepo;
     private final UserRepoI userRepo;
+    private final FollowUpRepo followUpRepo;
+
+    @Transactional
+    @Override
+    public FollowUp handleSaveFollowUp(FollowUpData followUpData) {
+        Long questionId = followUpData.getQuestionId();
+        var question = questionRepo.findById(questionId).orElseThrow(
+                () -> new IdNotFoundEx("질문 ID: " + questionId));
+
+        Long writerId = followUpData.getWriterId();
+        var writer = userRepo.findById(writerId).orElseThrow(
+                () -> new IdNotFoundEx("유저 ID: " + writerId));
+
+        var followUp = new FollowUp(question, writer, followUpData.getContent());
+
+        return followUpRepo.save(followUp);
+    }
 
     @Override
     public SearchResult<QuestionTableRowAdmin> getQuestionsPage(Integer page,
