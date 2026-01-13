@@ -21,6 +21,8 @@ import com.bumsoap.store.util.UrlMap;
 import com.bumsoap.store.util.UserType;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -73,8 +75,10 @@ public class QuestionCon {
                     .body(new ApiResp(e.getMessage(), null));
         }
     }
+
     /**
      * 현 로그인 유저가 읽으려는 질문에 유자격 자이면 질문 자료를 반응함.
+     *
      * @param id 질문 ID
      * @return 질문 상세 정보
      */
@@ -87,6 +91,25 @@ public class QuestionCon {
             } else {
                 throw new UnauthorizedException(Feedback.NOT_MY_QUESTION);
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping(UrlMap.MY_QUESTIONS)
+    public ResponseEntity<ApiResp> getMyQuestionsPage(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
+        try {
+            var user = (BsUserDetails) userDetails;
+            Pageable pageable = PageRequest.of(page - 1, size);
+            var questionPage = questionRepo.listMyQuestionTableRows(
+                    user.getId(), pageable);
+
+            return ResponseEntity.ok(
+                    new ApiResp("내 질문 페이지", questionPage));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
@@ -173,7 +196,7 @@ public class QuestionCon {
     }
 
     public static String getPlainContent(String htmlContent, int maxLength) {
-        if (htmlContent == null) {
+        if (htmlContent==null) {
             return "";
         }
 

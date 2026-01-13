@@ -118,4 +118,5 @@ public class UrlMap {
     public static final String QUESTION = API + "/question";
     public static final String GET_QUESTION = "/{id}/read";
     public static final String FOLLOW_UP = "/follow_up";
+    public static final String MY_QUESTIONS = "/my_questions";
 }
