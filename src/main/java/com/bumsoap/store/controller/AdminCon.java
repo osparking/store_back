@@ -43,7 +43,7 @@ public class AdminCon {
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size) {
         try {
-            var allQuestions = questionServ.getQuestionsPage(page, size);
+            var allQuestions = questionServ.getQuestionsPage(page, size, null);
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, allQuestions));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
