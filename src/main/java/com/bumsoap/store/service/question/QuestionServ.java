@@ -14,6 +14,7 @@ import com.bumsoap.store.request.FollowUpData;
 import com.bumsoap.store.request.QuestionSaveReq;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,10 +47,17 @@ public class QuestionServ implements QuestionServI {
     }
 
     @Override
-    public SearchResult<QuestionTableRowAdmin> getQuestionsPage(Integer page,
-                                                                Integer pageSize) {
+    public SearchResult<QuestionTableRowAdmin> getQuestionsPage(
+            Integer page, Integer pageSize, Long userId) {
+
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        var questionPage = questionRepo.listQuestionTableRowForAdmin(pageable);
+        Page<QuestionTableRowAdmin> questionPage = null;
+
+        if (userId == null) {
+            questionPage = questionRepo.listQuestionTableRowForAdmin(pageable);
+        } else {
+            questionPage = questionRepo.listMyQuestionTableRows(userId, pageable);
+        }
         int totalPages = questionPage.getTotalPages();
 
         List<Integer> pageNumbers = null;

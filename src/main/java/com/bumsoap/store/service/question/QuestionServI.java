@@ -13,7 +13,8 @@ public interface QuestionServI {
     @Transactional
     FollowUp handleSaveFollowUp(FollowUpData followUpData);
 
-    SearchResult<QuestionTableRowAdmin> getQuestionsPage(Integer page, Integer size);
+    SearchResult<QuestionTableRowAdmin> getQuestionsPage(
+            Integer page, Integer pageSize, Long userId);
 
     @Transactional
     Question handleSaveQuestion(QuestionSaveReq question);
