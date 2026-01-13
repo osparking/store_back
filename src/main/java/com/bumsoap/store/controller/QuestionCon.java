@@ -105,8 +105,8 @@ public class QuestionCon {
         try {
             var user = (BsUserDetails) userDetails;
             Pageable pageable = PageRequest.of(page - 1, size);
-            var questionPage = questionRepo.listMyQuestionTableRows(
-                    user.getId(), pageable);
+            var questionPage = questionServ.getQuestionsPage(
+                    page, size, user.getId());
 
             return ResponseEntity.ok(
                     new ApiResp("내 질문 페이지", questionPage));
