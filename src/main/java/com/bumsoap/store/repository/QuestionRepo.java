@@ -54,4 +54,44 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
             """
     )
     Page<QuestionTableRowAdmin> listQuestionTableRowForAdmin(Pageable pageable);
+
+    @Query(nativeQuery = true, value =
+            """
+            SELECT
+                q.id,
+                IF(
+                    CHAR_LENGTH(REGEXP_REPLACE(q.title, '<[^>]*>', '')) > 18,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(q.title, '<[^>]*>', ''), 1, 15), '...'),
+                    REGEXP_REPLACE(q.title, '<[^>]*>', '')
+                ) as title,
+                q.insert_time,
+                IF(
+                    CHAR_LENGTH(REGEXP_REPLACE(q.question, '<[^>]*>', '')) > 23,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(q.question, '<[^>]*>', ''), 1, 20), '...'),
+                    REGEXP_REPLACE(q.question, '<[^>]*>', '')
+                ) as question,
+               CASE
+                 WHEN latest_fu.user_id = 1 THEN '답변함'
+                 ELSE '미답변'
+               END AS answered,
+               latest_fu.user_id as last_writer_id,
+               latest_fu.id as followUpId
+            FROM question q
+            LEFT OUTER JOIN (
+                SELECT f1.*
+                FROM follow_up f1
+                INNER JOIN (
+                    SELECT question_id, MAX(id) as max_id
+                    FROM follow_up
+                    GROUP BY question_id
+                ) f2 ON f1.question_id = f2.question_id and
+                        f1.id = f2.max_id
+            ) latest_fu ON q.id = latest_fu.question_id
+            where q.user_id = :userId
+            order by q.insert_time desc
+            """
+    )
+    Page<QuestionTableRowAdmin> listMyQuestionTableRows(
+            @Param("userId") Long userId,
+            Pageable pageable);
 }
