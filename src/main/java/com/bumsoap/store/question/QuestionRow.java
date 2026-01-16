@@ -4,6 +4,9 @@ import com.bumsoap.store.model.Question;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
 
 @Data
@@ -16,6 +19,7 @@ public class QuestionRow {
     private String insertTime;
     private String updateTime;
     private String customerEmail;
+    private List<FollowUpRow> followUpRows;
 
     public QuestionRow(Question question) {
         this.id = question.getId();
@@ -25,5 +29,7 @@ public class QuestionRow {
         this.insertTime = formatKoreanDateTime(question.getInsertTime());
         this.updateTime = formatKoreanDateTime(question.getUpdateTime());
         this.customerEmail = question.getUser().getEmail();
+        this.followUpRows = question.getFollowUps().stream()
+                .map(FollowUpRow::new).collect(Collectors.toList());
     }
 }
