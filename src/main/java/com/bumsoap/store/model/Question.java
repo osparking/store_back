@@ -45,6 +45,7 @@ public class Question {
      * @param request
      */
     public Question(QuestionSaveReq request) {
+        this.id = request.getId();
         this.title = request.getTitle();
         this.question = request.getQuestion();
     }
