@@ -20,6 +20,7 @@ import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import com.bumsoap.store.util.UserType;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,8 +46,10 @@ public class QuestionCon {
     private final EmailManager emailManager;
 
     @DeleteMapping(UrlMap.DELETE_BY_ID2)
+    @Transactional
     public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
         try {
+            questionServ.checkIfFollowUpExists(id);
             questionServ.deleteFollowUp(id);
             return ResponseEntity.ok(
                     new ApiResp(Feedback.DELETEED_FOLLOWUP_ID + id, null));
