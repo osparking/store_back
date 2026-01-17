@@ -10,6 +10,8 @@ import com.bumsoap.store.request.QuestionSaveReq;
 import jakarta.transaction.Transactional;
 
 public interface QuestionServI {
+    void deleteFollowUp(Long followUpId);
+
     @Transactional
     FollowUp handleSaveFollowUp(FollowUpData followUpData);
 

@@ -30,6 +30,11 @@ public class QuestionServ implements QuestionServI {
     private final UserRepoI userRepo;
     private final FollowUpRepo followUpRepo;
 
+    @Override
+    public void deleteFollowUp(Long followUpId) {
+        followUpRepo.deleteById(followUpId);
+    }
+
     @Transactional
     @Override
     public FollowUp handleSaveFollowUp(FollowUpData followUpData) {
