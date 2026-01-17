@@ -22,6 +22,8 @@ import com.bumsoap.store.util.UserType;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +46,9 @@ public class QuestionCon {
     private final QuestionRepo questionRepo;
     private final UserRepoI userRepoI;
     private final EmailManager emailManager;
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(QuestionCon.class);
 
     @DeleteMapping(UrlMap.DELETE_BY_ID2)
     @Transactional
@@ -151,8 +156,10 @@ public class QuestionCon {
 
     private void sayAnswered(Long questionId, FollowUpDto mappedOne)
             throws MessagingException, UnsupportedEncodingException {
+        long start = System.currentTimeMillis();
         Question question = questionRepo.findById(questionId).orElseThrow(
                 () -> new IdNotFoundEx("부재 질문 ID: " + questionId));
+        long questionTm = System.currentTimeMillis() - start;
         var receiverEmail = question.getUser().getEmail();
 
         String subject = "답변 등록 안내";
@@ -172,10 +179,16 @@ public class QuestionCon {
                 formatKoreanDateTime(mappedOne.getInsertTime()),
                 getPlainContent(mappedOne.getFollowUpContent(), 100));
 
+        long startM = System.currentTimeMillis();
         emailManager.sendMail(receiverEmail,
                 subject,
                 senderName,
                 content);
+        long emailTime = System.currentTimeMillis() - startM;
+        long methodTime = System.currentTimeMillis() - start;
+        logger.info("질문 읽어온 시간: {}ms", questionTm);
+        logger.info("이메일 전송 시간: {}ms", emailTime);
+        logger.info("메소드 전체 시간: {}ms", methodTime);
     }
 
     private void emailAdmin(Long userId, QuestionDto mappedOne)
