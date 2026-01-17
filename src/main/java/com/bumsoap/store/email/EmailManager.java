@@ -70,6 +70,9 @@ public class EmailManager {
         props.put("mail.smtp.auth", EmailProperties.DEFAULT_AUTH);
         props.put("mail.smtp.starttls.enable", EmailProperties.DEFAULT_STARTTLS);
         props.put("mail.debug", "true");
+        props.put("mail.smtp.connectiontimeout", "10000"); // 5초 타임아웃
+        props.put("mail.smtp.timeout", "30000");
+        props.put("mail.smtp.writetimeout", "10000");
         return mailSenderImpl;
     }
 
