@@ -101,4 +101,10 @@ public class QuestionServ implements QuestionServI {
         return new QuestionRow(question);
     }
 
+    @Override
+    public void checkIfFollowUpExists(Long id) {
+        followUpRepo.findById(id).orElseThrow(
+                () -> new IdNotFoundEx("부재 댓글 ID: " + id));
+    }
+
 }

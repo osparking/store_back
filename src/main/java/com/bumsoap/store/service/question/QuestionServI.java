@@ -22,4 +22,6 @@ public interface QuestionServI {
     Question handleSaveQuestion(QuestionSaveReq question);
 
     QuestionRow findById(Long id);
+
+    void checkIfFollowUpExists(Long id);
 }
