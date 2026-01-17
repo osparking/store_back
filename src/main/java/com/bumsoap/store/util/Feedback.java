@@ -115,7 +115,10 @@ public class Feedback {
     public static final String REVIEW_PAGE_FAILURE = "후기 목록 읽기 실패";
     public static final String AVERAGE_STARS_FOUND = "후기 별점 평균값 계산됨";
     public static final String SHAPE_COUNT_FOUND = "외형별 구매량 읽음";
+
+    /**************** 질문 댓글 관련 피드백 메시지 *********************/
     public static final String QUESTION_SAVED = "고객 질문 저장됨";
     public static final String NOT_MY_QUESTION = "당신의 질문이 아님";
     public static final String FOLLOW_UP_SAVED = "질문 댓글 저장됨";
+    public static final String DELETEED_FOLLOWUP_ID = "삭제된 댓글 ID: ";
 }

@@ -32,8 +32,7 @@ import java.io.UnsupportedEncodingException;
 
 import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
 import static com.bumsoap.store.util.BsUtils.isQualified;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping(UrlMap.QUESTION)
@@ -44,6 +43,18 @@ public class QuestionCon {
     private final QuestionRepo questionRepo;
     private final UserRepoI userRepoI;
     private final EmailManager emailManager;
+
+    @DeleteMapping(UrlMap.DELETE_BY_ID2)
+    public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
+        try {
+            questionServ.deleteFollowUp(id);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.DELETEED_FOLLOWUP_ID + id, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @PostMapping(value = UrlMap.FOLLOW_UP)
     public ResponseEntity<ApiResp> addFollowUp(
