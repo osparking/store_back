@@ -1,5 +1,6 @@
 package com.bumsoap.store.model;
 
+import com.bumsoap.store.request.FollowUpData;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,9 +47,10 @@ public class FollowUp {
                 '}';
     }
 
-    public FollowUp(Question question, BsUser user, String content) {
+    public FollowUp(FollowUpData followUp, Question question, BsUser user) {
+        this.content = followUp.getContent();
+        this.id = followUp.getId();
         this.question = question;
         this.user = user;
-        this.content = content;
     }
 }

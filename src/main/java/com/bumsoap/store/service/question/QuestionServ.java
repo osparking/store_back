@@ -46,7 +46,7 @@ public class QuestionServ implements QuestionServI {
         var writer = userRepo.findById(writerId).orElseThrow(
                 () -> new IdNotFoundEx("유저 ID: " + writerId));
 
-        var followUp = new FollowUp(question, writer, followUpData.getContent());
+        var followUp = new FollowUp(followUpData, question, writer);
 
         return followUpRepo.save(followUp);
     }
