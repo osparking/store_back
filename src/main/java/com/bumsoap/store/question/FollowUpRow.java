@@ -4,16 +4,20 @@ import com.bumsoap.store.model.FollowUp;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
+
 @Data
 @NoArgsConstructor
 public class FollowUpRow {
     private long id;
     private String content;
     private boolean bumWrote;
+    private String insertTime;
 
     public FollowUpRow(FollowUp followUp) {
         this.id = followUp.getId();
         this.content = followUp.getContent();
         this.bumWrote = followUp.getUser().getId() == 1L;
+        this.insertTime = formatKoreanDateTime(followUp.getInsertTime());
     }
 }
