@@ -17,10 +17,12 @@ public class QuestionTableRowAdmin {
     private String answered;
     private Long lastWriterId;
     private Long followUpId;
+    private Long followUpCount;
 
     public QuestionTableRowAdmin(Long id, String title, Timestamp insertTime,
                                  String question, String answered,
-                                 Long lastWriterId, Long followUpId) {
+                                 Long lastWriterId, Long followUpId,
+                                 Long followUpCount) {
         this.id = id;
         this.title = title;
         this.insertTime = formatKoreanDateTime(insertTime.toLocalDateTime());
@@ -28,5 +30,6 @@ public class QuestionTableRowAdmin {
         this.answered = answered;
         this.lastWriterId = lastWriterId;
         this.followUpId = followUpId;
+        this.followUpCount = followUpCount;
     }
 }
