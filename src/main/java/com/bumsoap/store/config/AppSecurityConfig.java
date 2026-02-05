@@ -5,6 +5,7 @@ import com.bumsoap.store.security.jwt.BsJwtErrorEntry;
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -92,13 +93,16 @@ public class AppSecurityConfig {
         "/api/s1/cart/**"
     };
 
+    @Value("${frontend.base.url}")
+    private String frontend_url;
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:4173/")
+                    .allowedOrigins(frontend_url)
                     .allowedMethods("GET", "POST", "PUT",
                             "PATCH", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
