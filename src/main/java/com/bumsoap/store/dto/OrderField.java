@@ -33,7 +33,9 @@ public class OrderField extends OrderPageRow {
         this.mbPhone = mbPhone;
         this.waybillNo = waybillNo;
         this.review = review;
-        this.reviewTime = reviewTime.toLocalDateTime();
+        if (reviewTime!=null) {
+            this.reviewTime = reviewTime.toLocalDateTime();
+        }
         this.stars = stars;
     }
 }
