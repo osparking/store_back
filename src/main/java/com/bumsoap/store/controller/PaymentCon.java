@@ -95,6 +95,13 @@ public class PaymentCon {
                 System.getenv("WIDGET_SECRET_KEY"),
                 "https://api.tosspayments.com/v1/payments/confirm");
 
+        if (response.containsKey("code") &&
+                "ALREADY_PROCESSING_REQUEST".equals(response.get("code"))) {
+            logger.debug("토스페이먼츠로 이미 컨펌을 보냈습니다.");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(
+                    new ApiResp("이미 보고된 컨펌임", null));
+        }
+
         var payment = paymentService.createPayment(response);
         if (payment.getOrder().getOrderStatus() == OrderStatus.PAID) {
             // 직원에게 이메일(worker1@email.com) 전송
