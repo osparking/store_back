@@ -58,7 +58,7 @@ public class StoreIngreServ implements StoreIngreServI {
     if (name == null || "".equals(name)) {
       ingredientPage = storeIngreRepo.findPageAll(pageable);
     } else {
-//      ingredientPage = storeIngreRepo.findPageByName(name, pageable);
+      ingredientPage = storeIngreRepo.findPageByName(name, pageable);
     }
     Page<StoreIngreDto> ingredientDtos = ingredientPage.map(row
             -> stInConverter.mapEntityToDto(row, StoreIngreDto.class));
