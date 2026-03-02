@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -116,16 +116,16 @@ public class StoreIngreCon {
     }
   }
 
-  @GetMapping(UrlMap.GET_ALL)
-  public ResponseEntity<ApiResp> getAllStoredIngred() {
+  @GetMapping(UrlMap.GET_PAGE)
+  public ResponseEntity<ApiResp> getIngredientPage(
+          @RequestParam("name") String name,
+          @RequestParam("page") Optional<Integer> page,
+          @RequestParam("size") Optional<Integer> size) {
     try {
-      var storedIngre = storeIngreRepo.findAllWorkerName();
-      List<StoreIngreDto> storeIngreDtos = storedIngre.stream()
-          .map(entity -> stInConverter.mapEntityToDto
-              (entity, StoreIngreDto.class))
-          .collect(Collectors.toList());
+      var result = storeIngreServI.getIngredientPage(name, page, size);
+
       return ResponseEntity.ok().body(
-          new ApiResp("입고 재료 전체 목록", storeIngreDtos));
+          new ApiResp("입고 재료 페이지", result));
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
           .body(new ApiResp(e.getMessage(), null));
