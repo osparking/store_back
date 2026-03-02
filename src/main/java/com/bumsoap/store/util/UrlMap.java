@@ -69,6 +69,7 @@ public class UrlMap {
     /*== 재료 구매 기록 시작 ====================================== */
     public static final String STORE_INGRED = API + "/store_ingred";
     public static final String GET_INGRE_NAMES = "/get_all_names";
+    public static final String GET_PAGE = "/get_page";
     public static final String GET_BUY_PLACES = "/get_buy_places";
     public static final String GET_PACKUNITS = "/get_packunits";
     /*== 재료 구매 기록 끝 ====================================== */
