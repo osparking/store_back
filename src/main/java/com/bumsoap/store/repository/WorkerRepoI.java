@@ -1,5 +1,6 @@
 package com.bumsoap.store.repository;
 
+import com.bumsoap.store.dto.PeopleByDept;
 import com.bumsoap.store.model.Worker;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,4 +13,13 @@ public interface WorkerRepoI extends JpaRepository<Worker, Long> {
     @Query(nativeQuery = true,
             value = "select distinct w.dept from worker w")
     List<String> findAllDept();
+
+    @Query(nativeQuery = true,
+            value = """
+                    select dept as department, count(*) as people
+                    from worker
+                    group by department
+                    order by people desc
+                    """)
+    List<PeopleByDept> findPeopleByDept();
 }
