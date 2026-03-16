@@ -1,6 +1,7 @@
 package com.bumsoap.store.service.worker;
 
 import com.bumsoap.store.dto.EntityConverter;
+import com.bumsoap.store.dto.PeopleByDept;
 import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.WorkerRepoI;
 import com.bumsoap.store.dto.UserDto;
@@ -10,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +44,11 @@ public class WorkerServ implements WorkerServInt {
     @Override
     public List<String> findAllDept() {
         return workerRepo.findAllDept();
+    }
+
+    @Override
+    public List<PeopleByDept> employeesByDept() {
+        return workerRepo.findPeopleByDept();
     }
 
     @Override
