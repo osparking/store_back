@@ -38,6 +38,17 @@ public class AdminCon {
     private final FeeEtcServI feeEtcServ;
     private final QuestionServI questionServ;
 
+    @GetMapping(UrlMap.EMPLOYEE_DEPT)
+    public ResponseEntity<ApiResp> findEmployeesByDept() {
+        try {
+            var counts = workerServ.employeesByDept();
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND, counts));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.DEPTS_READ_FAILURE, null ));
+        }
+    }
+
     @GetMapping(UrlMap.ALL_QUESTIONS)
     public ResponseEntity<ApiResp> getQuestionsPage(
             @RequestParam("page") Integer page,
