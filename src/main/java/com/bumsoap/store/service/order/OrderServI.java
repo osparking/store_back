@@ -15,7 +15,7 @@ public interface OrderServI {
     SearchResult<OrderPageRow> serviceOrderPage(Integer page,
                                                 Integer size);
 
-    List<SoapSaleLabel> getSoapSaleChart();
+    List<MonthLabelSales> getSoapSaleChart();
 
     @Transactional
     boolean updateReview(ReviewUpdateReq reqeust, Long userId);
