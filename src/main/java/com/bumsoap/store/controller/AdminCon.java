@@ -9,6 +9,7 @@ import com.bumsoap.store.request.SoapPriceAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServInt;
+import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.service.question.QuestionServI;
 import com.bumsoap.store.service.soap.FeeEtcServI;
 import com.bumsoap.store.service.soap.PriceServI;
@@ -37,6 +38,7 @@ public class AdminCon {
     private final ObjMapper objMapper;
     private final FeeEtcServI feeEtcServ;
     private final QuestionServI questionServ;
+    private final OrderServI orderServI;
 
     @GetMapping(UrlMap.EMPLOYEE_DEPT)
     public ResponseEntity<ApiResp> findEmployeesByDept() {
@@ -124,6 +126,17 @@ public class AdminCon {
         try {
             var customers = customerServ.findAllCustomers();
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, customers));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.NOT_FOUND, null ));
+        }
+    }
+
+    @GetMapping(UrlMap.GET_SOAP_SALE_CHART)
+    public ResponseEntity<ApiResp> getSoapSaleChart() {
+        try {
+            var soapSales = orderServI.getSoapSaleChart();
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND, soapSales));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
                     new ApiResp(Feedback.NOT_FOUND, null ));
