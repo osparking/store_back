@@ -18,7 +18,7 @@ public class MonthLabelSales {
     private Integer 메주비누;
 
     public MonthLabelSales(String month, Map<String, BigDecimal> valueMap) {
-        this.month = month;
+        this.month = "'" + month;
         String soapKey = month + "_" + BsShape.NORMAL.ordinal();
         this.보통비누 = valueMap.containsKey(soapKey) ?
                 valueMap.get(soapKey).intValue():0;
