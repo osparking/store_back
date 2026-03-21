@@ -8,11 +8,14 @@ import com.bumsoap.store.util.OrderStatus;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderServI {
     SearchResult<OrderPageRow> serviceOrderPage(Integer page,
                                                 Integer size);
+
+    List<SoapSaleLabel> getSoapSaleChart();
 
     @Transactional
     boolean updateReview(ReviewUpdateReq reqeust, Long userId);

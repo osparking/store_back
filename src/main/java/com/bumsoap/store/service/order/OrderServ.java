@@ -27,9 +27,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,6 +51,40 @@ public class OrderServ implements OrderServI {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Override
+    public List<SoapSaleLabel> getSoapSaleChart() {
+        var result = orderRepo.getSoapSaleChart();
+        Map<String, BigDecimal> valueMap = result.stream()
+                .collect(Collectors.toMap(
+                        dto ->  dto.getMonth() + "_" +  dto.getShape(),
+                        SoapSaleDto::getSoaps
+                ));
+
+        // 최근 6개월간 모든 외형 수량 배열 생성
+        var today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        var salesStatList = new ArrayList<SoapSaleDto>();
+
+        for (int i = 5; i >= 0; i--) {
+            var date = today.minusMonths(i);
+            String month = date.format(formatter);
+
+            for (BsShape shape : BsShape.values()) {
+                String key = month + "_" + shape.ordinal();
+                var element = new SoapSaleDto(
+                        (Byte) (byte) shape.ordinal(),
+                        // 월별 비누 외형별 판매 수량, 외형 부재 때: 수량 0
+                        valueMap.containsKey(key) ?
+                                valueMap.get(key):new BigDecimal("0"),
+                        month);
+                salesStatList.add(element);
+            }
+        }
+        // [{"shape": "보통비누", "soaps": ?, "month": "2025-10"}, ...]
+        return salesStatList.stream().map(SoapSaleLabel::new)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     @Override
