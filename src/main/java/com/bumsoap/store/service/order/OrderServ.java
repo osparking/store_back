@@ -57,7 +57,7 @@ public class OrderServ implements OrderServI {
         var result = orderRepo.getSoapSaleChart();
         Map<String, BigDecimal> valueMap = result.stream()
                 .collect(Collectors.toMap(
-                        dto ->  dto.getMonth() + "_" +  dto.getShape(),
+                        dto ->  dto.getMonth().substring(2) + "_" +  dto.getShape(),
                         SoapSaleDto::getSoaps
                 ));
 
