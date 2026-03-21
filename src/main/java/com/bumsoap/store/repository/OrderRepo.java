@@ -148,6 +148,18 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     Page<MyOrderDto> findMyOrders(@Param("user_id") Long user_id,
                                   Pageable pageable);
 
+    @Query(value = """
+            select oi.shape, sum(oi.count ) soaps,
+                	DATE_FORMAT(bo.order_time , '%Y-%m') month
+            from bs_order bo, order_item oi
+            where (bo.order_status = 8 or
+            		bo.order_status = 9) and
+            	oi.order_id = bo.id and
+            	bo.order_time >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)
+            group by month, oi.shape
+            """, nativeQuery = true)
+    List<SoapSaleDto> getSoapSaleChart();
+
     @Query("""
             SELECT bo
             FROM BsOrder bo
@@ -171,4 +183,6 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
             FROM BsOrder o where o.review is not null
             """)
     Float getAverageStars();
+
+
 }
