@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ShapeMonthDto {
+public class SoapSaleDto {
     private Byte shape;
     private BigDecimal soaps;
     private String month;
