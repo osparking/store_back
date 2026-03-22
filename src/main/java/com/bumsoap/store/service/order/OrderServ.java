@@ -29,7 +29,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -52,30 +55,22 @@ public class OrderServ implements OrderServI {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private static final DateTimeFormatter
+            MONTH_FORMATTER = DateTimeFormatter.ofPattern("yy-MM");
+
     @Override
     public List<MonthLabelSales> getSoapSaleChart() {
-        var result = orderRepo.getSoapSaleChart();
-        Map<String, BigDecimal> valueMap = result.stream()
+        Map<String, BigDecimal> valueMap = orderRepo.getSoapSaleChart().stream()
                 .collect(Collectors.toMap(
-                        dto ->  dto.getMonth().substring(2) + "_" +  dto.getShape(),
+                        dto -> dto.getMonth().substring(2) + dto.getShape(),
                         SoapSaleDto::getSoaps
                 ));
 
-        // 최근 6 개월간 모든 외형 라벨별 수량 배열 생성
-        // [{ month: "2025-10", 보통비누: 2, 백설공주: 0, 메주비누: 0 }, ...]
-
-        var today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM");
-        var salesStatList = new ArrayList<MonthLabelSales>();
-
-        for (int i = 5; i >= 0; i--) {
-            var date = today.minusMonths(i);
-            String month = date.format(formatter);
-            String keyNorm = month + "_" + BsShape.NORMAL.ordinal();
-            var monthElement = new MonthLabelSales(month, valueMap);
-            salesStatList.add(monthElement);
-        }
-        return salesStatList;
+        return IntStream.rangeClosed(0, 5)
+                .mapToObj(i -> LocalDate.now().minusMonths(5 - i))
+                .map(date -> MonthLabelSales.fromMap(
+                        date.format(MONTH_FORMATTER), valueMap))
+                .collect(Collectors.toList());
     }
 
     @Transactional
