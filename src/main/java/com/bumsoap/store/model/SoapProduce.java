@@ -1,5 +1,6 @@
 package com.bumsoap.store.model;
 
+import com.bumsoap.store.request.AddProduceReq;
 import com.bumsoap.store.util.BsShape;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,4 +29,11 @@ public class SoapProduce {
     @Column(name = "add_time", updatable = false, nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime registerTime = LocalDateTime.now(); // 등록 시간
+
+    public SoapProduce(AddProduceReq request) {
+        this.bsShape = BsShape.valueOfLabel(request.getShapeLabel());
+        this.quantity = request.getQuantity();
+        this.produceDate = request.getProduceDate();
+        this.producerId = request.getProducerId();
+    }
 }
