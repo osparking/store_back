@@ -3,6 +3,7 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.request.AddProduceReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
+import com.bumsoap.store.service.produce.ProduceServI;
 import com.bumsoap.store.util.AuthUtil;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
@@ -23,6 +24,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public class ProduceCon {
     private final AuthUtil authUtil;
     private final JwtUtilBean jwtUtilBean;
+    private final ProduceServI produceServI;
 
     @PostMapping(UrlMap.ADD_PRODUCE)
     public ResponseEntity<ApiResp> add(
@@ -31,12 +33,10 @@ public class ProduceCon {
         try {
             String jwt = authUtil.getJwtFromRequest(request);
             Long id = jwtUtilBean.getIdFrom(jwt);
+            var savedProduce = produceServI.addProduce(id, addProduceReq);
 
-            System.out.println("등록 직원 ID: " + id);
-            System.out.println("요청 내용 정보: " + addProduceReq.toString());
-
-            return ResponseEntity.ok(
-                    new ApiResp(Feedback.SOAP_PRODUCE_STORED, null));
+            return ResponseEntity.ok(new ApiResp(
+                    Feedback.SOAP_PRODUCE_STORED, savedProduce));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
