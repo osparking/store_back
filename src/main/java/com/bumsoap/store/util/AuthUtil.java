@@ -3,6 +3,7 @@ package com.bumsoap.store.util;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.security.user.BsUserDetails;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -45,5 +46,13 @@ public class AuthUtil {
       default -> null;
     };
     return id;
+  }
+
+  public String getJwtFromRequest(HttpServletRequest request) {
+    String header = request.getHeader("Authorization");
+    if (header == null || !header.startsWith("Bearer ")) {
+      return null;
+    }
+    return header.substring(7);
   }
 }
