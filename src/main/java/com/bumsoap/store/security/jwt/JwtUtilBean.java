@@ -1,6 +1,7 @@
 package com.bumsoap.store.security.jwt;
 
 import com.bumsoap.store.security.user.BsUserDetails;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,6 +37,13 @@ public class JwtUtilBean {
     public String getUsernameFrom(String token) {
         return Jwts.parser().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Long getIdFrom(String token) {
+        Claims claims = Jwts.parser().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody();
+        Long userId = claims.get("id", Long.class);
+        return userId;
     }
 
     public String generateTokenForUser(BsUserDetails userDetails) {
