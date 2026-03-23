@@ -20,6 +20,7 @@ public class SoapProduce {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private BsShape bsShape;
+    private Long quantity;
     private LocalDate produceDate;
     private Long producerId; // 생산직원 ID
     private Long registerId; // 등록직원 ID
