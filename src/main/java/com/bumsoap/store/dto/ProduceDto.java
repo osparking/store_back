@@ -1,0 +1,26 @@
+package com.bumsoap.store.dto;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import static com.bumsoap.store.util.BsUtils.getShortTimeStr;
+
+@Data
+@NoArgsConstructor
+public class ProduceDto {
+    private String shape;
+    private Long quantity;
+    private String produceDate;
+    private String producerName;
+    private String registerName;
+    private String registerTime;
+
+    public ProduceDto(ProducePageRow row) {
+        this.shape = row.getBsShape().toString();
+        this.quantity = row.getQuantity();
+        this.produceDate = row.getProduceDate().toString();
+        this.producerName = row.getProducer();
+        this.registerName = row.getRegister();
+        this.registerTime = getShortTimeStr(row.getRegisterTime());
+    }
+}
