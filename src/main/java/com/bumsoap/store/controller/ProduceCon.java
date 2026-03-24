@@ -11,10 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -25,6 +22,21 @@ public class ProduceCon {
     private final AuthUtil authUtil;
     private final JwtUtilBean jwtUtilBean;
     private final ProduceServI produceServI;
+
+    @GetMapping(UrlMap.PRODUCE_PAGE)
+    public ResponseEntity<ApiResp> getProduces(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
+
+        try {
+            var result = produceServI.getProducePage(page, size);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.PRODUCE_PAGE_FOUND, result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.PRODUCE_PAGE_FAILURE, null));
+        }
+    }
 
     @PostMapping(UrlMap.ADD_PRODUCE)
     public ResponseEntity<ApiResp> add(

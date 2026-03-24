@@ -67,6 +67,8 @@ public class Feedback {
     public static final String FOUND_INGRE_NAMES = "재료명 목록 발견됨";
     public static final String FOUND_BUY_PLACES = "재료 구매처 목록 발견됨";
     public static final String FOUND_PACKUNITS = "재료 포장 단위 발견됨";
+    public static final String PRODUCE_PAGE_FOUND = "비누 생산 정보 페이지";
+    public static final String PRODUCE_PAGE_FAILURE = "생산 정보 읽기 실패";
 
     /*************** 비누 상품 관련 메시지 ********************************/
     public static final String SHAPE_NOT_FOUND = "재고 수량 부재 비누 종류: ";

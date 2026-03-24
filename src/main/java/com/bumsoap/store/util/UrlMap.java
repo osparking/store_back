@@ -47,6 +47,7 @@ public class UrlMap {
     public static final String WORKER = API + "/worker";
     public static final String GET_ALL_DEPT = "/get_all_dept";
     public static final String ADD_PRODUCE = "/add_produce";
+    public static final String PRODUCE_PAGE = "/produces";
     /*== WORKER / 노동자 끝 ================================*/
 
     /*== Authentication / 인증 시작 =========================================*/
