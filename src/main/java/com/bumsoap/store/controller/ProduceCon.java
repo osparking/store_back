@@ -27,9 +27,10 @@ public class ProduceCon {
     @DeleteMapping(UrlMap.DELETE_PRODUCE_BY_ID)
     public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
         try {
-            String soapShape = produceServI.deleteById(id);
-            return ResponseEntity.ok(
-                    new ApiResp(Feedback.DELETEED_PRODUCE + soapShape, null));
+            String produceAddedAt = produceServI.deleteById(id);
+
+            return ResponseEntity.ok(new ApiResp(
+                    Feedback.DELETEED_PRODUCE + produceAddedAt, null));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));
