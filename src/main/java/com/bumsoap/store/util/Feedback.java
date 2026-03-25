@@ -126,5 +126,5 @@ public class Feedback {
     public static final String SOAP_PRODUCE_STORED = "생산정보 저장 성공";
 
     /****************** 비누 생산 정보 처리 관련 메시지 *****************/
-    public static final String DELETEED_PRODUCE = "삭제된 생산비누 외형: ";
+    public static final String DELETEED_PRODUCE = "삭제 정보 등록일시: ";
 }
