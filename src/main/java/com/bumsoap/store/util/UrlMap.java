@@ -125,4 +125,7 @@ public class UrlMap {
     public static final String FOLLOW_UP = "/follow_up";
     public static final String MY_QUESTIONS = "/my_questions";
     public static final String DELETE_BY_ID2 = "/follow_up/{id}/delete";
+
+    /*== 생산 관련 항목 ======*/
+    public static final String DELETE_PRODUCE_BY_ID = "/produces/{id}/delete";
 }

@@ -26,5 +26,3 @@ public class ProduceDto {
         this.registerTime = getShortTimeStr(row.getRegisterTime());
     }
 }
-
- >

@@ -14,6 +14,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(UrlMap.WORKER)
@@ -22,6 +23,18 @@ public class ProduceCon {
     private final AuthUtil authUtil;
     private final JwtUtilBean jwtUtilBean;
     private final ProduceServI produceServI;
+
+    @DeleteMapping(UrlMap.DELETE_PRODUCE_BY_ID)
+    public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
+        try {
+            String soapShape = produceServI.deleteById(id);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.DELETEED_PRODUCE + soapShape, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @GetMapping(UrlMap.PRODUCE_PAGE)
     public ResponseEntity<ApiResp> getProduces(
