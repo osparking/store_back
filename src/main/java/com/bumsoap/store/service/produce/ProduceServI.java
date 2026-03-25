@@ -11,4 +11,6 @@ public interface ProduceServI {
 
     SearchResult<ProduceDto> getProducePage(Integer page,
                                             Integer size);
+
+    String deleteById(Long id);
 }

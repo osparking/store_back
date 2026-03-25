@@ -49,4 +49,9 @@ public class ProduceServ implements ProduceServI {
                 size, totalPages, pageNumbers
         );
     }
+
+    @Override
+    public String deleteById(Long id) {
+        return "백설공주";
+    }
 }
