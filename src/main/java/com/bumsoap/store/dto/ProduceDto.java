@@ -8,6 +8,7 @@ import static com.bumsoap.store.util.BsUtils.getShortTimeStr;
 @Data
 @NoArgsConstructor
 public class ProduceDto {
+    private Long id;
     private String shape;
     private Long quantity;
     private String produceDate;
@@ -16,6 +17,7 @@ public class ProduceDto {
     private String registerTime;
 
     public ProduceDto(ProducePageRow row) {
+        this.id = row.getId();
         this.shape = row.getBsShape().toString();
         this.quantity = row.getQuantity();
         this.produceDate = row.getProduceDate().toString();
@@ -24,3 +26,5 @@ public class ProduceDto {
         this.registerTime = getShortTimeStr(row.getRegisterTime());
     }
 }
+
+ >

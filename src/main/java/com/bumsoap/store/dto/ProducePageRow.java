@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProducePageRow {
+    private Long id;
     private BsShape bsShape;
     private Long quantity;
     private LocalDate produceDate;

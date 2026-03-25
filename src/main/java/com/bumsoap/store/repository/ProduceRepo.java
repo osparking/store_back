@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface ProduceRepo extends JpaRepository<SoapProduce, Long> {
     @Query("""
             select new com.bumsoap.store.dto.ProducePageRow(
-                sp.bsShape, sp.quantity, sp.produceDate,
+                sp.id, sp.bsShape, sp.quantity, sp.produceDate,
                 bu.fullName as producer,
                 bu2.fullName as register, sp.registerTime)
             from SoapProduce sp
