@@ -71,7 +71,7 @@ public class AppSecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/s1/admin/**")
                         .hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/s1/store_ingred/**")
+                        .requestMatchers(HOUSE_URLS)
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_WORKER")
                         .requestMatchers(URLS)
                         .authenticated()
@@ -84,6 +84,11 @@ public class AppSecurityConfig {
                 authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+    private static String[] HOUSE_URLS = {
+        "/api/s1/store_ingred/**",
+        "/api/s1/worker/**"
+    };
 
     private static String[] URLS = {
         "/api/s1/user/**",
