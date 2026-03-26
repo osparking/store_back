@@ -1,5 +1,6 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.data.BsDataSupplier;
 import com.bumsoap.store.dto.ShapeSelItem;
 import com.bumsoap.store.model.SoapInven;
 import com.bumsoap.store.request.InvenUpdateReq;
@@ -28,6 +29,19 @@ public class SoapCon {
   private final InvenServI inventoryServ;
   private final PriceServI priceServ;
   private final OrderServI orderServ;
+
+  private final BsDataSupplier dataSupplier;
+
+  @GetMapping(UrlMap.SOAP_LABELS)
+  public ResponseEntity<ApiResp> readSoapShapeLabels() {
+    try {
+      return ResponseEntity.ok(new ApiResp(Feedback.FOUND,
+              dataSupplier.getSoapShapeLabels()));
+    } catch (Exception e) {
+      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+              .body(new ApiResp(e.getMessage(), null));
+    }
+  }
 
   @GetMapping(UrlMap.SOAP_SHAPES)
   public ResponseEntity<ApiResp> getShapeSelectionData() {
