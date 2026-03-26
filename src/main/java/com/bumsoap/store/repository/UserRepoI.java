@@ -3,6 +3,7 @@ package com.bumsoap.store.repository;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.row.EmployeeNameRow;
 import com.bumsoap.store.util.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,4 +92,17 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     @Query("SELECT b.email FROM BsUser b WHERE b.id = :id")
     String getEmailById(@Param("id") Long id);
+
+    @Query(nativeQuery = true,
+            value = """
+                    select
+                        bu.id,
+                        CONCAT(bu.full_name, '-', bu.id) as uniq_name
+                    from bs_user bu
+                    where bu.user_type = :user_type
+                        and bu.full_name like concat('%', :name, '%')
+                    """)
+    Page<EmployeeNameRow> getEmployeeNames(@Param("user_type") int type,
+                                           @Param("name") String name,
+                                           Pageable pageable);
 }
