@@ -21,6 +21,7 @@ public class Feedback {
     public static final String PASSWORD_CHANGED = "비밀번호 변경 완료";
     public static final String NOT_QUALIFIED_FOR = "당신에게 접근권없는 유저ID:";
     public static final String MY_RECIPIENTS_FOUND = "내 수신처 페이지 발견됨";
+    public static final String EMP_NAMES_PAGE = "직원 이름 페이지 발견";
 
     /********************** 사진 처리 관련 메시지 ********************/
     public static final String PHOTO_UPLOAD_OK = "사진 올리기 성공";
@@ -40,6 +41,7 @@ public class Feedback {
     public static final String LOGIN_FAILURE = "로그인 인증 예외:";
     public static final String AUTHEN_SUCCESS = "계정 인증에 성공하였습니다.";
     public static final String DISABLED_ACCOUNT = "사용 중지된 계정입니다.";
+    public static final String EMP_NAMES_FAIL = "직원 이름 페이지 실패";
 
     /*************** 토큰 관련 메시지 ********************************/
     public static final String JWT_WRONG = "잘못된 토큰:";
@@ -126,5 +128,5 @@ public class Feedback {
     public static final String SOAP_PRODUCE_STORED = "생산정보 저장 성공";
 
     /****************** 비누 생산 정보 처리 관련 메시지 *****************/
-    public static final String DELETEED_PRODUCE = "삭제 정보 등록일시: ";
+    public static final String DELETEED_PRODUCE = "삭제 정보 등록일시: ";;
 }

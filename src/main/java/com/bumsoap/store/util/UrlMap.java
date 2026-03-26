@@ -20,6 +20,7 @@ public class UrlMap {
     public static final String CHANGE_PASSWORD = "/change_pwd/{id}";
     public static final String GET_MAX_SUFFIX = "/get_dummy_suffix";
     public static final String GET_DETAILS = "/get_details";
+    public static final String EMPLOYEE_NAME_PAGE = "/employee_name_page";
     /*== USER / 유저 끝 ==================================*/
 
     /*== ADMIN / 관리자 시작 ====================================================*/

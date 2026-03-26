@@ -16,6 +16,7 @@ import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
+import com.bumsoap.store.service.employee.EmployeeServInt;
 import com.bumsoap.store.service.password.PasswordChangeServInt;
 import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
@@ -61,6 +62,23 @@ public class UserCon {
     private final RoleServInt roleServ;
     private final BsUserDetailsService bsUserDetailsService;
     private final BsParameters provider;
+    private final EmployeeServInt employeeServ;
+
+    @GetMapping(UrlMap.EMPLOYEE_NAME_PAGE)
+    public ResponseEntity<ApiResp> getProduces(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size,
+            @RequestParam("name") String name) {
+
+        try {
+            var result = employeeServ.getEmpNamesPage(page, size, name);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.EMP_NAMES_PAGE, result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.EMP_NAMES_FAIL, null));
+        }
+    }
 
     @GetMapping(UrlMap.GET_MAX_SUFFIX)
     public ResponseEntity<ApiResp> getMaxDummyEmailSuffix() {
