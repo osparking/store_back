@@ -97,7 +97,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
             value = """
                     select
                         bu.id,
-                        CONCAT(bu.full_name, '-', bu.id) as uniq_name
+                        bu.full_name as name
                     from bs_user bu
                     where bu.user_type = :user_type
                         and bu.full_name like concat('%', :name, '%')

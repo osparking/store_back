@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class EmployeeNameRow {
     private Long id;
-    private String uniqName;
+    private String name;
 }
