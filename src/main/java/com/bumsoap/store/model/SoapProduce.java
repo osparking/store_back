@@ -31,6 +31,7 @@ public class SoapProduce {
     private LocalDateTime registerTime = LocalDateTime.now(); // 등록 시간
 
     public SoapProduce(AddProduceReq request) {
+        this.id = request.getId();
         this.bsShape = BsShape.valueOfLabel(request.getShapeLabel());
         this.quantity = request.getQuantity();
         this.produceDate = request.getProduceDate();
