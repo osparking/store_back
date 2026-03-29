@@ -60,9 +60,12 @@ public class ProduceCon {
             String jwt = authUtil.getJwtFromRequest(request);
             Long id = jwtUtilBean.getIdFrom(jwt);
             var savedProduce = produceServI.addProduce(id, addProduceReq);
+            var successMessage = addProduceReq.getId() == null
+                    ? Feedback.SOAP_PRODUCE_STORED
+                    : Feedback.SOAP_PRODUCE_UPDATED;
 
-            return ResponseEntity.ok(new ApiResp(
-                    Feedback.SOAP_PRODUCE_STORED, savedProduce));
+            return ResponseEntity.ok(new ApiResp(successMessage,
+                    savedProduce));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
