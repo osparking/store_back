@@ -18,7 +18,8 @@ public class ProducePageRow {
     private Long quantity;
     private LocalDate produceDate;
 
-    private String producer;
+    private Long producerId;
+    private String producerName;
     private String register;
     private LocalDateTime registerTime;
 }
