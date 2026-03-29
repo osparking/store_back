@@ -14,6 +14,7 @@ public class ProduceDto {
     private String produceDate;
     private Long producerId;
     private String producerName;
+    private Long registerId;
     private String registerName;
     private String registerTime;
 
@@ -24,7 +25,8 @@ public class ProduceDto {
         this.produceDate = row.getProduceDate().toString();
         this.producerId = row.getProducerId();
         this.producerName = row.getProducerName();
-        this.registerName = row.getRegister();
+        this.registerId = row.getRegisterId();
+        this.registerName = row.getRegisterName();
         this.registerTime = getShortTimeStr(row.getRegisterTime());
     }
 }
