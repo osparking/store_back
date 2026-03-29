@@ -14,7 +14,8 @@ public interface ProduceRepo extends JpaRepository<SoapProduce, Long> {
             select new com.bumsoap.store.dto.ProducePageRow(
                 sp.id, sp.bsShape, sp.quantity, sp.produceDate,
                 bu.id as producerId, bu.fullName as producerName,
-                bu2.fullName as register, sp.registerTime)
+                bu2.id as registerId, bu2.fullName as registerName,
+                sp.registerTime)
             from SoapProduce sp
             join BsUser bu on bu.id = sp.producerId
             join BsUser bu2 on bu2.id = sp.registerId
