@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class AddProduceReq {
+    private Long id;
     private String shapeLabel;
     private Long quantity;
     private LocalDate produceDate;
