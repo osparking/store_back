@@ -20,6 +20,7 @@ public class ProducePageRow {
 
     private Long producerId;
     private String producerName;
-    private String register;
+    private Long registerId;
+    private String registerName;
     private LocalDateTime registerTime;
 }
