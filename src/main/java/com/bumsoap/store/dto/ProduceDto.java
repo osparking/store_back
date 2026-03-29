@@ -12,6 +12,7 @@ public class ProduceDto {
     private String shape;
     private Long quantity;
     private String produceDate;
+    private Long producerId;
     private String producerName;
     private String registerName;
     private String registerTime;
@@ -21,7 +22,8 @@ public class ProduceDto {
         this.shape = row.getBsShape().toString();
         this.quantity = row.getQuantity();
         this.produceDate = row.getProduceDate().toString();
-        this.producerName = row.getProducer();
+        this.producerId = row.getProducerId();
+        this.producerName = row.getProducerName();
         this.registerName = row.getRegister();
         this.registerTime = getShortTimeStr(row.getRegisterTime());
     }
