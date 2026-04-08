@@ -41,15 +41,18 @@ public class AppSecurityConfig {
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         var authenticationProvider = new DaoAuthenticationProvider();
@@ -57,6 +60,7 @@ public class AppSecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -67,7 +71,7 @@ public class AppSecurityConfig {
                         -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/s1/user/add")
+                        .requestMatchers(PRRMIT_URLS)
                         .permitAll()
                         .requestMatchers("/api/s1/admin/**")
                         .hasAuthority("ROLE_ADMIN")
@@ -77,7 +81,7 @@ public class AppSecurityConfig {
                         .authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 ->
-                    oauth2.successHandler(oAuth2LoginSuccessHandler));
+                        oauth2.successHandler(oAuth2LoginSuccessHandler));
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(
@@ -85,17 +89,22 @@ public class AppSecurityConfig {
         return http.build();
     }
 
+    private static String[] PRRMIT_URLS = {
+            "/api/s1/user/add",
+            "/api/s1/worker/get_all_dept"
+    };
+
     private static String[] HOUSE_URLS = {
-        "/api/s1/store_ingred/**",
-        "/api/s1/worker/**"
+            "/api/s1/store_ingred/**",
+            "/api/s1/worker/**"
     };
 
     private static String[] URLS = {
-        "/api/s1/user/**",
-        "/api/s1/photo/**",
-        "/api/s1/order/**",
-        "/api/s1/question/**",
-        "/api/s1/cart/**"
+            "/api/s1/user/**",
+            "/api/s1/photo/**",
+            "/api/s1/order/**",
+            "/api/s1/question/**",
+            "/api/s1/cart/**"
     };
 
     @Value("${frontend.base.url}")
@@ -107,11 +116,11 @@ public class AppSecurityConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOrigins(frontend_url)
-                    .allowedMethods("GET", "POST", "PUT",
-                            "PATCH", "DELETE", "OPTIONS")
-                    .allowedHeaders("*")
-                    .allowCredentials(true);
+                        .allowedOrigins(frontend_url)
+                        .allowedMethods("GET", "POST", "PUT",
+                                "PATCH", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
