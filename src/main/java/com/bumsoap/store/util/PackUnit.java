@@ -4,6 +4,7 @@ public enum PackUnit {
   LITER("리터"),
   ML("ml"),
   CC("cc"),
+  CM("cm"),
   KG("kg"),
   GRAM("그램");
 
