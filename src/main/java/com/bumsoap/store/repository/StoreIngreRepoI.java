@@ -30,14 +30,14 @@ public interface StoreIngreRepoI extends JpaRepository<StoreIngre, Long> {
                     from store_ingre si
                     join bs_user bu on si.worker_id = bu.id
                     """;
-    @Query(nativeQuery = true,
-            value = selectIngredient + " order by si.store_date desc")
+    @Query(nativeQuery = true, value = selectIngredient +
+            " order by si.store_date desc, si.id desc")
     Page<StoreIngreRow> findPageAll(Pageable pageable);
 
     @Query(nativeQuery = true,
             value = selectIngredient + """
                     where si.ingre_name = :name
-                    order by si.store_date desc
+                    order by si.store_date desc, si.id desc
                     """)
     Page<StoreIngreRow> findPageByName(@Param("name") String name,
                                        Pageable pageable);
