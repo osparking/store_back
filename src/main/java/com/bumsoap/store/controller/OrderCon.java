@@ -19,6 +19,7 @@ import com.bumsoap.store.util.OrderStatus;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -90,6 +91,14 @@ public class OrderCon {
             } else {
                 return ResponseEntity.status(BAD_REQUEST).body(new ApiResp
                         (Feedback.WAYBILL_NO_STORE_FAILED, result));
+            }
+        } catch (DataIntegrityViolationException e) {
+            if (e.getMessage().contains("duplicate_waybil")) {
+                return ResponseEntity.status(CONFLICT)
+                        .body(new ApiResp("오류 - 중복 운송장번호: ", null));
+            } else {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                        .body(new ApiResp(e.getMessage(), null));
             }
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
