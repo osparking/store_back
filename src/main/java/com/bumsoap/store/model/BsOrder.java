@@ -17,6 +17,9 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "duplicate_waybill", columnNames = "waybillNo")
+})
 public class BsOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +59,7 @@ public class BsOrder {
     @OneToOne(mappedBy = "order")
     private TossPayment tossPayment;
 
-    @Column(unique = true)
+    @Column
     private String waybillNo;
 
     @Lob
