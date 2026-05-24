@@ -104,8 +104,8 @@ public class PaymentCon {
 
         var payment = paymentService.createPayment(response);
         if (payment.getOrder().getOrderStatus() == OrderStatus.PAID) {
-            // 직원에게 이메일(worker1@email.com) 전송
-            sendOrderPaidEmail("jbpark103@hanmail.net",
+            // 주문 사실을 관리자에게 이메일 통지
+            sendOrderPaidEmail("jbpark03@gmail.com",
                     payment.getOrder().getOrderName(),
                     BsUtils.getMoneyString(payment.getTotalAmount()));
 
