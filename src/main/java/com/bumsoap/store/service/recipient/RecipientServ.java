@@ -23,13 +23,15 @@ public class RecipientServ implements RecipientServI {
         recipient.getFullName(),
         recipient.getMbPhone()
     );
+
     if (recipientInDB.isPresent()) {
       return recipientInDB.get();
+    } else {
+      var addrBasis = addressBasisServ
+              .saveUpdate(recipient.getAddressBasis());
+      recipient.setAddressBasis(addrBasis);
+      return recipientRepo.save(recipient);
     }
-    var addrBasis = addressBasisServ
-        .saveUpdate(recipient.getAddressBasis());
-    recipient.setAddressBasis(addrBasis);
-    return recipientRepo.save(recipient);
   }
 
   @Override
