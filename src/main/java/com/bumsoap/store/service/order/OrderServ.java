@@ -244,14 +244,15 @@ public class OrderServ implements OrderServI {
         // 상향식 순서로 하위 요소들을 저장하고, 저장 결과로 기존 멤버를 대체!
         var recipient = order.getRecipient();
         var basis = addressBasisServ.addGetAddrBasis(recipient.getAddressBasis());
+
         recipient.setAddressBasis(basis);
+        recipientServ.save(recipient);
 
-        var recipientSaved = recipientServ.save(recipient);
-        order.setRecipient(recipientSaved);
-        order.getItems().forEach(item ->
-                item.setSubTotal(subTotaler.getSubtotal(item)));
-        order.getItems().forEach(item -> item.setOrder(order));
-
+        order.getItems().forEach(item -> {
+            item.setSubTotal(subTotaler.getSubtotal(item));
+            item.setOrder(order);
+            }
+        );
         order.setPayment(calculatePayment(order));
 
         order.setOrderId("");
