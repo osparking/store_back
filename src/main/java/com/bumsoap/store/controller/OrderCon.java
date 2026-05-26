@@ -128,8 +128,9 @@ public class OrderCon {
     public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
         try {
             var order = orderServ.findOrderById(id);
+
             if (BsUtils.isQualified(order.getUser().getId(), false, null)) {
-                orderServ.deleteById(id);
+                orderServ.deleteById(id, order.getRecipient().getId());
                 return ResponseEntity.ok(
                         new ApiResp(Feedback.DELETED_ORDER_ID + id, null));
             } else {
