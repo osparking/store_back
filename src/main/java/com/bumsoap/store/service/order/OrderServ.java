@@ -248,7 +248,8 @@ public class OrderServ implements OrderServI {
         var basis = addressBasisServ.addGetAddrBasis(recipient.getAddressBasis());
 
         recipient.setAddressBasis(basis);
-        recipientServ.save(recipient);
+        var recipientWithId = recipientServ.save(recipient);
+        order.setRecipient(recipientWithId);
 
         order.getItems().forEach(item -> {
                     item.setSubTotal(subTotaler.getSubtotal(item));
