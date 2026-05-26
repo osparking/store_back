@@ -3,7 +3,6 @@ package com.bumsoap.store.repository;
 import com.bumsoap.store.dto.*;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.util.OrderStatus;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -170,19 +169,9 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
             """)
     List<BsOrder> findOrdersByUserEmailWithoutPayments(String email);
 
-    @Transactional
-    default int deleteOrdersByUserEmailWithoutPayments(String email) {
-        List<BsOrder> ordersToDelete =
-                findOrdersByUserEmailWithoutPayments(email);
-        deleteAll(ordersToDelete);
-        return ordersToDelete.size();
-    }
-
     @Query("""
             SELECT AVG(o.stars) as averageStars
             FROM BsOrder o where o.review is not null
             """)
     Float getAverageStars();
-
-
 }
