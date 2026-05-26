@@ -10,6 +10,7 @@ import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
+import com.bumsoap.store.repository.RecipientRepoI;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.service.address.AddressBasisServI;
@@ -43,6 +44,7 @@ public class OrderServ implements OrderServI {
     private final OrderItemRepo orderItemRepo;
     private final SubTotaler subTotaler;
     private final RecipientServI recipientServ;
+    private final RecipientRepoI recipientRepo;
     private final AddressBasisServI addressBasisServ;
     private final FeeEtcServI feeEtcServ;
 
@@ -249,9 +251,9 @@ public class OrderServ implements OrderServI {
         recipientServ.save(recipient);
 
         order.getItems().forEach(item -> {
-            item.setSubTotal(subTotaler.getSubtotal(item));
-            item.setOrder(order);
-            }
+                    item.setSubTotal(subTotaler.getSubtotal(item));
+                    item.setOrder(order);
+                }
         );
         order.setPayment(calculatePayment(order));
 
@@ -352,8 +354,22 @@ public class OrderServ implements OrderServI {
     }
 
     @Override
-    public void deleteById(Long id) {
-        orderRepo.deleteById(id);
+    @Transactional
+    public void deleteById(Long id, Long re_id) {
+        try {
+            // 프로시저 호출
+            orderRepo.deleteById(id);
+            var result = recipientRepo.safeDeleteRecipient(re_id);
+
+            // 결과 메시지 로깅
+            if (result.contains("삭제된 고아 수신처 ID")) {
+                System.out.println(result);
+            }
+        } catch (Exception e) {
+            String errorMsg = "주문 삭제 오류: " + e.getMessage();
+            System.err.println(errorMsg);
+            throw e;
+        }
     }
 
     @Override

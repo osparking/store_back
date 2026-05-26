@@ -46,7 +46,7 @@ public interface OrderServI {
 
     BsOrder updateOrder(BsOrder order);
 
-    void deleteById(Long id);
+    void deleteById(Long id, Long re_id);
 
     int deleteOrdersByUserIdWithoutPayments(String email);
 
