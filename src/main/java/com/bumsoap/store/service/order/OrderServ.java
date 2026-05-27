@@ -374,8 +374,14 @@ public class OrderServ implements OrderServI {
     }
 
     @Override
+    @Transactional
     public int deleteOrdersByUserIdWithoutPayments(String email) {
-        return orderRepo.deleteOrdersByUserEmailWithoutPayments(email);
+        var orders = orderRepo.findOrdersByUserEmailWithoutPayments(email);
+        orderRepo.deleteAll(orders);
+        for (BsOrder order : orders) {
+            recipientRepo.safeDeleteRecipient(order.getRecipient().getId());
+        }
+        return orders.size();
     }
 
     @Override
