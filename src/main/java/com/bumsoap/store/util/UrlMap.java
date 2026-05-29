@@ -89,6 +89,7 @@ public class UrlMap {
     /*== 주문-배송 주소 관련 항목 시작 ================================= */
     public static final String ORDER = API + "/order";
     public static final String RECIPIENT = API + "/order/recipient";
+    public static final String DELETE_REVIEW = "/{id}/delete_review";
     public static final String MY_ROWS = "/myrows";
     public static final String MY_REVIEWS = "/my_reviews";
     public static final String ADD_BASIC_ADDR = "/address/basic/add";

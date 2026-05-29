@@ -61,6 +61,26 @@ public class OrderCon {
         }
     }
 
+    @PatchMapping(UrlMap.DELETE_REVIEW)
+    public ResponseEntity<ApiResp> delete_review(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable("id") Long id) {
+        try {
+            var user = (BsUserDetails) userDetails;
+            var result = orderServ.deleteReview(id, user.getId());
+            if (result) {
+                return ResponseEntity.ok(new ApiResp(
+                        Feedback.REVIEW_DELETED, result));
+            } else {
+                return ResponseEntity.status(BAD_REQUEST).body(
+                        new ApiResp(Feedback.REVIEW_DELETE_FAILED, result));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @PatchMapping(UrlMap.UPDATE_STATUS)
     public ResponseEntity<ApiResp> update_status(
             @RequestBody OrderStatusUpdateReq updateReq) {
