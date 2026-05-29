@@ -96,6 +96,26 @@ public class OrderServ implements OrderServI {
         }
     }
 
+    @Transactional
+    @Override
+    public boolean deleteReview(Long orderId, Long userId) {
+        var theOrder = orderRepo.findById(orderId).orElseThrow(
+                () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
+
+        if (userId==theOrder.getUser().getId()) {
+            theOrder.setReview(null);
+            theOrder.setStars((byte)0);
+            theOrder.setReviewTime(null);
+            theOrder.setOrderStatus(OrderStatus.PURCHASE_CONFIRMED);
+            entityManager.persist(theOrder);
+            entityManager.flush();
+            return true;
+        } else {
+            throw new UnauthorizedException(
+                    Feedback.NOT_BELONG_TO_YOU + orderId);
+        }
+    }
+
     @Override
     @Transactional
     public boolean updateOrderStatus(Long id, OrderStatus status) {

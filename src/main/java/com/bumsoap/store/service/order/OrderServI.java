@@ -18,6 +18,9 @@ public interface OrderServI {
     List<MonthLabelSales> getSoapSaleChart();
 
     @Transactional
+    boolean deleteReview(Long reqeust, Long userId);
+
+    @Transactional
     boolean updateReview(ReviewUpdateReq reqeust, Long userId);
 
     boolean updateOrderStatus(Long id, OrderStatus status);
