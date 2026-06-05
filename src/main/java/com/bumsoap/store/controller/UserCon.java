@@ -37,6 +37,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -335,8 +336,13 @@ public class UserCon {
             var userDto = objMapper.mapToDto(user, UserDto.class);
             String verifToken = UUID.randomUUID().toString();
 
-            tokenService.saveTokenForUser(verifToken, user);
+            var expireDate = tokenService.saveTokenForUser(verifToken, user);
+            var expireLocalTm = expireDate.toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+
             userDto.setVerifToken(verifToken);
+            userDto.setTokenExpireTime(expireLocalTm);
+
             return ResponseEntity.ok(
                     new ApiResp(Feedback.USER_ADD_SUCCESS, userDto));
         } catch (Exception e) {
