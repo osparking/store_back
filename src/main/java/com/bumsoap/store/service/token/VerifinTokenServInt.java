@@ -4,6 +4,7 @@ import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.VerifinToken;
 import com.bumsoap.store.util.TokenResult;
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface VerifinTokenServInt {
@@ -11,7 +12,7 @@ public interface VerifinTokenServInt {
 
     boolean hasNotExpiredTokenFor(String email);
 
-    void saveTokenForUser(String token, BsUser user);
+    Date saveTokenForUser(String token, BsUser user);
     VerifinToken makeNewToken(String oldToken);
     Optional<VerifinToken> findByToken(String token);
     void deleteTokenByUserId(Long tokenId, Long userId);

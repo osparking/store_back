@@ -5,12 +5,9 @@ import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.UserType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.java.Log;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 @Data
 @NoArgsConstructor
@@ -28,6 +25,7 @@ public class UserDto {
     private Long photoId;
     private byte[] photoBytes;
     private String verifToken;
+    private LocalDateTime tokenExpireTime;
 
     public UserDto(Long id, String fullName, String mbPhone, String email,
                    boolean enabled, String dept, byte userType,

@@ -10,6 +10,7 @@ import com.bumsoap.store.util.TokenResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,9 +48,10 @@ public class VerifinTokenServ implements VerifinTokenServInt{
     }
 
     @Override
-    public void saveTokenForUser(String token, BsUser user) {
+    public Date saveTokenForUser(String token, BsUser user) {
         var verifinToken = new VerifinToken(token, user);
         verifinTokenRepo.save(verifinToken);
+        return verifinToken.getExpireDate();
     }
 
     @Override
