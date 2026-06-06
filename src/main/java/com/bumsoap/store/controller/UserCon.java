@@ -331,11 +331,11 @@ public class UserCon {
                 default:
                     throw new IllegalArgumentException(Feedback.USER_TYPE_WRONG);
             }
-            publisher.publishEvent(new UserRegisterEvent(user));
 
             var userDto = objMapper.mapToDto(user, UserDto.class);
             String verifToken = UUID.randomUUID().toString();
 
+            publisher.publishEvent(new UserRegisterEvent(user, verifToken));
             var expireDate = tokenService.saveTokenForUser(verifToken, user);
             var expireLocalTm = expireDate.toInstant()
                     .atZone(ZoneId.systemDefault()).toLocalDateTime();
