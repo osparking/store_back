@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -39,13 +38,12 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
      * @param event 유저등록 사건
      */
     private void handleUserRegisterEvent(UserRegisterEvent event) {
-        BsUser user = event.getUser();
-        String vToken = UUID.randomUUID().toString();
-        tokenService.saveTokenForUser(vToken, user);
+        StringBuilder verificationUrl = new StringBuilder(frontendBaseUrl);
 
-        String verifUrl = frontendBaseUrl + "/email_verifin?token=" + vToken;
+        verificationUrl.append("/email_verifin?token=");
+        verificationUrl.append(event.getVerificationCode());
         try {
-            sendVerifEmail(user, verifUrl);
+            sendVerifEmail(event.getUser(), verificationUrl.toString());
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
