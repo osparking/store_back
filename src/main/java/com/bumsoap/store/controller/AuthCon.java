@@ -98,8 +98,12 @@ public class AuthCon {
     public ResponseEntity<ApiResp> verifyEmailToken(@RequestParam("token") String token) {
         try {
             TokenResult result = verifinTokenService.verifyToken(token);
+            // 만료된 토큰의 경우 새 토큰을 발급하고 새 이메일을 보낸다.
             HttpStatus status = HttpStatus.OK;
-            if (result == TokenResult.EXPIRED || result == TokenResult.INVALID) {
+            if (result == TokenResult.EXPIRED) {
+                result = verifinTokenService.reIssueToken(token);
+            }
+            if (result == TokenResult.INVALID) {
                 status = HttpStatus.GONE;
             }
             return ResponseEntity.status(status).body(new ApiResp(result.label, null));
