@@ -1,5 +1,7 @@
 package com.bumsoap.store.service.token;
 
+import com.bumsoap.store.event.UserRegisterEvent;
+import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.VerifinToken;
 import com.bumsoap.store.repository.UserRepoI;
@@ -7,7 +9,9 @@ import com.bumsoap.store.repository.VerifinTokenRepoI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.TokenResult;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -18,9 +22,10 @@ import static com.bumsoap.store.util.TokenResult.*;
 
 @Service
 @RequiredArgsConstructor
-public class VerifinTokenServ implements VerifinTokenServInt{
+public class VerifinTokenServ implements VerifinTokenServInt {
     private final UserRepoI userRepo;
     private final VerifinTokenRepoI verifinTokenRepo;
+    private final ApplicationEventPublisher publisher;
 
     @Override
     public TokenResult verifyToken(String token) {
@@ -88,5 +93,22 @@ public class VerifinTokenServ implements VerifinTokenServInt{
             var expireDate = verifinToken.get().getExpireDate();
             return System.currentTimeMillis() > expireDate.getTime();
         }
+    }
+
+    @Override
+    @Transactional
+    public TokenResult reIssueToken(String tokenString) {
+        var optionalToken = findByToken(tokenString);
+        VerifinToken expiredToken = optionalToken.orElseThrow(
+                () -> new DataNotFoundException("이메일 검증 토큰 부재"));
+
+        var user = (expiredToken.getUser());
+        verifinTokenRepo.delete(expiredToken); // 만료된 토큰 삭제
+
+        String newTokenStr = UUID.randomUUID().toString();
+        verifinTokenRepo.save(new VerifinToken(newTokenStr, user));
+        publisher.publishEvent(new UserRegisterEvent(user, newTokenStr));
+
+        return TokenResult.REISSUED;
     }
 }

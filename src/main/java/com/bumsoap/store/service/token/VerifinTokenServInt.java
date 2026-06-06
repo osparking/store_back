@@ -17,4 +17,6 @@ public interface VerifinTokenServInt {
     Optional<VerifinToken> findByToken(String token);
     void deleteTokenByUserId(Long tokenId, Long userId);
     boolean hasTokenExpired(String token);
+
+    TokenResult reIssueToken(String token);
 }
