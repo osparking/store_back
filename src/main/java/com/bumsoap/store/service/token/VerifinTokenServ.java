@@ -35,7 +35,11 @@ public class VerifinTokenServ implements VerifinTokenServInt {
         }
         BsUser user = optionalVeriTok.get().getUser();
         if (user.isEnabled()) {
-            return VERIFIED;
+            if (hasTokenExpired(token)) {
+                return VERIFIED;
+            } else {
+                return VALIDATED;
+            }
         }
         if (hasTokenExpired(token)) {
             return EXPIRED;
