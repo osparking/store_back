@@ -28,6 +28,7 @@ public class VerifinTokenServ implements VerifinTokenServInt {
     private final ApplicationEventPublisher publisher;
 
     @Override
+    @Transactional
     public TokenResult verifyToken(String token) {
         Optional<VerifinToken> optionalVeriTok = findByToken(token);
         if (optionalVeriTok.isEmpty()) {
@@ -46,6 +47,7 @@ public class VerifinTokenServ implements VerifinTokenServInt {
         }
         user.setEnabled(true);
         userRepo.save(user);
+        verifinTokenRepo.deleteByUser(user);
 
         return VALIDATED;
     }

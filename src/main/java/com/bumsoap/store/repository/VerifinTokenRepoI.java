@@ -1,5 +1,6 @@
 package com.bumsoap.store.repository;
 
+import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.VerifinToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,8 @@ public interface VerifinTokenRepoI extends JpaRepository<VerifinToken, Long> {
     @Query(value = "DELETE FROM verifin_token WHERE id != :tokenId AND user_id = :userId",
             nativeQuery = true)
     void deleteByUserId(@Param("tokenId") Long tokenId, @Param("userId") Long userId);
+
+    void deleteByUser(BsUser user);
 
     @Query(value = "SELECT vt.token FROM verifin_token vt JOIN bs_user bu " +
             "ON vt.user_id = bu.id WHERE bu.email = :email",
