@@ -131,7 +131,7 @@ public class AuthCon {
                     new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
         } catch (DisabledException e) {
             String message = Feedback.DISABLED_ACCOUNT;
-            if (verifinTokenService.hasNotExpiredTokenFor(request.getEmail())) {
+            if (verifinTokenService.hasTokenFor(request.getEmail())) {
               message = Feedback.PLZ_VERIFY_EMAIL;
             }
             return ResponseEntity.status(UNAUTHORIZED).body(
