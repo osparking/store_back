@@ -40,12 +40,12 @@ public class AuthCon {
     public ResponseEntity<?> get2FAstatus() {
         var details = authUtil.loggedInUserDetails();
 
-        if (details == null) {
+        if (details==null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Feedback.NOT_FOUND);
+                    .body(Feedback.NOT_FOUND);
         } else {
             return ResponseEntity.ok().body(
-                Map.of("2FA-활성화", details.isTwoFaAEnabled()));
+                    Map.of("2FA-활성화", details.isTwoFaAEnabled()));
         }
     }
 
@@ -59,23 +59,23 @@ public class AuthCon {
             return ResponseEntity.ok(Feedback.TWO_FA_VERIFIED);
         } else {
             return ResponseEntity
-                .status(BAD_REQUEST)
-                .body(Feedback.TWO_FA_CODE_ERROR);
+                    .status(BAD_REQUEST)
+                    .body(Feedback.TWO_FA_CODE_ERROR);
         }
     }
 
     @PostMapping("/public/verify-2fa-login")
     public ResponseEntity<ApiResp> verify2FaLogin(@RequestParam int code,
-                                                 @RequestParam String jwtToken) {
+                                                  @RequestParam String jwtToken) {
         String username = jwtUtilBean.getUsernameFrom(jwtToken);
         var user = userService.getBsUserByEmail(username);
         if (user.isPresent() &&
-            userService.verifyCode(user.get().getId(), code)) {
+                userService.verifyCode(user.get().getId(), code)) {
             return ResponseEntity.ok(
-                new ApiResp(Feedback.AUTHEN_SUCCESS, null));
+                    new ApiResp(Feedback.AUTHEN_SUCCESS, null));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-            new ApiResp(Feedback.TWO_FA_CODE_ERROR, null));
+                new ApiResp(Feedback.TWO_FA_CODE_ERROR, null));
     }
 
     @PostMapping("/disable-2fa")
@@ -90,7 +90,7 @@ public class AuthCon {
         Long userId = authUtil.loggedInUserId();
         var secret = userService.generateSecret(userId);
         String qrCodeUrl = totpService.getQRcodeUrl(secret,
-            userService.getUserById(userId).getEmail());
+                userService.getUserById(userId).getEmail());
         return ResponseEntity.ok(qrCodeUrl);
     }
 
@@ -100,10 +100,10 @@ public class AuthCon {
             TokenResult result = verifinTokenService.verifyToken(token);
             // 만료된 토큰의 경우 새 토큰을 발급하고 새 이메일을 보낸다.
             HttpStatus status = HttpStatus.OK;
-            if (result == TokenResult.EXPIRED) {
+            if (result==TokenResult.EXPIRED) {
                 result = verifinTokenService.reIssueToken(token);
             }
-            if (result == TokenResult.INVALID) {
+            if (result==TokenResult.INVALID) {
                 status = HttpStatus.GONE;
             }
             return ResponseEntity.status(status).body(new ApiResp(result.label, null));
@@ -114,14 +114,14 @@ public class AuthCon {
     }
 
     @PostMapping(UrlMap.LOGIN)
-    public ResponseEntity<ApiResp> login (@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResp> login(@Valid @RequestBody LoginRequest request) {
         try {
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(
                     authentication);
-            var details = (BsUserDetails)authentication.getPrincipal();
+            var details = (BsUserDetails) authentication.getPrincipal();
             details.setLoginMethod(LoginSource.EMAIL.getLabel());
             String jwt = jwtUtilBean.generateTokenForUser(details);
             BsUserDetails userDetails =
@@ -130,25 +130,28 @@ public class AuthCon {
             return ResponseEntity.ok(
                     new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
         } catch (DisabledException e) {
-            String message = Feedback.DISABLED_ACCOUNT;
-            if (verifinTokenService.hasTokenFor(request.getEmail())) {
-              message = Feedback.PLZ_VERIFY_EMAIL;
+            String message = Feedback.CLOSED_ACCOUNT;
+            HttpStatus status = ACCEPTED;
+
+            if (verifinTokenService.isOpenAccount(request.getEmail())) {
+                status = UNAUTHORIZED;
+                message = Feedback.PLZ_VERIFY_EMAIL;
             }
-            return ResponseEntity.status(UNAUTHORIZED).body(
+            return ResponseEntity.status(status).body(
                     new ApiResp(message, null));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(
                     new ApiResp(e.getMessage(), Feedback.BAD_CREDENTIAL));
         } catch (RuntimeException e) {
             BsUser user = userService.getByEmail(request.getEmail());
-            if (user == null) {
+            if (user==null) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-                    .body(new ApiResp(e.getMessage(), null));
+                        .body(new ApiResp(e.getMessage(), null));
             } else {
                 var signUp = LoginSource.valueOf(user.getSignUpMethod());
                 var message = signUp.getLabel() + Feedback.TRY_SOCIAL_LOGIN;
                 return ResponseEntity.status(BAD_REQUEST).body(
-                    new ApiResp(message, null));
+                        new ApiResp(message, null));
             }
         }
     }

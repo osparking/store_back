@@ -133,4 +133,5 @@ public class Feedback {
 
     /****************** 비누 생산 정보 처리 관련 메시지 *****************/
     public static final String DELETEED_PRODUCE = "삭제 정보 등록일시: ";;
+    public static final String CLOSED_ACCOUNT = "폐쇄된 계정";
 }
