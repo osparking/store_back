@@ -8,6 +8,7 @@ public class UrlMap {
     public static final String GET_BY_ID = "/{id}/get";
     public static final String UPDATE = "/{id}/update";
     public static final String DELETE_BY_ID = "/{id}/delete";
+    public static final String DISABLE_BY_ID = "/{id}/disable";
     public static final String GET_ALL = "/get_all";
     /*== Common / 공통 끝 ===============================*/
 

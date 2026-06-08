@@ -194,6 +194,23 @@ public class UserCon {
         }
     }
 
+    @PostMapping(UrlMap.DISABLE_BY_ID)
+    public ResponseEntity<ApiResp> disable(@PathVariable("id") Long id) {
+        try {
+            if (BsUtils.isQualified(id, false, null)) {
+                String uName = userServ.disableById(id);
+                return ResponseEntity.ok(
+                        new ApiResp(Feedback.DISABLED_USER_NAME + uName, null));
+            } else {
+                return ResponseEntity.status(UNAUTHORIZED).body(
+                        new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
     @DeleteMapping(UrlMap.DELETE_BY_ID)
     public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
         try {
