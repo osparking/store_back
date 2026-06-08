@@ -73,6 +73,18 @@ public class VerifinTokenServ implements VerifinTokenServInt {
     }
 
     @Override
+    public boolean isOpenAccount(String email) {
+        var verificationToken = verifinTokenRepo.findVerificationToken(email);
+
+        if (verificationToken.isPresent() &&
+                !verificationToken.get().getDiscarded()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public Date saveTokenForUser(String token, BsUser user) {
         var verifinToken = new VerifinToken(token, user);
         verifinTokenRepo.save(verifinToken);
