@@ -10,6 +10,7 @@ import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.service.TotpService;
 import com.bumsoap.store.util.Feedback;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -103,6 +104,19 @@ public class UserServ implements UserServInt {
         var user = userRepo.findById(id);
         if (user.isPresent()) {
             userRepo.delete(user.get());
+            return user.get().getFullName();
+        } else {
+            throw new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id);
+        }
+    }
+
+    @Override
+    @Transactional
+    public String disableById(Long id) {
+        var user = userRepo.findById(id);
+
+        if (user.isPresent()) {
+            user.get().setEnabled(false);
             return user.get().getFullName();
         } else {
             throw new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id);

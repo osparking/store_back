@@ -27,6 +27,8 @@ public interface UserServInt {
 
     String deleteById(Long id);
 
+    String disableById(Long id);
+
     BsUser findById(Long id);
 
     BsUser getUserById(Long id);
