@@ -19,10 +19,12 @@ public class VerifinToken {
     @ManyToOne
     @JoinColumn(name="user_id")
     private BsUser user;
+    private Boolean discarded;
 
     public VerifinToken(String token, BsUser user) {
         this.token = token;
         this.expireDate = BsUtils.getExpireTime();
         this.user = user;
+        discarded = false;
     }
 }
