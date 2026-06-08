@@ -33,23 +33,31 @@ public class VerifinTokenServ implements VerifinTokenServInt {
         Optional<VerifinToken> optionalVeriTok = findByToken(token);
         if (optionalVeriTok.isEmpty()) {
             return INVALID;
-        }
-        BsUser user = optionalVeriTok.get().getUser();
-        if (user.isEnabled()) {
-            if (hasTokenExpired(token)) {
-                return VERIFIED;
+        } else {
+            var tokenFound = optionalVeriTok.get();
+
+            if (tokenFound.getDiscarded()) {
+                return DISCARDED;
             } else {
+                BsUser user = tokenFound.getUser();
+                if (user.isEnabled()) {
+                    if (hasTokenExpired(token)) {
+                        return VERIFIED;
+                    } else {
+                        return VALIDATED;
+                    }
+                }
+                if (hasTokenExpired(token)) {
+                    return EXPIRED;
+                }
+                user.setEnabled(true);
+                userRepo.save(user);
+                tokenFound.setDiscarded(true);
+
                 return VALIDATED;
             }
         }
-        if (hasTokenExpired(token)) {
-            return EXPIRED;
-        }
-        user.setEnabled(true);
-        userRepo.save(user);
-        verifinTokenRepo.deleteByUser(user);
 
-        return VALIDATED;
     }
 
     @Override
