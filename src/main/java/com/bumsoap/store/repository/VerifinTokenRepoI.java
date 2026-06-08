@@ -21,4 +21,9 @@ public interface VerifinTokenRepoI extends JpaRepository<VerifinToken, Long> {
             "ON vt.user_id = bu.id WHERE bu.email = :email",
             nativeQuery = true)
     Optional<String> findTokenByEmail(@Param("email") String email);
+
+    @Query(value = "SELECT vt.* FROM verifin_token vt JOIN bs_user bu " +
+            "ON vt.user_id = bu.id WHERE bu.email = :email",
+            nativeQuery = true)
+    Optional<VerifinToken> findVerificationToken(@Param("email") String email);
 }
