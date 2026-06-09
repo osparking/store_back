@@ -1,6 +1,7 @@
 package com.bumsoap.store.event.listener;
 
 import com.bumsoap.store.email.EmailManager;
+import com.bumsoap.store.event.UserAuthEvent;
 import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
@@ -27,14 +28,50 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
             case UserRegisterEvent registerE -> {
                 handleUserRegisterEvent(registerE);
             }
-            default ->  {
+            case UserAuthEvent userAuthEvent -> {
+                handleUserAuthEvent(userAuthEvent);
+            }
+            default -> {
             }
         }
+    }
+
+    private void handleUserAuthEvent(UserAuthEvent event) {
+        StringBuilder verificationUrl = new StringBuilder(frontendBaseUrl);
+
+        verificationUrl.append("/email_verifin?token=");
+        verificationUrl.append(event.getVerificationCode());
+        verificationUrl.append("&type=");
+        verificationUrl.append(event.getAuthType());
+        try {
+            sendEnableEmail(event.getUser(), verificationUrl.toString());
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sendEnableEmail(BsUser user, String vUrl)
+            throws MessagingException, UnsupportedEncodingException {
+        String subject = "계정 활성화를 위한 이메일 검증";
+        String senderName = "범이비누";
+        StringBuilder content = new StringBuilder("<p>안녕하세요? '");
+
+        content.append(user.getFullName());
+        content.append("' 고객님</p><br>");
+        content.append("<p>귀하의 범이비누 계정은 활성화 중입니다.</p>");
+        content.append("<p/>단, 계정 활성화는 다음 링크 클릭으로 완성됩니다.</p>");
+        content.append("<p><u><a href=\"");
+        content.append(vUrl);
+        content.append("\">이메일 소유 확인</a></u></p>");
+        content.append("<br><p>고맙습니다.<br><br> 범이비누 계정 서비스");
+        emailManager.sendMail(user.getEmail(), subject, senderName,
+                content.toString());
     }
 
     /**
      * 유저 등록 사건을 수신하면, 유저에게 36자리 난수를 할당하고, 난수를 DB 에 저장하며,
      * 난수를 포함하는 메일을 유저에게 발송하여 유저가 등록한 이메일 주소의 실 소유주인지 증명하게 한다.
+     *
      * @param event 유저등록 사건
      */
     private void handleUserRegisterEvent(UserRegisterEvent event) {
