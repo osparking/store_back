@@ -4,6 +4,7 @@ import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.UserDto;
+import com.bumsoap.store.event.UserAuthEvent;
 import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.ExistingEmailEx;
@@ -47,6 +48,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.bumsoap.store.util.AuthType.ENABLE;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -381,8 +383,19 @@ public class UserCon {
             user = userOpt.orElseThrow(() -> new DataNotFoundException(
                     Feedback.NOT_FOUND_EMAIL + email));
 
+            var userDto = objMapper.mapToDto(user, UserDto.class);
+            String vToken = UUID.randomUUID().toString();
+
+            publisher.publishEvent(new UserAuthEvent(user, vToken, ENABLE));
+            var expireDate = tokenService.saveTokenForUser(vToken, user);
+            var expireLocalTm = expireDate.toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+            userDto.setVerifToken(vToken);
+            userDto.setTokenExpireTime(expireLocalTm);
+
             return ResponseEntity.ok(
-                    new ApiResp(Feedback.REQUEST_ACCEPTED, null));
+                    new ApiResp(Feedback.REQUEST_ACCEPTED, userDto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     new ApiResp(e.getMessage(), null));
