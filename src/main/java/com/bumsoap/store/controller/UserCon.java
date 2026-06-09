@@ -5,10 +5,12 @@ import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.event.UserRegisterEvent;
+import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.*;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.request.EnableUserReq;
 import com.bumsoap.store.request.PasswordChangeReq;
 import com.bumsoap.store.request.UserRegisterReq;
 import com.bumsoap.store.request.UserUpdateReq;
@@ -367,5 +369,23 @@ public class UserCon {
                     new ApiResp(e.getMessage(), null));
         }
 
+    }
+
+    @PutMapping(UrlMap.ENABLE)
+    public ResponseEntity<ApiResp> enable(@RequestBody EnableUserReq request) {
+        String email = request.getEmail();
+        BsUser user = null;
+
+        try {
+            var userOpt = userRepo.findByEmail(email);
+            user = userOpt.orElseThrow(() -> new DataNotFoundException(
+                    Feedback.NOT_FOUND_EMAIL + email));
+
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.REQUEST_ACCEPTED, null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ApiResp(e.getMessage(), null));
+        }
     }
 }
