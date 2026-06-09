@@ -22,5 +22,5 @@ public interface VerifinTokenServInt {
 
     TokenResult reIssueToken(String token);
 
-    boolean isOpenAccount(@NotBlank String email);
+    boolean isBeingVerified(@NotBlank String email);
 }

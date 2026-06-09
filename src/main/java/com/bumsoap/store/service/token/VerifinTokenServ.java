@@ -73,7 +73,7 @@ public class VerifinTokenServ implements VerifinTokenServInt {
     }
 
     @Override
-    public boolean isOpenAccount(String email) {
+    public boolean isBeingVerified(String email) {
         var verificationToken = verifinTokenRepo.findVerificationToken(email);
 
         return verificationToken.isPresent() &&
