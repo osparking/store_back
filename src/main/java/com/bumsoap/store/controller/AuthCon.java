@@ -133,8 +133,8 @@ public class AuthCon {
             String message = Feedback.CLOSED_ACCOUNT;
             HttpStatus status = ACCEPTED;
 
-            if (verifinTokenService.isOpenAccount(request.getEmail())) {
-                status = UNAUTHORIZED;
+            if (verifinTokenService.isBeingVerified(request.getEmail())) {
+                status = ALREADY_REPORTED;
                 message = Feedback.PLZ_VERIFY_EMAIL;
             }
             return ResponseEntity.status(status).body(
