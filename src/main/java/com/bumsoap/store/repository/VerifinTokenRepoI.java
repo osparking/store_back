@@ -16,6 +16,7 @@ public interface VerifinTokenRepoI extends JpaRepository<VerifinToken, Long> {
     void deleteByUserId(@Param("tokenId") Long tokenId, @Param("userId") Long userId);
 
     void deleteByUser(BsUser user);
+    void deleteByUserId(Long userId);
 
     @Query(value = "SELECT vt.token FROM verifin_token vt JOIN bs_user bu " +
             "ON vt.user_id = bu.id WHERE bu.email = :email",

@@ -12,6 +12,7 @@ import com.bumsoap.store.util.TokenResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -61,18 +62,6 @@ public class VerifinTokenServ implements VerifinTokenServInt {
     }
 
     @Override
-    public boolean hasNotExpiredTokenFor(String email) {
-        Optional<String> token = verifinTokenRepo.findTokenByEmail(email);
-        return token.isPresent() && !hasTokenExpired(token.get());
-    }
-
-    @Override
-    public boolean hasTokenFor(String email) {
-        Optional<String> token = verifinTokenRepo.findTokenByEmail(email);
-        return token.isPresent();
-    }
-
-    @Override
     public boolean isBeingVerified(String email) {
         var verificationToken = verifinTokenRepo.findVerificationToken(email);
 
@@ -81,7 +70,10 @@ public class VerifinTokenServ implements VerifinTokenServInt {
     }
 
     @Override
+    @Modifying
+    @Transactional
     public Date saveTokenForUser(String token, BsUser user) {
+        verifinTokenRepo.deleteByUserId(user.getId());
         var verifinToken = new VerifinToken(token, user);
         verifinTokenRepo.save(verifinToken);
         return verifinToken.getExpireDate();
