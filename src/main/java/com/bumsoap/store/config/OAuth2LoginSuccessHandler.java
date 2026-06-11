@@ -115,14 +115,18 @@ public class OAuth2LoginSuccessHandler
           .ifPresentOrElse(
               // 등록된 유저의 OAuth 2 로그인 처리
               user -> {
-                Collection<Role> roles = user.getRoles();
-                Role firstRole = roles.iterator().next();
-                putAuth2Context(firstRole.getName(),
-                    finalAttributes, idAttributeKey, oAuth2);
-                username = user.getEmail();
-                this.signUpSource =
-                    LoginSource.valueOf(user.getSignUpMethod());
-                redirectWithJwt(user, oauth2User, loginSource);
+                if (user.isEnabled()) {
+                  Collection<Role> roles = user.getRoles();
+                  Role firstRole = roles.iterator().next();
+                  putAuth2Context(firstRole.getName(),
+                          finalAttributes, idAttributeKey, oAuth2);
+                  username = user.getEmail();
+                  this.signUpSource =
+                          LoginSource.valueOf(user.getSignUpMethod());
+                  redirectWithJwt(user, oauth2User, loginSource);
+                } else {
+                  redirectToLogin(user.getEmail());
+                }
               },
               // 이메일이 DB 에 부재인 경우 처리
               () -> {
@@ -183,6 +187,15 @@ public class OAuth2LoginSuccessHandler
     String targetUrl = UriComponentsBuilder.fromUriString(
             frontendUrl + "/oauth2/redirect")
         .queryParam("token", jwtToken)
+        .build().toUriString();
+    this.setDefaultTargetUrl(targetUrl);
+  }
+
+  private void redirectToLogin(String email) {
+    // Redirect to the frontend with the email address
+    String targetUrl = UriComponentsBuilder.fromUriString(
+            frontendUrl + "/login")
+        .queryParam("email", email)
         .build().toUriString();
     this.setDefaultTargetUrl(targetUrl);
   }
