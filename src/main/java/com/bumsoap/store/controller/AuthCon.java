@@ -4,6 +4,7 @@ import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.request.LoginRequest;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.response.JwtResponse;
+import com.bumsoap.store.security.TokenCache;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.TotpService;
@@ -35,6 +36,18 @@ public class AuthCon {
     private final UserServInt userService;
     private final AuthUtil authUtil;
     private final TotpService totpService;
+    private final TokenCache tokenCache;
+
+    @GetMapping("/email")
+    public ResponseEntity<?> getEmailByToken(@RequestParam String token) {
+        String email = tokenCache.getAndRemove(token);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Invalid or expired token"));
+        }
+        return ResponseEntity.ok(new ApiResp(Feedback.EMAIL_FOUND,
+                Map.of("email", email)));
+    }
 
     @GetMapping("/user/2fa-status")
     public ResponseEntity<?> get2FAstatus() {
