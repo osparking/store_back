@@ -3,6 +3,7 @@ package com.bumsoap.store.config;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.model.Role;
+import com.bumsoap.store.security.TokenCache;
 import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.CustomerServInt;
@@ -191,13 +192,16 @@ public class OAuth2LoginSuccessHandler
     this.setDefaultTargetUrl(targetUrl);
   }
 
+  private final TokenCache tokenCache;
+
   private void redirectToLogin(String email) {
+    String tempToken = tokenCache.put(email, 300);
+
     // Redirect to the frontend with the email address
     String targetUrl = UriComponentsBuilder.fromUriString(
             frontendUrl + "/login")
-        .queryParam("email", email)
+        .queryParam("token", tempToken)
         .build().toUriString();
     this.setDefaultTargetUrl(targetUrl);
   }
-
 }
