@@ -18,9 +18,11 @@ import java.util.List;
 
 /**
  * BumSoap(범이비누) 사용자
+ *
  * @author <a href="mailto:jbpark03@gmail.com">박종범
  */
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +33,8 @@ public class BsUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String fullName;
+    @Column(name = "mb_phone", length = 11, columnDefinition =
+            "VARCHAR(11) NOT NULL CHECK (mb_phone REGEXP '^[0-9]{10,11}$')")
     private String mbPhone; // Mobile Phone
     @NaturalId
     private String email;
