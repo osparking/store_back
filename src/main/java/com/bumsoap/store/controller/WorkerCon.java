@@ -6,9 +6,7 @@ import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(UrlMap.WORKER)
@@ -23,7 +21,23 @@ public class WorkerCon {
             return ResponseEntity.ok(new ApiResp(Feedback.DEPTS_FOUND, depts));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.DEPTS_READ_FAILURE, null ));
+                    new ApiResp(Feedback.DEPTS_READ_FAILURE, null));
+        }
+    }
+
+    @PutMapping(UrlMap.CHANGE_DEPT)
+    public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
+                                          @RequestBody String dept) {
+        try {
+            int updatedRowCount = workerServ.updateDeptById(id, dept);
+            if (updatedRowCount==1) {
+                return ResponseEntity.ok(new ApiResp(Feedback.DEPT_UPDATED, dept));
+            } else {
+                throw new Exception("직원 소속 갱신 실패");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.DEPTS_READ_FAILURE, e.getMessage()));
         }
     }
 }
