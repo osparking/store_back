@@ -1,5 +1,6 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.request.DeptChangeReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
@@ -27,11 +28,13 @@ public class WorkerCon {
 
     @PutMapping(UrlMap.CHANGE_DEPT)
     public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
-                                          @RequestBody String dept) {
+                                          @RequestBody DeptChangeReq req) {
         try {
-            int updatedRowCount = workerServ.updateDeptById(id, dept);
+            int updatedRowCount =
+                    workerServ.updateDeptById(id, req.getDept());
             if (updatedRowCount==1) {
-                return ResponseEntity.ok(new ApiResp(Feedback.DEPT_UPDATED, dept));
+                return ResponseEntity.ok(new ApiResp(
+                        Feedback.DEPT_UPDATED, req.getDept()));
             } else {
                 throw new Exception("직원 소속 갱신 실패");
             }
