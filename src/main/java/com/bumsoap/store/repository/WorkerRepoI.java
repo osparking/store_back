@@ -2,8 +2,11 @@ package com.bumsoap.store.repository;
 
 import com.bumsoap.store.dto.PeopleByDept;
 import com.bumsoap.store.model.Worker;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +25,9 @@ public interface WorkerRepoI extends JpaRepository<Worker, Long> {
                     order by people desc
                     """)
     List<PeopleByDept> findPeopleByDept();
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Worker w SET w.dept = :dept WHERE w.id = :id")
+    int updateDeptById(@Param("id") long id, @Param("dept") String dept);
 }
