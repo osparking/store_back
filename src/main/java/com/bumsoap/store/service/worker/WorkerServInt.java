@@ -12,5 +12,7 @@ public interface WorkerServInt {
 
     List<PeopleByDept> employeesByDept();
 
+    int updateDeptById(Long id, String dept);
+
     Worker add(Worker worker);
 }

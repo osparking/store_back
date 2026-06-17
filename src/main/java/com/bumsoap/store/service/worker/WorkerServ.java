@@ -52,6 +52,11 @@ public class WorkerServ implements WorkerServInt {
     }
 
     @Override
+    public int updateDeptById(Long id, String dept) {
+        return workerRepo.updateDeptById(id, dept);
+    }
+
+    @Override
     public Worker add(Worker worker) {
         return workerRepo.save(worker);
     }
