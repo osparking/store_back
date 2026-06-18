@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface WorkerRepoI extends JpaRepository<Worker, Long> {
@@ -35,4 +36,12 @@ public interface WorkerRepoI extends JpaRepository<Worker, Long> {
     @Transactional
     @Query("UPDATE Worker w SET w.deleted = true WHERE w.id = :id")
     int softDeleteWorkerById(@Param("id") long id);
+
+    @Query(nativeQuery = true,
+            value = """
+                    SELECT w.deleted
+                    FROM bs_user bu join worker w on w.worker_id = bu.id
+                    WHERE bu.email = :email
+                    """)
+    Optional<Boolean> isAccountDeleted(@Param("email") String email);
 }
