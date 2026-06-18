@@ -10,11 +10,13 @@ import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.TotpService;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
+import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,7 +43,7 @@ public class AuthCon {
     @GetMapping("/email")
     public ResponseEntity<?> getEmailByToken(@RequestParam String token) {
         String email = tokenCache.getAndRemove(token);
-        if (email == null) {
+        if (email==null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Invalid or expired token"));
         }
@@ -126,9 +128,14 @@ public class AuthCon {
         }
     }
 
+    private final WorkerServInt workerServ;
+
     @PostMapping(UrlMap.LOGIN)
     public ResponseEntity<ApiResp> login(@Valid @RequestBody LoginRequest request) {
         try {
+            if (workerServ.isAccountDeleted(request.getEmail())) {
+                throw new AccountExpiredException(Feedback.WRONG_CREDENTIAL);
+            }
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(), request.getPassword()));
@@ -152,6 +159,9 @@ public class AuthCon {
             }
             return ResponseEntity.status(status).body(
                     new ApiResp(message, null));
+        } catch (AccountExpiredException e) {
+            return ResponseEntity.status(UNAUTHORIZED).body(
+                    new ApiResp(e.getMessage(), null));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(
                     new ApiResp(e.getMessage(), Feedback.BAD_CREDENTIAL));

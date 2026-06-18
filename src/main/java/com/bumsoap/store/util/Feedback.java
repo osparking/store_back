@@ -55,12 +55,14 @@ public class Feedback {
     public static final String TOKEN_SAVED = "유저 토큰 저장됨";
     public static final String TOKEN_DELETED = "유저 토큰 삭제됨";
     public static final String TOKEN_VALI_ERROR = "토큰 검증 오류";
-    public static final String ENABLED_TOGGLED = "유저 활성화 토글" ;
+    public static final String ENABLED_TOGGLED = "유저 활성화 토글";
     public static final String ENABLED_TOGGLING_ERROR = "유저 활성화 토글 오류";
     public static final String PLZ_VERIFY_EMAIL = "이메일 검증을 진행하십시오.";
     public static final String TRY_SOCIAL_LOGIN = " 계정으로 로그인하세요";
 
-    /** 2FA 관련 메시지 **/
+    /**
+     * 2FA 관련 메시지
+     **/
     public static final String DISABLED_2FA = "2FA 비활성화됨";
     public static final String TWO_FA_VERIFIED = "구글 2FA 코드 검증 성공";
     public static final String TWO_FA_CODE_ERROR = "2FA 코드 오류";
@@ -136,6 +138,7 @@ public class Feedback {
     public static final String SOAP_PRODUCE_UPDATED = "생산정보 갱신 성공";
 
     /****************** 비누 생산 정보 처리 관련 메시지 *****************/
-    public static final String DELETEED_PRODUCE = "삭제 정보 등록일시: ";;
+    public static final String DELETEED_PRODUCE = "삭제 정보 등록일시: ";
     public static final String CLOSED_ACCOUNT = "폐쇄된 계정";
+    public static final String WRONG_CREDENTIAL = "로그인 자격정보 오류";
 }
