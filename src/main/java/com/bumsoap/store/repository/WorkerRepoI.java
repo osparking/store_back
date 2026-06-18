@@ -30,4 +30,9 @@ public interface WorkerRepoI extends JpaRepository<Worker, Long> {
     @Transactional
     @Query("UPDATE Worker w SET w.dept = :dept WHERE w.id = :id")
     int updateDeptById(@Param("id") long id, @Param("dept") String dept);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Worker w SET w.deleted = true WHERE w.id = :id")
+    int softDeleteWorkerById(@Param("id") long id);
 }
