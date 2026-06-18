@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface WorkerServInt {
     List<UserDto> findAllWorkers();
+
     List<String> findAllDept();
 
     List<PeopleByDept> employeesByDept();
@@ -17,4 +18,6 @@ public interface WorkerServInt {
     int setWorkerDeleted(long id);
 
     Worker add(Worker worker);
+
+    Boolean isAccountDeleted(String email);
 }
