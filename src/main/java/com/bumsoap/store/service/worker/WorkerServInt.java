@@ -14,5 +14,7 @@ public interface WorkerServInt {
 
     int updateDeptById(Long id, String dept);
 
+    int setWorkerDeleted(long id);
+
     Worker add(Worker worker);
 }

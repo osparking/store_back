@@ -57,6 +57,11 @@ public class WorkerServ implements WorkerServInt {
     }
 
     @Override
+    public int setWorkerDeleted(long id) {
+        return workerRepo.softDeleteWorkerById(id);
+    }
+
+    @Override
     public Worker add(Worker worker) {
         return workerRepo.save(worker);
     }
