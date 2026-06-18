@@ -1,5 +1,6 @@
 package com.bumsoap.store.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.AllArgsConstructor;
@@ -16,4 +17,7 @@ import lombok.Setter;
 public class Worker extends Employee {
     private long id;
     private String dept;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
 }
