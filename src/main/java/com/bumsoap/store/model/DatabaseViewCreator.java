@@ -68,4 +68,87 @@ public class DatabaseViewCreator {
             System.err.println("생성이 실패된 프로시져 : " + e.getMessage());
         }
     }
+
+    @EventListener(ContextRefreshedEvent.class)
+    public void createDeleteCustomerByIdProcedure() {
+        String dropSql =
+                "DROP PROCEDURE IF EXISTS delete_customer_by_id";
+        String createSql =
+                """
+                CREATE PROCEDURE bs_store.delete_customer_by_id(IN uid INT)
+                BEGIN
+                    START TRANSACTION;
+                
+                    -- 1. user_roles 테이블에서 해당 사용자와 연결된 행 삭제
+                    DELETE FROM user_roles
+                    WHERE user_id = uid;
+                
+                    -- 2. verification_token 테이블에서 해당 사용자와 연결된 행 삭제
+                    DELETE FROM verifin_token
+                    WHERE user_id = uid;
+                
+                    -- 3. customer 테이블에서 해당 사용자와 연결된 행 삭제
+                    DELETE FROM customer
+                    WHERE customer_id = uid;
+                
+                    -- 4. bs_user 테이블에서 해당 사용자 삭제
+                    DELETE FROM bs_user
+                    WHERE id = uid;
+                
+                    -- 모든 삭제 성공 시 커밋
+                    COMMIT;
+                END
+                """;
+        try {
+            jdbcTemplate.execute(dropSql);
+            jdbcTemplate.execute(createSql);
+            System.out.println("프로시저 'delete_customer_by_id' 생성 성공");
+        } catch (Exception e) {
+            System.err.println("생성이 실패된 프로시져 : " + e.getMessage());
+        }
+    }
+
+    @EventListener(ContextRefreshedEvent.class)
+    public void createDeleteWorkerByIdProcedure() {
+        String dropSql =
+                "DROP PROCEDURE IF EXISTS delete_customer_by_id";
+        String createSql =
+                """
+                CREATE DEFINER=`root`@`localhost`
+                    PROCEDURE `bs_store`.`delete_worker_by_id`(IN uid INT)
+                BEGIN
+                    START TRANSACTION;
+                
+                    -- 1. user_roles 테이블에서 해당 사용자와 연결된 행 삭제
+                    DELETE FROM user_roles
+                    WHERE user_id = uid;
+                
+                    -- 2. verification_token 테이블에서 해당 사용자와 연결된 행 삭제
+                    DELETE FROM verifin_token
+                    WHERE user_id = uid;
+                
+                    -- 3. customer 테이블에서 해당 사용자와 연결된 행 삭제
+                    DELETE FROM worker
+                    WHERE worker_id = uid;
+                
+                    -- 4. customer 테이블에서 해당 사용자와 연결된 행 삭제
+                    DELETE FROM employee
+                    WHERE employee_id = uid;
+
+                    -- 5. bs_user 테이블에서 해당 사용자 삭제
+                    DELETE FROM bs_user
+                    WHERE id = uid;
+                
+                    -- 모든 삭제 성공 시 커밋
+                    COMMIT;
+                END
+                """;
+        try {
+            jdbcTemplate.execute(dropSql);
+            jdbcTemplate.execute(createSql);
+            System.out.println("프로시저 'delete_customer_by_id' 생성 성공");
+        } catch (Exception e) {
+            System.err.println("생성이 실패된 프로시져 : " + e.getMessage());
+        }
+    }
 }
