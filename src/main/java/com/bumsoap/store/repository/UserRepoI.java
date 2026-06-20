@@ -26,14 +26,15 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
             "UPDATE Bs_User u SET u.enabled = not u.enabled WHERE u.id = :userId")
     int toggleEnabledColumn(@Param("userId") Long userId);
 
-    String selectUserDto =
-            "select u.id, u.full_name, u.mb_phone, u.email, u.enabled," +
-                    " w.dept, u.user_type, u.sign_up_method, u.two_fa_enabled," +
-                    " u.add_date, e.photo_id, p.image, w.deleted " +
-                    "from bs_user u" +
-                    " left join employee e on e.employee_id = u.id" +
-                    " left join worker w on w.worker_id = e.employee_id" +
-                    " left join photo p on p.id = e.photo_id";
+    String selectUserDto = """
+            select u.id, u.full_name, u.mb_phone, u.email, u.enabled,
+              w.dept, u.user_type, u.sign_up_method, u.two_fa_enabled,
+              w.deleted, u.add_date, e.photo_id, p.image
+            from bs_user u
+              left join employee e on e.employee_id = u.id
+              left join worker w on w.worker_id = e.employee_id
+              left join photo p on p.id = e.photo_id
+            """;
     String selectUserDtoById = selectUserDto + " where u.id = :id";
 
     @Query(nativeQuery = true,
