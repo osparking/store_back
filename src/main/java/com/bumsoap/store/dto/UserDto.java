@@ -29,15 +29,15 @@ public class UserDto {
     private LocalDateTime tokenExpireTime;
 
     public UserDto(Long id, String fullName, String mbPhone, String email,
-                   boolean enabled, boolean deleted, String dept, byte userType,
-                   String signUpMethod, boolean twoFaEnabled,
+                   boolean enabled, String dept, byte userType,
+                   String signUpMethod, boolean twoFaEnabled, Boolean deleted,
                    Timestamp addDate, Long photoId, byte[] photoBytes) {
         this.id = id;
         this.fullName = fullName;
         this.mbPhone = mbPhone;
         this.email = email;
         this.enabled = enabled;
-        this.deleted = deleted;
+        this.deleted = deleted == null ? false : deleted;
         this.dept = dept;
         this.userType = UserType.values()[userType].label;
         this.signUpMethod = LoginSource.valueOf(signUpMethod);
