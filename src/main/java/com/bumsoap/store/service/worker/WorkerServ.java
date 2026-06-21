@@ -7,9 +7,7 @@ import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.WorkerRepoI;
 import com.bumsoap.store.service.photo.PhotoServInt;
 import com.bumsoap.store.util.BsUtils;
-import com.bumsoap.store.util.Feedback;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -70,7 +68,6 @@ public class WorkerServ implements WorkerServInt {
 
     @Override
     public Boolean isAccountDeleted(String email) {
-        return workerRepo.isAccountDeleted(email).orElseThrow(() ->
-                new AccountExpiredException(Feedback.WRONG_CREDENTIAL));
+        return workerRepo.isAccountDeleted(email).orElse(false);
     }
 }
