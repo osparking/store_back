@@ -12,7 +12,7 @@ public class Feedback {
     public static final String USER_TYPE_WRONG = "존재하지 않는 유저 유형";
     public static final String USER_TAKEN_EMAIL = "이미 사용 중인 이메일:";
     public static final String USER_ID_NOT_FOUND = "발견되지 않은 유저 아이디:";
-    public static final String USER_UPDATE_SUCCESS = "유저 갱신 성공 - [닫기]로 마감하세요.";
+    public static final String USER_UPDATE_SUCCESS = "유저 갱신 성공";
     public static final String DELETEED_USER_NAME = "성공적으로 삭제된 유저 성명: ";
     public static final String DELETEED_WORKER_ID = "성공적으로 삭제된 직원 ID: ";
     public static final String DISABLED_USER_NAME = "성공적으로 폐쇄된 유저 성명: ";
