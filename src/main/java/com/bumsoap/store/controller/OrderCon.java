@@ -296,18 +296,10 @@ public class OrderCon {
             BsOrder orderSaved = orderServ.saveOrder(order);
 
             // 기본 수신처 처리 지시 수행
-            switch (addOrderReq.getDefaultRecipientAction()) {
-                case "store":
-                    user.setRecipient(order.getRecipient());
-                    userRepo.save(user);
-                    break;
-                case "remove":
-                    user.setRecipient(null);
-                    userRepo.save(user);
-                    break;
-                default:
-                    break;
+            if ("store".equals(addOrderReq.getDefaultRecipientAction())) {
+                user.setRecipient(order.getRecipient());
             }
+            userRepo.save(user);
 
             var orderDto = objMapper.mapToDto(orderSaved, BsOrderDto.class);
             return ResponseEntity.ok(new ApiResp(Feedback.SOAP_ORDER_SAVED,
