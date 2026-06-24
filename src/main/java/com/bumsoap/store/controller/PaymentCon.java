@@ -102,6 +102,13 @@ public class PaymentCon {
                     new ApiResp("이미 보고된 컨펌임", null));
         }
 
+        if (response.containsKey("code") &&
+                "ALREADY_PROCESSED_PAYMENT".equals(response.get("code"))) {
+            logger.debug("이미 처리된 결제 건입니다.");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(
+                    new ApiResp("이미 처리된 결제", null));
+        }
+
         var payment = paymentService.createPayment(response);
         if (payment.getOrder().getOrderStatus() == OrderStatus.PAID) {
             // 주문 사실을 관리자에게 이메일 통지
