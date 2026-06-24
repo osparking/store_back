@@ -58,15 +58,17 @@ public class PaymentCon {
     @PostMapping("/saveAmount")
     public ResponseEntity<?> saveAmountTemporarily(
             HttpSession session, @RequestBody SaveAmountReq request) {
+        System.out.println("ssnid-save: " + session.getId());
         session.setAttribute(request.getOrderId(),
                 new OrderInfo(request.getAmount(), request.getOrderName()));
+
         return ResponseEntity.ok("<주문 ID, 결제액> 항목 세션 저장.");
     }
 
     @PostMapping("/checkAmount")
     public ResponseEntity<CheckAmountResult> checkIfAmountMatches(
             HttpSession session, @RequestBody SaveAmountReq req) {
-
+        System.out.println("ssnid-check:" + session.getId() );
         var order = (OrderInfo) session.getAttribute(req.getOrderId());
 
         if (order==null) {
