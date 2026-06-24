@@ -69,7 +69,7 @@ public class AppSecurityConfig {
                         -> exception.authenticationEntryPoint(bsJwtErrorEntry))
                 .sessionManagement(session
                         -> session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
+                        SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PRRMIT_URLS)
                         .permitAll()
