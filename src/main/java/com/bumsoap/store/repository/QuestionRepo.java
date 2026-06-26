@@ -67,4 +67,6 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
     Page<QuestionTableRowAdmin> listMyQuestionTableRows(
             @Param("userId") Long userId,
             Pageable pageable);
+
+    Optional<Question> findById(long id);
 }
