@@ -34,7 +34,7 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
                             REGEXP_REPLACE(q.question, '<[^>]*>', '')
                         ) as question,
                        CASE
-                         WHEN latest_fu.user_id = 1 THEN '완료'
+                         WHEN latest_fu.user_id = 1 THEN '등록'
                          ELSE '대기'
                        END AS answered,
                        latest_fu.user_id as last_writer_id,
