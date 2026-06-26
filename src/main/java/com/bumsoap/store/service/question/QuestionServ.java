@@ -4,6 +4,7 @@ import com.bumsoap.store.dto.QuestionTableRowAdmin;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.FollowUp;
 import com.bumsoap.store.model.Question;
 import com.bumsoap.store.question.QuestionRow;
@@ -12,6 +13,8 @@ import com.bumsoap.store.repository.QuestionRepo;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.FollowUpData;
 import com.bumsoap.store.request.QuestionSaveReq;
+import com.bumsoap.store.util.Feedback;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -105,6 +108,15 @@ public class QuestionServ implements QuestionServI {
     public void checkIfFollowUpExists(Long id) {
         followUpRepo.findById(id).orElseThrow(
                 () -> new IdNotFoundEx("부재 댓글 ID: " + id));
+    }
+
+    @Override
+    public String findWriterNameByQuestionId(Long id) {
+        Question question = questionRepo.findById(id)
+                .orElseThrow(
+                        () -> new EntityNotFoundException(Feedback.NOT_FOUND));
+        BsUser user = question.getUser();
+        return user.getFullName();
     }
 
 }

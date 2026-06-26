@@ -24,4 +24,6 @@ public interface QuestionServI {
     QuestionRow findById(Long id);
 
     void checkIfFollowUpExists(Long id);
+
+    String findWriterNameByQuestionId(Long id);
 }
