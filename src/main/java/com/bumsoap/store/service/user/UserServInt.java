@@ -43,6 +43,8 @@ public interface UserServInt {
 
     long countAll();
 
+    String getAdminEmail();
+
     RecipientDto getRecipientById(Long id);
 
     List<Map<String, Object>> getSoapsMonthOfUser(Long id);

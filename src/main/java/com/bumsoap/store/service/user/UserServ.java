@@ -5,10 +5,12 @@ import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.exception.UserTypeNotFouncEx;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.service.TotpService;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.UserType;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,13 @@ public class UserServ implements UserServInt {
     private final UserRepoI userRepo;
     private final ObjMapper mapper;
     private final TotpService totpService;
+
+    @Override
+    public String getAdminEmail() {
+        return userRepo.findEmailByUserType(UserType.ADMIN)
+                .orElseThrow(() -> new UserTypeNotFouncEx(
+                        "부재 유저 유형: " + UserType.ADMIN.toString()));
+    }
 
     @Override
     public RecipientDto getRecipientById(Long id) {
