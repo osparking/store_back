@@ -179,7 +179,7 @@ public class QuestionCon {
                 <p>귀하께서 등록한 글에 댓글이 등록되었습니다. 댓글 요약:</p>
                 <ul>
                     <li>원 질문 제목: %s</li>
-                    <li>댓글 등록 유저: %s</li>
+                    <li>댓글 작성 유저: %s</li>
                     <li>댓글 등록 일시: %s</li>
                     <li>댓글 서두(100자): %s</li>
                 </ul>
@@ -194,7 +194,7 @@ public class QuestionCon {
 
         emailManager.sendMail(mappedOne.getReceiverEmail(),
                 subject,
-                mappedOne.getSenderName(),
+                "범이비누",
                 content);
     }
 
