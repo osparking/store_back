@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ShapeSelItem {
   private String shapeLabel;
-  private int count;
+
+  private Long count;
+  
   private BigDecimal price;
 }
