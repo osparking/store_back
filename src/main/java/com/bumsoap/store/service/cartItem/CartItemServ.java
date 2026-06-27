@@ -8,7 +8,7 @@ import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.CartItem;
 import com.bumsoap.store.repository.CartItemRepo;
 import com.bumsoap.store.request.CartUpdateReq;
-import com.bumsoap.store.service.soap.InvenServI;
+import com.bumsoap.store.service.produce.ProduceServI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.SubTotaler;
@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartItemServ implements CartItemServI {
   private final CartItemRepo cartItemRepo;
-  private final InvenServI invenServ;
   private final ObjMapper objMapper;
   private final SubTotaler subTotaler;
+  private final ProduceServI produceServ;
 
   @Transactional(rollbackOn =
       {InventoryException.class, UnauthorizedException.class})
@@ -52,12 +52,12 @@ public class CartItemServ implements CartItemServI {
     /**
      * 재고 검사 및 예외 발생
      */
-    int level = invenServ.getByBsShape(item.getShape()).getStockLevel();
+    Long stock = produceServ.getStockByShape(item.getShape());
 
-    if (level < item.getCount() || item.getCount() < 1) {
+    if (stock < item.getCount() || item.getCount() < 1) {
       String sb = Feedback.SHORT_INVENTORY + item.getShape().label +
           " - " +
-          level;
+          stock;
       throw new InventoryException(sb);
     }
 
