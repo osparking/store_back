@@ -6,7 +6,6 @@ import com.bumsoap.store.dto.QuestionDto;
 import com.bumsoap.store.email.EmailManager;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.UnauthorizedException;
-import com.bumsoap.store.exception.UserTypeNotFouncEx;
 import com.bumsoap.store.model.Question;
 import com.bumsoap.store.question.QuestionRow;
 import com.bumsoap.store.repository.QuestionRepo;
@@ -16,9 +15,9 @@ import com.bumsoap.store.request.QuestionSaveReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.question.QuestionServI;
+import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
-import com.bumsoap.store.util.UserType;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +43,7 @@ public class QuestionCon {
     private final ObjMapper objMapper;
     private final QuestionServI questionServ;
     private final QuestionRepo questionRepo;
+    private final UserServInt userServ;
     private final UserRepoI userRepoI;
     private final EmailManager emailManager;
 
@@ -82,8 +82,24 @@ public class QuestionCon {
                     .anyMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"));
 
             if (isAdmin) {
-                sayAnswered(answerData.getQuestionId(), mappedOne);
+                mappedOne.setSenderName("범이비누");
+
+                Long questionId = answerData.getQuestionId();
+                Question question = questionRepo.findById(questionId)
+                        .orElseThrow(() -> new IdNotFoundEx(
+                                "부재 질문 ID: " + questionId));
+                var questionWriterEmail = question.getUser().getEmail();
+                mappedOne.setReceiverEmail(questionWriterEmail);
+
+                String questionWriterName =
+                        questionServ.findWriterNameByQuestionId(questionId);
+                mappedOne.setReceiverName(questionWriterName);
+            } else {
+                mappedOne.setSenderName(user.getFullName() + " 고객");
+                mappedOne.setReceiverEmail(userServ.getAdminEmail());
+                mappedOne.setReceiverName("범이비누 관리자");
             }
+            sayAnswered(mappedOne);
             return ResponseEntity.ok(new ApiResp(Feedback.FOLLOW_UP_SAVED,
                     mappedOne));
         } catch (IdNotFoundEx e) {
@@ -154,41 +170,38 @@ public class QuestionCon {
         }
     }
 
-    private void sayAnswered(Long questionId, FollowUpDto mappedOne)
+    private void sayAnswered(FollowUpDto mappedOne)
             throws MessagingException, UnsupportedEncodingException {
-        Question question = questionRepo.findById(questionId).orElseThrow(
-                () -> new IdNotFoundEx("부재 질문 ID: " + questionId));
-        var receiverEmail = question.getUser().getEmail();
 
-        String subject = "답변 등록 안내";
-        String senderName = "범이비누";
+        String subject = "댓글 등록 안내";
         String EMAIL_TEMPLATE = """
-                <p>범이비누 고객님, 안녕하세요?</p>
-                <p>귀하께서 등록한 질문에 대한 답변이 등록되었습니다. 답변 요약:</p>
+                <p>%s님, 안녕하세요?</p>
+                <p>귀하께서 등록한 글에 댓글이 등록되었습니다. 댓글 요약:</p>
                 <ul>
-                    <li>질문 제목: %s</li>
-                    <li>답변 시각: %s</li>
-                    <li>답변 서두(100자): %s</li>
+                    <li>원 질문 제목: %s</li>
+                    <li>댓글 등록 유저: %s</li>
+                    <li>댓글 등록 일시: %s</li>
+                    <li>댓글 서두(100자): %s</li>
                 </ul>
-                <br>- 범이비누 질문 등록 알림 체계""";
+                <br>- 범이비누 질문-댓글 체계""";
 
         String content = String.format(EMAIL_TEMPLATE,
+                mappedOne.getReceiverName(),
                 mappedOne.getQuestionTitle(),
+                mappedOne.getSenderName(),
                 formatKoreanDateTime(mappedOne.getInsertTime()),
                 getPlainContent(mappedOne.getFollowUpContent(), 100));
 
-        emailManager.sendMail(receiverEmail,
+        emailManager.sendMail(mappedOne.getReceiverEmail(),
                 subject,
-                senderName,
+                mappedOne.getSenderName(),
                 content);
     }
 
     private void emailAdmin(Long userId, QuestionDto mappedOne)
             throws MessagingException, UnsupportedEncodingException {
 
-        var adminEmail = userRepoI.findEmailByUserType(UserType.ADMIN)
-                .orElseThrow(() -> new UserTypeNotFouncEx(
-                        "부재 유저 유형: " + UserType.ADMIN.toString()));
+        var adminEmail = userServ.getAdminEmail();
         String subject = "고객 질문 접수 안내";
         String senderName = "범이비누";
         String EMAIL_TEMPLATE = """
