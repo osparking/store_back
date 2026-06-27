@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-@DependsOn({"initialSoapInvenCreator", "initialSoapPriceCreator"})
+@DependsOn({"initialSoapPriceCreator"})
 public class BsParameters {
     private Map<Integer, BigDecimal> priceMap;
     private final SoapPriceRepo soapPriceRepo;
