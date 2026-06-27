@@ -4,7 +4,7 @@ import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.ShapeCount;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.OrderItem;
-import com.bumsoap.store.service.soap.InvenServI;
+import com.bumsoap.store.service.produce.ProduceServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,20 +15,21 @@ import java.math.RoundingMode;
 @Component
 @RequiredArgsConstructor
 public class SubTotaler {
-  private final InvenServI invenServ;
   private final PriceServI priceServ;
   private final ObjMapper objMapper;
+  private final ProduceServI produceServ;
 
   public BigDecimal getSubtotal(ShapeCount item) {
     /**
      * 재고 검사 및 예외 발생
      */
-    int level = invenServ.getByBsShape(item.getShape()).getStockLevel();
-    if (level < item.getCount()) {
+    Long stock = produceServ.getStockByShape(item.getShape());
+    
+    if (stock < item.getCount()) {
       StringBuffer sb = new StringBuffer(Feedback.SHORT_INVENTORY);
       sb.append(item.getShape().label);
       sb.append(" - ");
-      sb.append(level);
+      sb.append(stock);
       throw new InventoryException(sb.toString());
     }
     var subTotal = priceServ.findSoapPrice(item.getShape())
