@@ -2,19 +2,16 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.data.BsDataSupplier;
 import com.bumsoap.store.dto.ShapeSelItem;
-import com.bumsoap.store.model.SoapInven;
-import com.bumsoap.store.request.InvenUpdateReq;
 import com.bumsoap.store.request.SoapPriceReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.order.OrderServI;
-import com.bumsoap.store.service.soap.InvenServI;
+import com.bumsoap.store.service.produce.ProduceServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.util.BsShape;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +23,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequestMapping(UrlMap.SOAP)
 @RequiredArgsConstructor
 public class SoapCon {
-  private final InvenServI inventoryServ;
+  private final ProduceServI produceServ;
   private final PriceServI priceServ;
   private final OrderServI orderServ;
 
@@ -46,28 +43,13 @@ public class SoapCon {
   @GetMapping(UrlMap.SOAP_SHAPES)
   public ResponseEntity<ApiResp> getShapeSelectionData() {
     try {
-      List<ShapeSelItem> shapeSelItems = inventoryServ.getShapeSelItems();
+      List<ShapeSelItem> shapeSelItems = produceServ.getShapeSelItems();
 
       return ResponseEntity.ok(
               new ApiResp(Feedback.ORDER_FOUND, shapeSelItems));
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)
               .body(new ApiResp(e.getMessage(), null));
-    }
-  }
-
-  @PutMapping(UrlMap.UPDATE)
-  public ResponseEntity<ApiResp> update(@RequestBody InvenUpdateReq request) {
-    try {
-      SoapInven soapInven = inventoryServ.getByBsShape(request.getBsShape());
-      soapInven.setStockLevel(
-              request.getStockDiff() + soapInven.getStockLevel());
-      SoapInven updatedSoap = inventoryServ.add(soapInven);
-      return ResponseEntity.ok(
-              new ApiResp(Feedback.INVEN_UPDATE_SUCC, updatedSoap));
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-              new ApiResp(e.getMessage(), null));
     }
   }
 
