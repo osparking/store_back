@@ -23,104 +23,120 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequestMapping(UrlMap.SOAP)
 @RequiredArgsConstructor
 public class SoapCon {
-  private final ProduceServI produceServ;
-  private final PriceServI priceServ;
-  private final OrderServI orderServ;
+    private final ProduceServI produceServ;
+    private final PriceServI priceServ;
+    private final OrderServI orderServ;
 
-  private final BsDataSupplier dataSupplier;
+    private final BsDataSupplier dataSupplier;
 
-  @GetMapping(UrlMap.SOAP_LABELS)
-  public ResponseEntity<ApiResp> readSoapShapeLabels() {
-    try {
-      return ResponseEntity.ok(new ApiResp(Feedback.FOUND,
-              dataSupplier.getSoapShapeLabels()));
-    } catch (Exception e) {
-      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-              .body(new ApiResp(e.getMessage(), null));
+    @GetMapping(UrlMap.SOAP_LABELS)
+    public ResponseEntity<ApiResp> readSoapShapeLabels() {
+        try {
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND,
+                    dataSupplier.getSoapShapeLabels()));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
-  }
 
-  @GetMapping(UrlMap.SOAP_SHAPES)
-  public ResponseEntity<ApiResp> getShapeSelectionData() {
-    try {
-      List<ShapeSelItem> shapeSelItems = produceServ.getShapeSelItems();
+    @GetMapping(UrlMap.SOAP_SHAPES)
+    public ResponseEntity<ApiResp> getShapeSelectionData() {
+        try {
+            List<ShapeSelItem> shapeSelItems = produceServ.getShapeSelItems();
 
-      return ResponseEntity.ok(
-              new ApiResp(Feedback.ORDER_FOUND, shapeSelItems));
-    } catch (Exception e) {
-      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-              .body(new ApiResp(e.getMessage(), null));
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.ORDER_FOUND, shapeSelItems));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
-  }
 
-  @GetMapping(UrlMap.SOAP_PRICE)
-  public ResponseEntity<ApiResp> getSoapPrice(@RequestBody SoapPriceReq request) {
-    try {
-      var price = priceServ.findSoapPrice(request.getBsShape());
-      if (price == null) {
-        String msg = "존재하지 않는 비누 외형: " + request.getBsShape().toString();
-        return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-            .body(new ApiResp(msg, null));
-      } else {
-        return ResponseEntity.ok(new ApiResp("비누 가격", price.toBigInteger()));
-      }
-    } catch (Exception e) {
-      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-          .body(new ApiResp(e.getMessage(), null));
+    @GetMapping(UrlMap.SOAP_PRICE)
+    public ResponseEntity<ApiResp> getSoapPrice(@RequestBody SoapPriceReq request) {
+        try {
+            var price = priceServ.findSoapPrice(request.getBsShape());
+            if (price==null) {
+                String msg = "존재하지 않는 비누 외형: " + request.getBsShape().toString();
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
+                        .body(new ApiResp(msg, null));
+            } else {
+                return ResponseEntity.ok(new ApiResp("비누 가격", price.toBigInteger()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
-  }
 
-  @GetMapping(UrlMap.SHAPE_PRICE)
-  public ResponseEntity<ApiResp> getSoapPrice(@PathVariable String shape) {
-    try {
-      BsShape bsShape = BsShape.valueOf(shape.toUpperCase());
-      var price = priceServ.findSoapPrice(bsShape);
-      if (price == null) {
-        String msg = "존재하지 않는 비누 외형: " + shape;
-        return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-            .body(new ApiResp(msg, null));
-      } else {
-        return ResponseEntity.ok(new ApiResp("비누 가격", price.toBigInteger()));
-      }
-    } catch (Exception e) {
-      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-          .body(new ApiResp(e.getMessage(), null));
+    @GetMapping(UrlMap.SOAP_PRICES)
+    public ResponseEntity<ApiResp> getSoapPrices() {
+        try {
+            var prices = priceServ.findSoapPrices();
+            if (prices==null) {
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
+                        .body(new ApiResp("외형별 비누 가격 채취 오류", null));
+            } else {
+                return ResponseEntity.ok(new ApiResp("비누 외형별 가격", prices));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
-  }
 
-  @GetMapping(UrlMap.REVIEW_PAGE)
-  public ResponseEntity<ApiResp> getReviewPage(
-          @RequestParam("page") Integer page,
-          @RequestParam("size") Integer size) {
-
-    try {
-      var result = orderServ.serviceReviewPage(page, size);
-      return ResponseEntity.ok(
-              new ApiResp(Feedback.REVIEW_PAGE_FOUND, result));
-    } catch (Exception e) {
-      return ResponseEntity.internalServerError().body(
-              new ApiResp(Feedback.REVIEW_PAGE_FAILURE, e.getMessage()));
+    @GetMapping(UrlMap.SHAPE_PRICE)
+    public ResponseEntity<ApiResp> getSoapPrice(@PathVariable String shape) {
+        try {
+            BsShape bsShape = BsShape.valueOf(shape.toUpperCase());
+            var price = priceServ.findSoapPrice(bsShape);
+            if (price==null) {
+                String msg = "존재하지 않는 비누 외형: " + shape;
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
+                        .body(new ApiResp(msg, null));
+            } else {
+                return ResponseEntity.ok(new ApiResp("비누 가격", price.toBigInteger()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
     }
-  }
 
-  @GetMapping(UrlMap.AVERAGE_STARS)
-  public ResponseEntity<ApiResp> getAverageStars() {
-    Float averageStars = orderServ.getAverageStars();
-    return ResponseEntity.ok(
-            new ApiResp(Feedback.AVERAGE_STARS_FOUND, averageStars));
-  }
+    @GetMapping(UrlMap.REVIEW_PAGE)
+    public ResponseEntity<ApiResp> getReviewPage(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
 
-  @GetMapping(UrlMap.GET_REVIEW_INFO)
-  public ResponseEntity<ApiResp> getReviewInfo(
-          @PathVariable("oId") Long oId) {
-    try {
-      // 주문 id 로 주문 후기를 읽음
-      var orderDetailDto = orderServ.serviceReviewInfo(oId);
-      return ResponseEntity.ok(
-              new ApiResp(Feedback.ORDER_FOUND, orderDetailDto));
-    } catch (Exception e) {
-      return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-              .body(new ApiResp(e.getMessage(), null));
+        try {
+            var result = orderServ.serviceReviewPage(page, size);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.REVIEW_PAGE_FOUND, result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.REVIEW_PAGE_FAILURE, e.getMessage()));
+        }
     }
-  }
+
+    @GetMapping(UrlMap.AVERAGE_STARS)
+    public ResponseEntity<ApiResp> getAverageStars() {
+        Float averageStars = orderServ.getAverageStars();
+        return ResponseEntity.ok(
+                new ApiResp(Feedback.AVERAGE_STARS_FOUND, averageStars));
+    }
+
+    @GetMapping(UrlMap.GET_REVIEW_INFO)
+    public ResponseEntity<ApiResp> getReviewInfo(
+            @PathVariable("oId") Long oId) {
+        try {
+            // 주문 id 로 주문 후기를 읽음
+            var orderDetailDto = orderServ.serviceReviewInfo(oId);
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.ORDER_FOUND, orderDetailDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 }
