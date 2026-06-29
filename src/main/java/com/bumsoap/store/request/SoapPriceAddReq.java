@@ -15,4 +15,9 @@ public class SoapPriceAddReq {
   public void setUnitPrice(String priceStr) {
     this.unitPrice = new BigDecimal(priceStr);
   }
+
+  public SoapPriceAddReq(int shapeOrdinal, BigDecimal unitPrice) {
+    this.bsShape = BsShape.values()[shapeOrdinal];
+    this.unitPrice = unitPrice;
+  }
 }
