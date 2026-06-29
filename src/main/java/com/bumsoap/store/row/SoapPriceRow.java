@@ -10,10 +10,12 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 public class SoapPriceRow {
+    int shapeOrdinal;
     String shapeLabel;
     BigDecimal unitPrice;
 
     public SoapPriceRow(SoapPriceDto dto) {
+        shapeOrdinal = dto.getShapeOrdinal();
         shapeLabel = BsShape.values()[dto.getShapeOrdinal()].label;
         unitPrice = dto.getUnitPrice();
     }
