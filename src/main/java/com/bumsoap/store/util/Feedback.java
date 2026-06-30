@@ -109,7 +109,7 @@ public class Feedback {
     public static final String ORDER_ID_NOT_FOUND = "없는 주문 ID: ";
     public static final String NOT_BELONG_TO_YOU = "소유하지 않은 주문 ID: ";
     public static final String DELETED_ORDER_ID = "삭제된 주문 ID: ";
-    public static final String FEE_ETC_INSERTED = "배송비 등 숫자 삽입됨";
+    public static final String FEE_ETC_INSERTED = "배송비류 갱신 성공";
     public static final String DELIVERY_FEE_FOUND = "배송비 계산 성공";
     public static final String MY_ORDERS_FOUND = "내 주문 목록 발견";
     public static final String MY_ORDERS_FAILURE = "주문 목록 검색 실패";
