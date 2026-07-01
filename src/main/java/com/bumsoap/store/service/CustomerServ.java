@@ -26,6 +26,8 @@ public class CustomerServ implements CustomerServInt{
         UserDto dtoUser = converter.mapEntityToDto(customer, UserDto.class);
 
         dtoUser.setAddDate(BsUtils.getLocalDateTimeStr(customer.getAddDate()));
+        dtoUser.setRecipientSet(customer.getRecipient() != null);
+
         return dtoUser;
     }
 
