@@ -18,6 +18,7 @@ public class UserDto {
     private String email;
     private boolean enabled;
     private boolean deleted;
+    private boolean recipientSet;
     private String dept;
     private String userType;
     private LoginSource signUpMethod;
