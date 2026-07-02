@@ -74,8 +74,12 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
     private void insertCustomersIfNotExists() {
         Role customerRole = roleServ.findByName("ROLE_CUSTOMER");
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 200; i++) {
             String defaultEmail = "customer" + i + "@email.com";
+
+            if (i % 5 == 0) {
+                defaultEmail = "buyer" + i + "@email.com";
+            }
             if (i == 1) {
                 defaultEmail = "jbpark03@naver.com";
             }
@@ -84,7 +88,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             }
             Customer customer = new Customer();
             customer.setFullName("고객" + i);
-            customer.setMbPhone("0104567890" + (i - 1));
+            customer.setMbPhone("01045670" + String.format("%03d", i - 1));
             customer.setEmail(defaultEmail);
             customer.setPassword(passwordEncoder.encode("1234"));
             customer.setUserType(UserType.CUSTOMER);
