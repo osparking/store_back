@@ -1,5 +1,6 @@
 package com.bumsoap.store.service;
 
+import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.Customer;
 
@@ -9,4 +10,6 @@ public interface CustomerServInt {
     List<UserDto> findAllCustomers();
 
     Customer add(Customer customer);
+
+    SearchResult<UserDto> getCustomerPage(Integer page, Integer size);
 }
