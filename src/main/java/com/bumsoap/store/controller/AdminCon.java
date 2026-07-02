@@ -132,6 +132,20 @@ public class AdminCon {
         }
     }
 
+
+    @GetMapping(UrlMap.GET_CUSTOMER_PAGE)
+    public ResponseEntity<ApiResp> getCustomerPage(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
+        try {
+            var customers = customerServ.getCustomerPage(page, size);
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND, customers));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.NOT_FOUND, null ));
+        }
+    }
+
     @GetMapping(UrlMap.GET_SOAP_SALE_CHART)
     public ResponseEntity<ApiResp> getSoapSaleChart() {
         try {
