@@ -136,9 +136,11 @@ public class AdminCon {
     @GetMapping(UrlMap.GET_CUSTOMER_PAGE)
     public ResponseEntity<ApiResp> getCustomerPage(
             @RequestParam("page") Integer page,
-            @RequestParam("size") Integer size) {
+            @RequestParam("size") Integer size,
+            @RequestParam("email") String email
+            ) {
         try {
-            var customers = customerServ.getCustomerPage(page, size);
+            var customers = customerServ.getCustomerPage(email, page, size);
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, customers));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
