@@ -43,9 +43,10 @@ public class CustomerServ implements CustomerServInt{
     }
 
     @Override
-    public SearchResult<UserDto> getCustomerPage(Integer page, Integer size) {
+    public SearchResult<UserDto> getCustomerPage(String email,
+                                                 Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Customer> customerPage = customerRepo.getOnePage(pageable);
+        Page<Customer> customerPage = customerRepo.getOnePage(email, pageable);
         Page<UserDto> userDtoPage = customerPage.map(this::toDtoUser);
         int totalPages = customerPage.getTotalPages();
         List<Integer> pageNumbers = null;
