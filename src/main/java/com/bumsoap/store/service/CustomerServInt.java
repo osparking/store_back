@@ -11,6 +11,6 @@ public interface CustomerServInt {
 
     Customer add(Customer customer);
 
-    SearchResult<UserDto> getCustomerPage(String email,
+    SearchResult<UserDto> getCustomerPage(String email, String name,
                                           Integer page, Integer size);
 }
