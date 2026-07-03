@@ -137,10 +137,12 @@ public class AdminCon {
     public ResponseEntity<ApiResp> getCustomerPage(
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size,
-            @RequestParam("email") String email
+            @RequestParam("email") String email,
+            @RequestParam("name") String name
             ) {
         try {
-            var customers = customerServ.getCustomerPage(email, page, size);
+            var customers =
+                    customerServ.getCustomerPage(email, name, page, size);
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, customers));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
