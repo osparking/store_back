@@ -13,7 +13,9 @@ public interface CustomerRepoI extends JpaRepository<Customer, Long> {
     @Query("""
              SELECT c FROM Customer c
               WHERE LOWER(c.email) LIKE LOWER(CONCAT('%', :email, '%'))
+                AND LOWER(c.fullName) LIKE LOWER(CONCAT('%', :name, '%'))
             """)
     Page<Customer> getOnePage(
-            @Param("email") String email, Pageable pageable);
+            @Param("email") String email,
+            @Param("name") String name, Pageable pageable);
 }
