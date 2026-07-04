@@ -17,9 +17,12 @@ public interface StoreIngreRepoI extends JpaRepository<StoreIngre, Long> {
             value = "select distinct si.ingre_name from store_ingre si ")
     List<String> findDistinctIngreNames();
 
-    @Query(nativeQuery = true,
-            value = "select distinct si.buy_place from store_ingre si")
-    List<String> findDistinctBuyPlaces();
+    @Query(nativeQuery = true, value = """
+            select distinct si.buy_place
+            from store_ingre si
+            where si.ingre_name like CONCAT('%', :name, '%')
+            """)
+    List<String> findDistinctBuyPlaces(@Param("name") String name);
 
     String selectIngredient = """
                     select si.id, si.ingre_name, si.quantity,
