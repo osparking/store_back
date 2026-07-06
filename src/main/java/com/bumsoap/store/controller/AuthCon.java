@@ -83,14 +83,18 @@ public class AuthCon {
     public ResponseEntity<ApiResp> verify2FaLogin(@RequestParam int code,
                                                   @RequestParam String jwtToken) {
         String username = jwtUtilBean.getUsernameFrom(jwtToken);
-        var user = userService.getBsUserByEmail(username);
-        if (user.isPresent() &&
-                userService.verifyCode(user.get().getId(), code)) {
-            return ResponseEntity.ok(
-                    new ApiResp(Feedback.AUTHEN_SUCCESS, null));
+        try {
+            var user = userService.getBsUserByEmail(username);
+            if (userService.verifyCode(user.getId(), code)) {
+                return ResponseEntity.ok(
+                        new ApiResp(Feedback.AUTHEN_SUCCESS, null));
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ApiResp(Feedback.TWO_FA_CODE_ERROR, null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResp(
+                    Feedback.NOT_FOUND_EMAIL + username, "로그인 이중 검증"));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                new ApiResp(Feedback.TWO_FA_CODE_ERROR, null));
     }
 
     @PostMapping("/disable-2fa")
