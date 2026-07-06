@@ -4,6 +4,7 @@ import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.UserDto;
+import com.bumsoap.store.event.PwdResetReqEvent;
 import com.bumsoap.store.event.UserAuthEvent;
 import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.exception.DataNotFoundException;
@@ -11,10 +12,7 @@ import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.*;
 import com.bumsoap.store.repository.UserRepoI;
-import com.bumsoap.store.request.EnableUserReq;
-import com.bumsoap.store.request.PasswordChangeReq;
-import com.bumsoap.store.request.UserRegisterReq;
-import com.bumsoap.store.request.UserUpdateReq;
+import com.bumsoap.store.request.*;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import com.bumsoap.store.service.AdminServ;
@@ -318,6 +316,33 @@ public class UserCon {
     }
 
     private final VerifinTokenServInt tokenService;
+
+    /**
+     * 이메일 연관 계정 존재 여부에 따라 동작한다.
+     * 존재 - 10분 만료 시간의 비밀번호 재설정 인가 토큰을 이메일로 전송
+     * 부재 - 잘못된 요청 반응
+     *
+     * @param request 비밀번호 리셋을 요청하는 계정 등록 이메일
+     * @return 비밀번호 리셋 단계 진행 혹은 이메일 오류 반응
+     */
+    @PostMapping(UrlMap.RESET_PASSWORD)
+    public ResponseEntity<ApiResp> resetPassword(@RequestBody ResetPwdReq request) {
+        try {
+            var user = userServ.getBsUserByEmail(request.getEmail());
+            String verifToken = UUID.randomUUID().toString();
+
+            publisher.publishEvent(new PwdResetReqEvent(user, verifToken));
+            var expireDate = tokenService.saveTokenForUser(verifToken, user);
+            var expireLocalTm = expireDate.toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+            return ResponseEntity.ok(new ApiResp(
+                    Feedback.PWD_RESET_EMAIL_SENT, expireLocalTm));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResp(
+                    Feedback.NOT_FOUND_EMAIL + request.getEmail(), null));
+        }
+    }
 
     @PostMapping(UrlMap.ADD)
     public ResponseEntity<ApiResp> add(@RequestBody UserRegisterReq request) {
