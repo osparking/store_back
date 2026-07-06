@@ -1,6 +1,7 @@
 package com.bumsoap.store.event.listener;
 
 import com.bumsoap.store.email.EmailManager;
+import com.bumsoap.store.event.PwdResetReqEvent;
 import com.bumsoap.store.event.UserAuthEvent;
 import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.model.BsUser;
@@ -31,9 +32,43 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
             case UserAuthEvent userAuthEvent -> {
                 handleUserAuthEvent(userAuthEvent);
             }
+            case PwdResetReqEvent pwdResetReqEvent -> {
+                handlePwdResetRequest(pwdResetReqEvent);
+            }
             default -> {
             }
         }
+    }
+
+    private void handlePwdResetRequest(PwdResetReqEvent event) {
+        StringBuilder verificationUrl = new StringBuilder(frontendBaseUrl);
+
+        verificationUrl.append("/reset_password?token=");
+        verificationUrl.append(event.getVerificationCode());
+
+        try {
+            sendResetPwdEmail(event.getUser(), verificationUrl.toString());
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sendResetPwdEmail(BsUser user, String vUrl)
+            throws MessagingException, UnsupportedEncodingException {
+        String subject = "범이비누 계정 비밀번호 재 설정";
+        String senderName = "범이비누";
+        StringBuilder content = new StringBuilder("<p>안녕하세요? '");
+
+        content.append(user.getFullName());
+        content.append("' 고객님</p><br>");
+        content.append("<p>귀하는 비밀번호 재설정을 요청하셨습니다.</p>");
+        content.append("<p/>다음 링크를 클릭하여 비밀번호를 재설정하십시오.</p>");
+        content.append("<br><p><u><a href=\"");
+        content.append(vUrl);
+        content.append("\">비밀번호 재 설정</a></u></p>");
+        content.append("<br><p>고맙습니다.<br><br> 범이비누 계정 서비스");
+        emailManager.sendMail(user.getEmail(), subject, senderName,
+                content.toString());
     }
 
     private void handleUserAuthEvent(UserAuthEvent event) {
