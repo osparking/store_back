@@ -6,9 +6,9 @@ import com.bumsoap.store.model.BsUser;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.validation.constraints.NotBlank;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface UserServInt {
     void enable2FA(Long id);
@@ -37,7 +37,7 @@ public interface UserServInt {
 
     BsUser getByEmail(@NotBlank String email);
 
-    Optional<BsUser> getBsUserByEmail(String email);
+    BsUser getBsUserByEmail(String email) throws AccountNotFoundException;
 
     Map<String, Map<String, Long>> countUsersByMonthAndType();
 

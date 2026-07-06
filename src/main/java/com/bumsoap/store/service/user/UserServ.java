@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -168,8 +169,10 @@ public class UserServ implements UserServInt {
     }
 
     @Override
-    public Optional<BsUser> getBsUserByEmail(String email) {
-        return userRepo.findByEmail(email);
+    public BsUser getBsUserByEmail(String email)
+            throws AccountNotFoundException {
+        return userRepo.findByEmail(email)
+                .orElseThrow(AccountNotFoundException::new);
     }
 
     @Override
