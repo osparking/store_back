@@ -16,9 +16,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -110,6 +112,16 @@ public class ProduceServ implements ProduceServI {
             shapeSelItems.add(createShapeItem(outOfStockItem));
         });
 
+        Set<BsShape> existingShapes = soapStocks.stream()
+                .map(SoapStock::getShape)
+                .collect(Collectors.toSet());
+
+        for (BsShape shape : BsShape.values()) {
+            if (!existingShapes.contains(shape)) {
+                shapeSelItems.add(new ShapeSelItem(
+                        shape.label, 0L, BigDecimal.ZERO));
+            }
+        }
         return shapeSelItems;
     }
 
