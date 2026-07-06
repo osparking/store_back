@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -37,171 +38,169 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler
-    extends SavedRequestAwareAuthenticationSuccessHandler {
+        extends SavedRequestAwareAuthenticationSuccessHandler {
 
-  @Autowired
-  private final UserServInt userService;
-  private final CustomerServInt customerServ;
+    @Autowired
+    private final UserServInt userService;
+    private final CustomerServInt customerServ;
 
-  @Autowired
-  private final JwtUtilBean jwtUtilBean;
+    @Autowired
+    private final JwtUtilBean jwtUtilBean;
 
-  @Autowired
-  private final RoleServInt roleServ;
+    @Autowired
+    private final RoleServInt roleServ;
 
-  @Value("${frontend.base.url}")
-  private String frontendUrl;
+    @Value("${frontend.base.url}")
+    private String frontendUrl;
 
-  private String username;
-  private String idAttributeKey;
-  private LoginSource signUpSource = null;
+    private String username;
+    private String idAttributeKey;
+    private LoginSource signUpSource = null;
 
-  private void putAuth2Context(String role,
-                               Map<String, Object> attributes,
-                               String idAttributeKey,
-                               String oAuth2) {
-    DefaultOAuth2User oauthUser = new DefaultOAuth2User(
-        List.of(new SimpleGrantedAuthority(role)),
-        attributes,
-        idAttributeKey
-    );
-    Authentication securityAuth = new OAuth2AuthenticationToken(
-        oauthUser,
-        List.of(new SimpleGrantedAuthority(role)),
-        oAuth2
-    );
-    SecurityContextHolder.getContext()
-        .setAuthentication(securityAuth);
-  }
+    private void putAuth2Context(String role,
+                                 Map<String, Object> attributes,
+                                 String idAttributeKey,
+                                 String oAuth2) {
+        DefaultOAuth2User oauthUser = new DefaultOAuth2User(
+                List.of(new SimpleGrantedAuthority(role)),
+                attributes,
+                idAttributeKey
+        );
+        Authentication securityAuth = new OAuth2AuthenticationToken(
+                oauthUser,
+                List.of(new SimpleGrantedAuthority(role)),
+                oAuth2
+        );
+        SecurityContextHolder.getContext()
+                .setAuthentication(securityAuth);
+    }
 
-  @Override
-  public void onAuthenticationSuccess(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      Authentication authentication)
-      throws ServletException, IOException {
-    OAuth2AuthenticationToken oAuth2AuthenticationToken
-        = (OAuth2AuthenticationToken) authentication;
-    String oAuth2 = oAuth2AuthenticationToken
-        .getAuthorizedClientRegistrationId().toUpperCase();
-    LoginSource loginSource = LoginSource.valueOf(oAuth2.toUpperCase());
-    var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
-    Map<String, Object> attributes = oauth2User.getAttributes();
+    @Override
+    public void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication)
+            throws ServletException, IOException {
+        OAuth2AuthenticationToken oAuth2AuthenticationToken
+                = (OAuth2AuthenticationToken) authentication;
+        String oAuth2 = oAuth2AuthenticationToken
+                .getAuthorizedClientRegistrationId().toUpperCase();
+        LoginSource loginSource = LoginSource.valueOf(oAuth2.toUpperCase());
+        var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
+        Map<String, Object> attributes = oauth2User.getAttributes();
 
-    if (loginSource == LoginSource.GOOGLE
-        || loginSource == LoginSource.NAVER) {
+        if (loginSource==LoginSource.GOOGLE
+                || loginSource==LoginSource.NAVER) {
 
-      if (loginSource == LoginSource.NAVER) {
-        attributes = (Map<String, Object>) attributes.get("response");
-      }
-      String name = attributes.getOrDefault("name", "").toString();
-      String email = attributes.getOrDefault("email", "").toString();
+            if (loginSource==LoginSource.NAVER) {
+                attributes = (Map<String, Object>) attributes.get("response");
+            }
+            String name = attributes.getOrDefault("name", "").toString();
+            String email = attributes.getOrDefault("email", "").toString();
 
-      switch (loginSource) {
-        case LoginSource.GOOGLE -> {
-          username = email.split("@")[0];
-          idAttributeKey = "sub";
-        }
-        case LoginSource.NAVER -> {
-          username = attributes.getOrDefault("nickname", "").toString();
-          idAttributeKey = "id";
-        }
-        default -> {
-        }
-      }
-
-      System.out.println("attrs: " + email + ", " + username);
-      final Map<String, Object> finalAttributes = attributes;
-      userService.getBsUserByEmail(email)
-          .ifPresentOrElse(
-              // 등록된 유저의 OAuth 2 로그인 처리
-              user -> {
-                if (user.isEnabled()) {
-                  Collection<Role> roles = user.getRoles();
-                  Role firstRole = roles.iterator().next();
-                  putAuth2Context(firstRole.getName(),
-                          finalAttributes, idAttributeKey, oAuth2);
-                  username = user.getEmail();
-                  this.signUpSource =
-                          LoginSource.valueOf(user.getSignUpMethod());
-                  redirectWithJwt(user, oauth2User, loginSource);
-                } else {
-                  redirectToLogin(user.getEmail());
+            switch (loginSource) {
+                case LoginSource.GOOGLE -> {
+                    username = email.split("@")[0];
+                    idAttributeKey = "sub";
                 }
-              },
-              // 이메일이 DB 에 부재인 경우 처리
-              () -> {
+                case LoginSource.NAVER -> {
+                    username = attributes.getOrDefault("nickname", "").toString();
+                    idAttributeKey = "id";
+                }
+                default -> {
+                }
+            }
+
+            System.out.println("attrs: " + email + ", " + username);
+            final Map<String, Object> finalAttributes = attributes;
+
+            try {
+                var user = userService.getBsUserByEmail(email);
+                // 등록된 유저의 OAuth 2 로그인 처리
+                if (user.isEnabled()) {
+                    Collection<Role> roles = user.getRoles();
+                    Role firstRole = roles.iterator().next();
+                    putAuth2Context(firstRole.getName(),
+                            finalAttributes, idAttributeKey, oAuth2);
+                    username = user.getEmail();
+                    this.signUpSource =
+                            LoginSource.valueOf(user.getSignUpMethod());
+                    redirectWithJwt(user, oauth2User, loginSource);
+                } else {
+                    redirectToLogin(user.getEmail());
+                }
+            } catch (AccountNotFoundException e) {
+                // 이메일이 DB 에 부재인 경우 처리
                 Customer customer = new Customer();
 
                 customer.setFullName(name);
                 customer.setEmail(email);
                 customer.setUserType(UserType.CUSTOMER);
                 customer.setRoles(
-                    Set.of(roleServ.findByName("ROLE_CUSTOMER")));
+                        Set.of(roleServ.findByName("ROLE_CUSTOMER")));
                 customer.setEnabled(true);
                 customer.setSignUpMethod(loginSource.toString());
 
                 BsUser user = customerServ.add(customer);
 
                 putAuth2Context("ROLE_CUSTOMER",
-                    finalAttributes, idAttributeKey, oAuth2.toString());
+                        finalAttributes, idAttributeKey, oAuth2.toString());
                 this.signUpSource = LoginSource.valueOf(oAuth2);
                 redirectWithJwt(user, oauth2User, loginSource);
-              }
-          );
+            }
+        }
+        super.onAuthenticationSuccess(request, response, authentication);
     }
-    super.onAuthenticationSuccess(request, response, authentication);
-  }
 
-  /**
-   * 전단 URL 에 착륙하되, URL에는 JWT 토큰을 붙여서 보낸다.
-   *
-   * @param user
-   * @param oAuth2User
-   */
-  private void redirectWithJwt(BsUser user,
-                               DefaultOAuth2User oAuth2User,
-                               LoginSource loginSource) {
-    Map<String, Object> attributes = oAuth2User.getAttributes();
+    /**
+     * 전단 URL 에 착륙하되, URL에는 JWT 토큰을 붙여서 보낸다.
+     *
+     * @param user
+     * @param oAuth2User
+     */
+    private void redirectWithJwt(BsUser user,
+                                 DefaultOAuth2User oAuth2User,
+                                 LoginSource loginSource) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
 
-    Set<GrantedAuthority> authorities =
-        oAuth2User.getAuthorities().stream()
-            .map(authority -> new SimpleGrantedAuthority(
-                authority.getAuthority()))
-            .collect(Collectors.toSet());
+        Set<GrantedAuthority> authorities =
+                oAuth2User.getAuthorities().stream()
+                        .map(authority -> new SimpleGrantedAuthority(
+                                authority.getAuthority()))
+                        .collect(Collectors.toSet());
 
-    Collection<Role> roles = user.getRoles();
-    String firstRoleStr = roles.iterator().next().toString();
-    authorities.add(new SimpleGrantedAuthority(firstRoleStr));
+        Collection<Role> roles = user.getRoles();
+        String firstRoleStr = roles.iterator().next().toString();
+        authorities.add(new SimpleGrantedAuthority(firstRoleStr));
 
-    BsUserDetails userDetails = new BsUserDetails(
-        user.getId(), user.getEmail(), null, user.getFullName(),
-        true, authorities, signUpSource.toString(),
-        loginSource.getLabel(), user.isTwoFaEnabled(), user.getMbPhone());
+        BsUserDetails userDetails = new BsUserDetails(
+                user.getId(), user.getEmail(), null, user.getFullName(),
+                true, authorities, signUpSource.toString(),
+                loginSource.getLabel(), user.isTwoFaEnabled(), user.getMbPhone());
 
-    this.setAlwaysUseDefaultTargetUrl(true);
+        this.setAlwaysUseDefaultTargetUrl(true);
 
-    // Generate JWT token
-    String jwtToken = jwtUtilBean.generateTokenForUser(userDetails);
+        // Generate JWT token
+        String jwtToken = jwtUtilBean.generateTokenForUser(userDetails);
 
-    // Redirect to the frontend with the JWT token
-    String targetUrl = UriComponentsBuilder.fromUriString(
-            frontendUrl + "/oauth2/redirect")
-        .queryParam("token", jwtToken)
-        .build().toUriString();
-    this.setDefaultTargetUrl(targetUrl);
-  }
+        // Redirect to the frontend with the JWT token
+        String targetUrl = UriComponentsBuilder.fromUriString(
+                        frontendUrl + "/oauth2/redirect")
+                .queryParam("token", jwtToken)
+                .build().toUriString();
+        this.setDefaultTargetUrl(targetUrl);
+    }
 
-  private final TokenCache tokenCache;
+    private final TokenCache tokenCache;
 
-  private void redirectToLogin(String email) {
-    String tempToken = tokenCache.put(email, 300);
+    private void redirectToLogin(String email) {
+        String tempToken = tokenCache.put(email, 300);
 
-    // Redirect to the frontend with the email address
-    String targetUrl = UriComponentsBuilder.fromUriString(
-            frontendUrl + "/login")
-        .queryParam("token", tempToken)
-        .build().toUriString();
-    this.setDefaultTargetUrl(targetUrl);
-  }
+        // Redirect to the frontend with the email address
+        String targetUrl = UriComponentsBuilder.fromUriString(
+                        frontendUrl + "/login")
+                .queryParam("token", tempToken)
+                .build().toUriString();
+        this.setDefaultTargetUrl(targetUrl);
+    }
 }
