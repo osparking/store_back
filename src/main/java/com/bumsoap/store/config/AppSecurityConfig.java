@@ -92,6 +92,7 @@ public class AppSecurityConfig {
     private static String[] PRRMIT_URLS = {
             "/api/s1/user/add",
             "/api/s1/user/enable",
+            "/api/s1/user/reset_pwd",
             "/api/s1/autho/email",
             "/api/s1/worker/get_all_dept"
     };
