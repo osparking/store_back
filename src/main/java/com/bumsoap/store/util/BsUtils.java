@@ -23,6 +23,20 @@ public class BsUtils {
         return new Date(calendar.getTime().getTime());
     }
 
+    /**
+     * LocalDateTime 객체로부터 "시 분" 형태의 한국어 문자열을 생성합니다.
+     *
+     * @param dateTime 변환할 LocalDateTime (null 허용)
+     * @return "H시 m분" 형식의 문자열, null 입력 시 빈 문자열 반환
+     */
+    public static String formatHourMinute(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return "";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H시 m분");
+        return dateTime.format(formatter);
+    }
+
     public static String getLocalDateTimeStr(LocalDateTime ldTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
                 "yyyy년 MM월 dd일 HH시 mm분 ss초", Locale.KOREAN);
