@@ -338,7 +338,7 @@ public class UserCon {
             publisher.publishEvent(new PwdResetReqEvent(user, verifToken, hourMin));
 
             return ResponseEntity.ok(new ApiResp(
-                    Feedback.PWD_RESET_EMAIL_SENT, expireLocalTm));
+                    Feedback.PWD_RESET_EMAIL_SENT, hourMin));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResp(
                     Feedback.NOT_FOUND_EMAIL + request.getEmail(), null));
