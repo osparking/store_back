@@ -9,10 +9,13 @@ import org.springframework.context.ApplicationEvent;
 public class PwdResetReqEvent extends ApplicationEvent {
     private BsUser user;
     private String verificationCode;
+    private String expiresAt;
 
-    public PwdResetReqEvent(BsUser user, String verificationCode) {
+    public PwdResetReqEvent(BsUser user, String verificationCode,
+                            String expiresAt) {
         super(user);
         this.user = user;
         this.verificationCode = verificationCode;
+        this.expiresAt = expiresAt;
     }
 }
