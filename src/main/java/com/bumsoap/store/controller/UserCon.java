@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.bumsoap.store.util.AuthType.ENABLE;
+import static com.bumsoap.store.util.BsUtils.formatHourMinute;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -330,11 +331,11 @@ public class UserCon {
         try {
             var user = userServ.getBsUserByEmail(request.getEmail());
             String verifToken = UUID.randomUUID().toString();
-
-            publisher.publishEvent(new PwdResetReqEvent(user, verifToken));
             var expireDate = tokenService.saveTokenForUser(verifToken, user);
             var expireLocalTm = expireDate.toInstant()
                     .atZone(ZoneId.systemDefault()).toLocalDateTime();
+            var hourMin = formatHourMinute(expireLocalTm);
+            publisher.publishEvent(new PwdResetReqEvent(user, verifToken, hourMin));
 
             return ResponseEntity.ok(new ApiResp(
                     Feedback.PWD_RESET_EMAIL_SENT, expireLocalTm));
