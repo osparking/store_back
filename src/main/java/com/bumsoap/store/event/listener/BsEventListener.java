@@ -45,15 +45,15 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
 
         verificationUrl.append("/reset_password?token=");
         verificationUrl.append(event.getVerificationCode());
-
         try {
-            sendResetPwdEmail(event.getUser(), verificationUrl.toString());
+            sendResetPwdEmail(event.getUser(), verificationUrl.toString(),
+                    event.getExpiresAt());
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void sendResetPwdEmail(BsUser user, String vUrl)
+    private void sendResetPwdEmail(BsUser user, String vUrl, String expiresAt)
             throws MessagingException, UnsupportedEncodingException {
         String subject = "범이비누 계정 비밀번호 재 설정";
         String senderName = "범이비누";
@@ -62,7 +62,8 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
         content.append(user.getFullName());
         content.append("' 고객님</p><br>");
         content.append("<p>귀하는 비밀번호 재설정을 요청하셨습니다.</p>");
-        content.append("<p/>다음 링크를 클릭하여 비밀번호를 재설정하십시오.</p>");
+        content.append("<p>다음 링크를 " + expiresAt);
+        content.append(" 전에 클릭하여 비밀번호를 재설정하십시오.</p>");
         content.append("<br><p><u><a href=\"");
         content.append(vUrl);
         content.append("\">비밀번호 재 설정</a></u></p>");
