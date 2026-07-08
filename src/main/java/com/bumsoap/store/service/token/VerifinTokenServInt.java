@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Optional;
 
 public interface VerifinTokenServInt {
+    BsUser findUserByToken(String token);
+
     TokenResult verifyToken(String token);
 
     Date saveTokenForUser(String token, BsUser user);

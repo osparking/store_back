@@ -29,6 +29,14 @@ public class VerifinTokenServ implements VerifinTokenServInt {
     private final ApplicationEventPublisher publisher;
 
     @Override
+    public BsUser findUserByToken(String token) {
+        return verifinTokenRepo
+                .findUserByVerificationToken(token)
+                .orElseThrow(() ->
+                        new DataNotFoundException("토큰 부재 오류"));
+    }
+
+    @Override
     @Transactional
     public TokenResult verifyToken(String token) {
         Optional<VerifinToken> optionalVeriTok = findByToken(token);
