@@ -16,6 +16,7 @@ public interface VerifinTokenRepoI extends JpaRepository<VerifinToken, Long> {
     void deleteByUserId(@Param("tokenId") Long tokenId, @Param("userId") Long userId);
 
     void deleteByUser(BsUser user);
+
     void deleteByUserId(Long userId);
 
     @Query(value = "SELECT vt.token FROM verifin_token vt JOIN bs_user bu " +
@@ -27,4 +28,10 @@ public interface VerifinTokenRepoI extends JpaRepository<VerifinToken, Long> {
             "ON vt.user_id = bu.id WHERE bu.email = :email",
             nativeQuery = true)
     Optional<VerifinToken> findVerificationToken(@Param("email") String email);
+
+    @Query("""
+            SELECT bu FROM VerifinToken vt JOIN vt.user bu
+            WHERE vt.token = :token
+            """)
+    Optional<BsUser> findUserByVerificationToken(@Param("token") String token);
 }
