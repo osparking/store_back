@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 
+import static com.bumsoap.store.util.UrlMap.VERIFY_TOKEN;
+
 @Component
 @RequiredArgsConstructor
 public class BsEventListener implements ApplicationListener<ApplicationEvent> {
@@ -43,7 +45,7 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
     private void handlePwdResetRequest(PwdResetReqEvent event) {
         StringBuilder verificationUrl = new StringBuilder(frontendBaseUrl);
 
-        verificationUrl.append("/reset_password?token=");
+        verificationUrl.append(VERIFY_TOKEN + "?token=");
         verificationUrl.append(event.getVerificationCode());
         try {
             sendResetPwdEmail(event.getUser(), verificationUrl.toString(),
