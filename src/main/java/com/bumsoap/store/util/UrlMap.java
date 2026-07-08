@@ -60,6 +60,7 @@ public class UrlMap {
     public static final String AUTHO = API + "/autho";
     public static final String LOGIN = "/login";
     public static final String EMAIL_ADDRESS = "/email_address";
+    public static final String VERIFY_TOKEN = "/verify_token";
     /*== Authentication / 인증 끝 ================================*/
 
     /*== JWT Token / 토큰 검증 시작 ===========================================*/
