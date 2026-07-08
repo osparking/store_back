@@ -6,7 +6,8 @@ public enum TokenResult {
     EXPIRED("만료된 토큰"),
     DISCARDED("폐기된 토큰"),
     VALIDATED("계정 활성화"),
-    REISSUED("토큰 재발급됨");
+    REISSUED("토큰 재발급됨"),
+    APPROVED("토큰 승인됨");
 
     public final String label;
 
