@@ -69,6 +69,29 @@ public class VerifinTokenServ implements VerifinTokenServInt {
 
     }
 
+    @Transactional
+    @Override
+    public TokenResult verifyPasswordResetToken(String token) {
+        Optional<VerifinToken> tokenOptional = findByToken(token);
+
+        if (tokenOptional.isEmpty()) {
+            return INVALID;
+        } else {
+            VerifinToken verificationToken = tokenOptional.get();
+
+            if (verificationToken.getDiscarded()) {
+                return DISCARDED;
+            } else {
+                verificationToken.setDiscarded(true);
+                if (hasTokenExpired(token)) {
+                    return EXPIRED;
+                } else {
+                    return APPROVED;
+                }
+            }
+        }
+    }
+
     @Override
     public boolean isBeingVerified(String email) {
         var verificationToken = verifinTokenRepo.findVerificationToken(email);

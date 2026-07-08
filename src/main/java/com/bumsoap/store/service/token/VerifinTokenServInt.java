@@ -3,6 +3,7 @@ package com.bumsoap.store.service.token;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.VerifinToken;
 import com.bumsoap.store.util.TokenResult;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
@@ -20,6 +21,9 @@ public interface VerifinTokenServInt {
     boolean hasTokenExpired(String token);
 
     TokenResult reIssueToken(String token);
+
+    @Transactional
+    TokenResult verifyPasswordResetToken(String token);
 
     boolean isBeingVerified(@NotBlank String email);
 }
