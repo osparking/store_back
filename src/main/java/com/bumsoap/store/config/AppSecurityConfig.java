@@ -26,6 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import static com.bumsoap.store.util.UrlMap.VERIFY_TOKEN;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -94,6 +96,7 @@ public class AppSecurityConfig {
             "/api/s1/user/enable",
             "/api/s1/user/reset_pwd",
             "/api/s1/autho/email",
+            "/api/s1/autho" + VERIFY_TOKEN,
             "/api/s1/worker/get_all_dept"
     };
 
