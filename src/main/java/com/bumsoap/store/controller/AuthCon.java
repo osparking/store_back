@@ -52,14 +52,15 @@ public class AuthCon {
     }
 
     /**
-     * 제출된 토큰이 정당하면, JWT 를 반응에 포함하여 OK 상태를 반환한다
+     * 비밀번호 리셋용 토큰의 유효성을 판단하여 그 결과를 반환한다
      *
      * @param token 검증 대상 토큰
      * @return 반응개체 성공 혹은 실패 상태
      */
     @GetMapping(UrlMap.VERIFY_TOKEN)
     public ResponseEntity<?> verifyToken(@RequestParam String token) {
-        TokenResult result = verifinTokenService.verifyPasswordResetToken(token);
+        TokenResult result = verifinTokenService
+                .verifyPasswordResetToken(token, false);
 
         try {
             // 검증 결과에 따라 예외 메시지를 달리한다.
@@ -72,16 +73,8 @@ public class AuthCon {
                     // 다른 값인 경우 아무 동작도 하지 않음
                     break;
             }
-
-            var user = verifinTokenService.findUserByToken(token);
-            var details = BsUserDetails.buildUserDetails(user);
-
-            details.setLoginMethod(LoginSource.EMAIL.getLabel());
-            String jwt = jwtUtilBean.generateTokenForUser(details);
-            JwtResponse jwtResponse = new JwtResponse(user.getId(), jwt);
-
             return ResponseEntity.ok(
-                    new ApiResp(Feedback.TOKEN_IS_VALID, jwtResponse));
+                    new ApiResp(Feedback.TOKEN_IS_VALID, null));
         } catch (Exception e) {
             return ResponseEntity
                     .badRequest()
