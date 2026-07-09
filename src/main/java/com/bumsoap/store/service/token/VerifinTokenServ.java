@@ -71,7 +71,7 @@ public class VerifinTokenServ implements VerifinTokenServInt {
 
     @Transactional
     @Override
-    public TokenResult verifyPasswordResetToken(String token) {
+    public TokenResult verifyPasswordResetToken(String token, boolean useIt) {
         Optional<VerifinToken> tokenOptional = findByToken(token);
 
         if (tokenOptional.isEmpty()) {
@@ -82,7 +82,9 @@ public class VerifinTokenServ implements VerifinTokenServInt {
             if (verificationToken.getDiscarded()) {
                 return DISCARDED;
             } else {
-                verificationToken.setDiscarded(true);
+                if (useIt) {
+                    verificationToken.setDiscarded(true);
+                }
                 if (hasTokenExpired(token)) {
                     return EXPIRED;
                 } else {

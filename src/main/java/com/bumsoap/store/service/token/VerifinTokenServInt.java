@@ -23,7 +23,7 @@ public interface VerifinTokenServInt {
     TokenResult reIssueToken(String token);
 
     @Transactional
-    TokenResult verifyPasswordResetToken(String token);
+    TokenResult verifyPasswordResetToken(String token, boolean useIt);
 
     boolean isBeingVerified(@NotBlank String email);
 }
