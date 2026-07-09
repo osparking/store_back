@@ -3,8 +3,10 @@ package com.bumsoap.store.service.password;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.request.ActResetPwdReq;
 import com.bumsoap.store.request.PasswordChangeReq;
 import com.bumsoap.store.util.Feedback;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class PasswordChangeServ implements PasswordChangeServInt {
         BsUser user = userRepo.findById(userId).orElseThrow(
                 () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + userId));
 
-        if (request.getCurPwd().equals("") || request.getNewPwd().equals("")) {
+        if ("".equals(request.getCurPwd()) || "".equals(request.getNewPwd())) {
             throw new IllegalArgumentException(Feedback.SOME_FIELD_MISSING);
         }
 
@@ -37,5 +39,22 @@ public class PasswordChangeServ implements PasswordChangeServInt {
 
         user.setPassword(passwordEncoder.encode(request.getNewPwd()));
         userRepo.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void resetPwd(Long userId, ActResetPwdReq request) {
+        BsUser user = userRepo.findById(userId).orElseThrow(
+                () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + userId));
+
+        if ("".equals(request.getCnfPwd()) || "".equals(request.getNewPwd())) {
+            throw new IllegalArgumentException(Feedback.SOME_FIELD_MISSING);
+        }
+
+        if (!Objects.equals(request.getNewPwd(), request.getCnfPwd())) {
+            throw new IllegalArgumentException(Feedback.PASSWORDS_MISMATCH);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPwd()));
     }
 }
