@@ -10,11 +10,11 @@ import com.bumsoap.store.event.UserRegisterEvent;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.exception.TokenException;
 import com.bumsoap.store.model.*;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.*;
 import com.bumsoap.store.response.ApiResp;
-import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
@@ -35,7 +35,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -351,16 +350,25 @@ public class UserCon {
     public ResponseEntity<ApiResp> actResetPassword(
             @RequestBody ActResetPwdReq request) {
         try {
-            var auth = SecurityContextHolder.getContext().getAuthentication();
-            Long userId = ((BsUserDetails)auth.getPrincipal()).getId();
+            TokenResult result = tokenService
+                    .verifyPasswordResetToken(request.getToken(), true);
 
-            passwordChangeServ.resetPwd(userId, request);
+            switch (result) {
+                case EXPIRED:
+                case INVALID:
+                case DISCARDED:
+                    throw new TokenException(result.label);
+                default:
+                    // 다른 값인 경우 아무 동작도 하지 않음
+                    break;
+            }
+            var optToken = tokenService.findByToken(request.getToken());
+            var token = optToken.orElseThrow(() -> new Exception("토큰 부재"));
+
+            passwordChangeServ.resetPwd(token.getUser().getId(), request);
             return ResponseEntity.ok(new ApiResp(Feedback.PASSWORD_CHANGED, null));
-        } catch (IllegalArgumentException e) {
+        } catch (TokenException e) {
             return ResponseEntity.badRequest()
-                    .body(new ApiResp(e.getMessage(), null));
-        } catch (IdNotFoundEx e) {
-            return ResponseEntity.status(NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
