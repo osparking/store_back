@@ -14,6 +14,7 @@ import com.bumsoap.store.model.*;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.*;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
@@ -34,6 +35,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -342,6 +344,27 @@ public class UserCon {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResp(
                     Feedback.NOT_FOUND_EMAIL + request.getEmail(), null));
+        }
+    }
+
+    @PutMapping(UrlMap.ACT_RESET_PASSWORD)
+    public ResponseEntity<ApiResp> actResetPassword(
+            @RequestBody ActResetPwdReq request) {
+        try {
+            var auth = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = ((BsUserDetails)auth.getPrincipal()).getId();
+
+            passwordChangeServ.resetPwd(userId, request);
+            return ResponseEntity.ok(new ApiResp(Feedback.PASSWORD_CHANGED, null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (IdNotFoundEx e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
         }
     }
 
