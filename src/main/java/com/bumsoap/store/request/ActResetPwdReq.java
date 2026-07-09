@@ -6,4 +6,5 @@ import lombok.Data;
 public class ActResetPwdReq {
     private String newPwd;
     private String cnfPwd;
+    private String token;
 }
