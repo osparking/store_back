@@ -367,7 +367,8 @@ public class UserCon {
 
             passwordChangeServ.resetPwd(token.getUser().getId(), request);
             return ResponseEntity.ok(new ApiResp(Feedback.PASSWORD_CHANGED, null));
-        } catch (TokenException e) {
+        } catch (TokenException | IllegalArgumentException e) {
+            // 토큰 및 비밀번호 관련 예외 처리
             return ResponseEntity.badRequest()
                     .body(new ApiResp(e.getMessage(), null));
         } catch (Exception e) {
