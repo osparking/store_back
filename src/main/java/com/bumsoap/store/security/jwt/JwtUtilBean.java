@@ -4,7 +4,6 @@ import com.bumsoap.store.security.user.BsUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,9 +57,9 @@ public class JwtUtilBean {
                 .claim("signUpMethod",userDetails.getSignUpMethod())
                 .claim("loginMethod", userDetails.getLoginMethod())
                 .claim("twoFaEnabled", userDetails.isTwoFaAEnabled())
-                .setIssuedAt(new java.util.Date())
-                .setExpiration(new java.util.Date(expirationMs
+                .issuedAt(new java.util.Date())
+                .expiration(new java.util.Date(expirationMs
                         + System.currentTimeMillis()))
-                .signWith(key(), SignatureAlgorithm.HS256).compact();
+                .signWith(key()).compact();
     }
 }
