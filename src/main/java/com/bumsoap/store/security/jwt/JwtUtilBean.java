@@ -2,6 +2,7 @@ package com.bumsoap.store.security.jwt;
 
 import com.bumsoap.store.security.user.BsUserDetails;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class JwtUtilBean {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(key()).build().parse(token);
+            Jwts.parser().verifyWith((SecretKey) key()).build().parse(token);
             return true;
         } catch (Exception e) {
             throw new JwtException(e.getMessage());
