@@ -2,7 +2,6 @@ package com.bumsoap.store.security.jwt;
 
 import com.bumsoap.store.security.user.BsUserDetails;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -17,8 +16,7 @@ import java.util.List;
 
 @Component
 public class JwtUtilBean {
-    @Value("${auth.token.jwtSecret}")
-    private String jwtSecret;
+    private final String jwtSecret = System.getenv("JWT_SECRET");
     @Value("${auth.token.expirationMs}")
     private int expirationMs;
 
