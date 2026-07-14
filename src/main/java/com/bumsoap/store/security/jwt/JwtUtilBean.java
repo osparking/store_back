@@ -2,7 +2,6 @@ package com.bumsoap.store.security.jwt;
 
 import com.bumsoap.store.security.user.BsUserDetails;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -25,12 +24,8 @@ public class JwtUtilBean {
     }
 
     public boolean validateToken(String token) {
-        try {
-            Jwts.parser().verifyWith((SecretKey) key()).build().parse(token);
-            return true;
-        } catch (Exception e) {
-            throw new JwtException(e.getMessage());
-        }
+        Jwts.parser().verifyWith((SecretKey) key()).build().parse(token);
+        return true;
     }
 
     public String getUsernameFrom(String token) {
@@ -54,7 +49,7 @@ public class JwtUtilBean {
                 .claim("fullName", userDetails.getFullName())
                 .claim("mbPhone", userDetails.getMbPhone())
                 .claim("roles", roles)
-                .claim("signUpMethod",userDetails.getSignUpMethod())
+                .claim("signUpMethod", userDetails.getSignUpMethod())
                 .claim("loginMethod", userDetails.getLoginMethod())
                 .claim("twoFaEnabled", userDetails.isTwoFaAEnabled())
                 .issuedAt(new java.util.Date())
