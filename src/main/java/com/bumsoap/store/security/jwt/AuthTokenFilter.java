@@ -2,6 +2,8 @@ package com.bumsoap.store.security.jwt;
 
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import com.bumsoap.store.util.AuthUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,6 +47,19 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext()
             .setAuthentication(authentication);
       }
+    } catch (JwtException e) { // JwtException을 정확히 캐치
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+      response.setContentType("application/json;charset=UTF-8");
+      String cause = null;
+      if (e instanceof ExpiredJwtException) {
+        cause = "JWT가 만료되었습니다.";
+      } else {
+        cause = e.getMessage();
+      }
+      response.getWriter().write("{\"code\":\"UNAUTHORIZED\", \"message\":\""
+              + cause + "\"}");
+      response.getWriter().flush();
+      return;
     } catch (Exception e) {
       throw new ServletException(e.getMessage());
     }
