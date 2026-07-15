@@ -23,7 +23,7 @@ public class RefreshTokenServ implements RefreshTokenServInt{
     public String createRefreshForUser(BsUserDetails userDetails) {
         String refresh = UUID.randomUUID().toString();
         var user = userService.findById(userDetails.getId());
-        
+
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .tokenHash(DigestUtils.sha256Hex(refresh)) // Apache Commons Codec
