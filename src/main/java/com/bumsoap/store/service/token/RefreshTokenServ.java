@@ -18,6 +18,23 @@ public class RefreshTokenServ implements RefreshTokenServInt{
     private final RefreshTokenRepoI refreshRepo;
     private final UserServInt userService;
 
+    /**
+     * 날것 RT 를 받아서, 해쉬를 구하고 해쉬로 DB에서 RT 를 채취함
+     * @param refresh
+     * @return 채취한 refresh token
+     */
+    @Override
+    public RefreshToken getRefrechTokenEntity(String refresh) {
+        String hashedToken = DigestUtils.sha256Hex(refresh);
+        RefreshToken foundToken = refreshRepo.findByTokenHash(hashedToken)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+
+        if (!foundToken.isValid()) {
+            throw new RuntimeException("Token expired or revoked");
+        }
+        return foundToken;
+    }
+
     @Override
     @Transactional
     public String createRefreshForUser(BsUserDetails userDetails) {
