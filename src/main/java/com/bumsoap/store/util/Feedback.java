@@ -143,4 +143,5 @@ public class Feedback {
     public static final String DELETEED_PRODUCE = "삭제 정보 등록일시: ";
     public static final String CLOSED_ACCOUNT = "폐쇄된 계정";
     public static final String WRONG_CREDENTIAL = "로그인 자격정보 오류";
+    public static final String REFRESH_WRONG = "리프레시 토큰 결함";
 }

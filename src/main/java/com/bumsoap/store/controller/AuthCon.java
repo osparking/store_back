@@ -1,7 +1,10 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.model.RefreshToken;
+import com.bumsoap.store.repository.RefreshTokenRepoI;
 import com.bumsoap.store.request.LoginRequest;
+import com.bumsoap.store.request.RefreshRequest;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.response.JwtResponse;
 import com.bumsoap.store.security.TokenCache;
@@ -25,6 +28,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
@@ -220,5 +224,35 @@ public class AuthCon {
                         new ApiResp(message, null));
             }
         }
+    }
+
+    private final RefreshTokenRepoI refreshRepo;
+
+    @PostMapping(UrlMap.REFRESH_TOKEN)
+    public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
+        // 1. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
+        RefreshToken entity = refreshTokenServ
+                .getRefrechTokenEntity(request.getRefreshToken());
+
+        if (entity.getExpiryDate().isBefore(LocalDateTime.now())
+                || entity.isRevoked()) {
+            throw new RuntimeException("만료 또는 폐기된 RT");
+        }
+
+        // 2. (로테이션) 기존 RT 폐기(Revoked), 새로운 RT 생성 및 DB 저장
+        entity.setRevoked(true);
+        refreshRepo.save(entity);
+
+        var userDetails = BsUserDetails.buildUserDetails(entity.getUser());
+        String jwt = jwtUtilBean.generateTokenForUser(userDetails);
+
+        var refresh = refreshTokenServ.createRefreshForUser(userDetails);
+
+        JwtResponse jwtResponse =
+                new JwtResponse(userDetails.getId(), jwt, refresh);
+
+        // 3. 새 AT와 새 RT를 클라이언트에 응답
+        return ResponseEntity.ok(
+                new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
     }
 }
