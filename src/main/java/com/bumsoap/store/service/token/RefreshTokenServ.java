@@ -44,7 +44,8 @@ public class RefreshTokenServ implements RefreshTokenServInt{
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .tokenHash(DigestUtils.sha256Hex(refresh)) // Apache Commons Codec
-                .expiryDate(LocalDateTime.now().plusWeeks(1))
+//                .expiryDate(LocalDateTime.now().plusWeeks(1))
+                .expiryDate(LocalDateTime.now().plusSeconds(30))
                 .build();
 
         refreshRepo.save(refreshToken);
