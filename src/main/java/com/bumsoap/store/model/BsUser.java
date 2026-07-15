@@ -72,6 +72,20 @@ public class BsUser {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<CartItem> cartItems = new ArrayList<>();
 
+    // 리프레시 토큰 목록 (양방향 매핑)
+    @OneToMany(
+            mappedBy = "user",          // RefreshToken 엔티티의 user 필드와 매핑
+            cascade = CascadeType.ALL,  // 사용자 저장/삭제 시 연관된 토큰도 함께 처리
+            orphanRemoval = true,       // 사용자 삭제 시 연결된 토큰들 자동 삭제
+            fetch = FetchType.LAZY      // 성능 최적화
+    )
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
+
+    public void addRefreshToken(RefreshToken refreshToken) {
+        this.refreshTokens.add(refreshToken);
+        refreshToken.setUser(this);  // 연관관계 주인(Setter)에도 반영
+    }
+
     public String addedMonth() {
         int monInt = addDate.getMonthValue();
         int yearInt = addDate.getYear();
