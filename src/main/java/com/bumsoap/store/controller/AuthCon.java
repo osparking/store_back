@@ -19,6 +19,7 @@ import com.bumsoap.store.util.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -182,20 +183,21 @@ public class AuthCon {
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(), request.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(
-                authentication);
-        var userDetails = (BsUserDetails) authentication.getPrincipal();
-        userDetails.setLoginMethod(LoginSource.EMAIL.getLabel());
-        String jwt = jwtUtilBean.generateTokenForUser(userDetails);
+            SecurityContextHolder.getContext().setAuthentication(
+                    authentication);
+            var userDetails = (BsUserDetails) authentication.getPrincipal();
+            userDetails.setLoginMethod(LoginSource.EMAIL.getLabel());
+            String jwt = jwtUtilBean.generateTokenForUser(userDetails);
+            /**
+             * 리프레시 토큰을 만들고, DB 에 저장하며, 반응에 포함한다.
+             */
+            var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
+            ResponseCookie refreshCookie = createRefreshCookie(refresh);
+            JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
 
-        /**
-         * 리프레시 토큰을 만들고, DB 에 저장하며, 반응에 포함한다.
-         */
-        var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
-        JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
-
-        return ResponseEntity.ok(
-                new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                    .body(new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
         } catch (DisabledException e) {
             String message = Feedback.CLOSED_ACCOUNT;
             HttpStatus status = ACCEPTED;
