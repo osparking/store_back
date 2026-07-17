@@ -1,10 +1,10 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.exception.RefreshTokenException;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.RefreshToken;
 import com.bumsoap.store.repository.RefreshTokenRepoI;
 import com.bumsoap.store.request.LoginRequest;
-import com.bumsoap.store.request.RefreshRequest;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.response.JwtResponse;
 import com.bumsoap.store.security.TokenCache;
@@ -231,10 +231,14 @@ public class AuthCon {
     private final RefreshTokenRepoI refreshRepo;
 
     @PostMapping(UrlMap.REFRESH_TOKEN)
-    public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
-        // 1. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
-        RefreshToken entity = refreshTokenServ
-                .getRefrechTokenEntity(request.getRefreshToken());
+    public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken",
+            required = false) String refresh1) {
+        // 1. 쿠키에 RT가 없는 경우 (required = false 로 설정하여 직접 예외 처리)
+        if (refresh1==null || refresh1.isEmpty()) {
+            throw new RefreshTokenException("리프레시 토큰 쿠키 부재");
+        }
+        // 2. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
+        RefreshToken entity = refreshTokenServ.getRefrechTokenEntity(refresh1);
 
         if (entity.getExpiryDate().isBefore(LocalDateTime.now())
                 || entity.isRevoked()) {
