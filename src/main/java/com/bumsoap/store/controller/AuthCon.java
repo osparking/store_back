@@ -233,45 +233,53 @@ public class AuthCon {
     @PostMapping(UrlMap.REFRESH_TOKEN)
     public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken",
             required = false) String refresh1) {
-        // 1. 쿠키에 RT가 없는 경우 (required = false 로 설정하여 직접 예외 처리)
-        if (refresh1==null || refresh1.isEmpty()) {
-            throw new RefreshTokenException("리프레시 토큰 쿠키 부재");
+        try {
+            // 1. 쿠키에 RT가 없는 경우 (required = false 로 설정하여 직접 예외 처리)
+            if (refresh1==null || refresh1.isEmpty()) {
+                throw new RefreshTokenException("리프레시 토큰 쿠키 부재");
+            }
+            // 2. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
+            RefreshToken entity = refreshTokenServ.getRefrechTokenEntity(refresh1);
+
+            if (entity.getExpiryDate().isBefore(LocalDateTime.now())
+                    || entity.isRevoked()) {
+                throw new RuntimeException("만료 또는 폐기된 RT");
+            }
+
+            // 3. 유효성 검증 (만료 or 폐기 여부)
+            if (entity.getExpiryDate().isBefore(LocalDateTime.now())
+                    || entity.isRevoked()) {
+                throw new RefreshTokenException("만료 또는 폐기된 RT");
+            }
+
+            // 4. (로테이션) 기존 RT 폐기(Revoked), 새로운 RT 생성 및 DB 저장
+            entity.setRevoked(true);
+            refreshRepo.save(entity); // 궂이 필요?
+
+            // 5. 새 access token(JWT) 발급
+            var userDetails = BsUserDetails.buildUserDetails(entity.getUser());
+            String jwt = jwtUtilBean.generateTokenForUser(userDetails);
+
+            // 6. 리프레시 토큰을 만들고, DB 에 저장
+            var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
+
+            // 7. 응답 본문 - JWT 만 포함
+            JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
+
+            // 8. 응답 헤더 - 리프레시를 HttpOnly 쿠키로 설정
+            ResponseCookie refreshCookie = createRefreshCookie(refresh);
+
+            // 9. 최종 응답(AT 는 본문에, RT 는 헤더에 적재)
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                    .body(new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
+        } catch (RefreshTokenException e) {
+            return ResponseEntity.status(UNAUTHORIZED).body(
+                    new ApiResp(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
         }
-        // 2. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
-        RefreshToken entity = refreshTokenServ.getRefrechTokenEntity(refresh1);
-
-        if (entity.getExpiryDate().isBefore(LocalDateTime.now())
-                || entity.isRevoked()) {
-            throw new RuntimeException("만료 또는 폐기된 RT");
-        }
-
-        // 3. 유효성 검증 (만료 or 폐기 여부)
-        if (entity.getExpiryDate().isBefore(LocalDateTime.now())
-                || entity.isRevoked()) {
-            throw new RefreshTokenException("만료 또는 폐기된 RT");
-        }
-
-        // 4. (로테이션) 기존 RT 폐기(Revoked), 새로운 RT 생성 및 DB 저장
-        entity.setRevoked(true);
-        refreshRepo.save(entity); // 궂이 필요?
-
-        // 5. 새 access token(JWT) 발급
-        var userDetails = BsUserDetails.buildUserDetails(entity.getUser());
-        String jwt = jwtUtilBean.generateTokenForUser(userDetails);
-
-        // 6. 리프레시 토큰을 만들고, DB 에 저장
-        var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
-
-        // 7. 응답 본문 - JWT 만 포함
-        JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
-
-        // 8. 응답 헤더 - 리프레시를 HttpOnly 쿠키로 설정
-        ResponseCookie refreshCookie = createRefreshCookie(refresh);
-
-        // 9. 최종 응답(AT 는 본문에, RT 는 헤더에 적재)
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body(new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
     }
 
     @Value("${auth.refresh.expirationSec}")
