@@ -245,12 +245,20 @@ public class AuthCon {
             throw new RuntimeException("만료 또는 폐기된 RT");
         }
 
-        // 2. (로테이션) 기존 RT 폐기(Revoked), 새로운 RT 생성 및 DB 저장
-        entity.setRevoked(true);
-        refreshRepo.save(entity);
+        // 3. 유효성 검증 (만료 or 폐기 여부)
+        if (entity.getExpiryDate().isBefore(LocalDateTime.now())
+                || entity.isRevoked()) {
+            throw new RefreshTokenException("만료 또는 폐기된 RT");
+        }
 
+        // 4. (로테이션) 기존 RT 폐기(Revoked), 새로운 RT 생성 및 DB 저장
+        entity.setRevoked(true);
+        refreshRepo.save(entity); // 궂이 필요?
+
+        // 5. 새 access token(JWT) 발급
         var userDetails = BsUserDetails.buildUserDetails(entity.getUser());
         String jwt = jwtUtilBean.generateTokenForUser(userDetails);
+
         var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
         JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
 
