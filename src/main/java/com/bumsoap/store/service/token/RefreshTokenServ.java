@@ -2,11 +2,11 @@ package com.bumsoap.store.service.token;
 
 import com.bumsoap.store.model.RefreshToken;
 import com.bumsoap.store.repository.RefreshTokenRepoI;
-import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.user.UserServInt;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,17 +35,20 @@ public class RefreshTokenServ implements RefreshTokenServInt{
         return foundToken;
     }
 
-    @Override
+    @Value("${auth.refresh.expirationSec}")
+    private int expirationSec;
+
     @Transactional
-    public String createRefreshForUser(BsUserDetails userDetails) {
+    @Override
+    public String createRefreshForUser(Long userId) {
         String refresh = UUID.randomUUID().toString();
-        var user = userService.findById(userDetails.getId());
+        var user = userService.findById(userId);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .tokenHash(DigestUtils.sha256Hex(refresh)) // Apache Commons Codec
 //                .expiryDate(LocalDateTime.now().plusWeeks(1))
-                .expiryDate(LocalDateTime.now().plusSeconds(30))
+                .expiryDate(LocalDateTime.now().plusSeconds(expirationSec))
                 .build();
 
         refreshRepo.save(refreshToken);
