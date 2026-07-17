@@ -259,12 +259,19 @@ public class AuthCon {
         var userDetails = BsUserDetails.buildUserDetails(entity.getUser());
         String jwt = jwtUtilBean.generateTokenForUser(userDetails);
 
+        // 6. 리프레시 토큰을 만들고, DB 에 저장
         var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
+
+        // 7. 응답 본문 - JWT 만 포함
         JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
 
-        // 3. 새 AT와 새 RT를 클라이언트에 응답
-        return ResponseEntity.ok(
-                new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
+        // 8. 응답 헤더 - 리프레시를 HttpOnly 쿠키로 설정
+        ResponseCookie refreshCookie = createRefreshCookie(refresh);
+
+        // 9. 최종 응답(AT 는 본문에, RT 는 헤더에 적재)
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
     }
 
     @Value("${auth.refresh.expirationSec}")
