@@ -58,7 +58,7 @@ public class RefreshToken {
 
     /**
      * 토큰이 아직 유효한지 확인하는 편의 메서드
-     * (만료일이 지나지 않았고, 폐기 상태가 아닌 경우)
+     * (사용 가능하고, 만료일이 지나지 않은 경우 참, 아니면 거짓 반환)
      */
     public boolean isValid() {
         return !this.revoked && this.expiryDate.isAfter(LocalDateTime.now());

@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.token;
 
+import com.bumsoap.store.exception.RefreshTokenException;
 import com.bumsoap.store.model.RefreshToken;
 import com.bumsoap.store.repository.RefreshTokenRepoI;
 import com.bumsoap.store.service.user.UserServInt;
@@ -19,20 +20,24 @@ public class RefreshTokenServ implements RefreshTokenServInt{
     private final UserServInt userService;
 
     /**
-     * 날것 RT 를 받아서, 해쉬를 구하고 해쉬로 DB에서 RT 를 채취함
-     * @param refresh
-     * @return 채취한 refresh token
+     * 날것 RT 문자열의 해쉬를 구해 DB 에서 RT 행을 찾고, DB에 사용됨 기록함
+     * @param refresh 날것 RT 문자열
+     * @return 사용 가능한 RT 객체
      */
     @Override
-    public RefreshToken getRefrechTokenEntity(String refresh) {
+    @Transactional
+    public RefreshToken consultConsumeRefreshToken(String refresh) {
         String hashedToken = DigestUtils.sha256Hex(refresh);
-        RefreshToken foundToken = refreshRepo.findByTokenHash(hashedToken)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        RefreshToken refreshToken = refreshRepo.findByTokenHash(hashedToken)
+                .orElseThrow(() -> new RefreshTokenException("RT 검색 실패"));
 
-        if (!foundToken.isValid()) {
-            throw new RuntimeException("Token expired or revoked");
+        if (!refreshToken.isValid()) {
+            throw new RefreshTokenException("사용되었거나 만료된 RT");
         }
-        return foundToken;
+        // 발견된 사용가능한 RT 사용되었다고 표시함
+        refreshToken.setRevoked(true);
+
+        return refreshToken;
     }
 
     @Value("${auth.refresh.expirationSec}")
