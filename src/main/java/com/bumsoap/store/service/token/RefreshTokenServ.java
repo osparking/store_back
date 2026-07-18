@@ -7,7 +7,10 @@ import com.bumsoap.store.service.user.UserServInt;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +21,16 @@ import java.util.UUID;
 public class RefreshTokenServ implements RefreshTokenServInt{
     private final RefreshTokenRepoI refreshRepo;
     private final UserServInt userService;
+    private static final Logger logger =
+            LoggerFactory.getLogger(RefreshTokenServ.class);
+
+    @Scheduled(cron = "0 0 3 * * ?") // 매일 새벽 3시 실행
+    @Transactional
+    public void cleanExpiredRefreshTokens() {
+        LocalDateTime now = LocalDateTime.now();
+        int deletedCount = refreshRepo.deleteByExpiryDateBefore(now);
+        logger.info("만료된 리프레시 토큰 {}개 삭제 완료", deletedCount);
+    }
 
     /**
      * 날것 RT 문자열의 해쉬를 구해 DB 에서 RT 행을 찾고, DB에 사용됨 기록함
