@@ -192,7 +192,7 @@ public class AuthCon {
              * 리프레시 토큰을 만들고, DB 에 저장하며, 반응에 포함한다.
              */
             var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
-            ResponseCookie refreshCookie = createRefreshCookie(refresh);
+            ResponseCookie refreshCookie = createSaveCookie(refresh);
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
 
             return ResponseEntity.ok()
@@ -267,7 +267,7 @@ public class AuthCon {
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
 
             // 8. 응답 헤더 - 리프레시를 HttpOnly 쿠키로 설정
-            ResponseCookie refreshCookie = createRefreshCookie(refresh);
+            ResponseCookie refreshCookie = createSaveCookie(refresh);
 
             // 9. 최종 응답(AT 는 본문에, RT 는 헤더에 적재)
             return ResponseEntity.ok()
@@ -285,7 +285,12 @@ public class AuthCon {
     @Value("${auth.refresh.expirationSec}")
     private int expirationSec;
 
-    private ResponseCookie createRefreshCookie(String refreshToken) {
+    /**
+     * (JWT) 토큰 리프레시 작업용 리프레시 토큰을 ResponseCookie 로 만든다.
+     * @param refreshToken 리스레시 토큰     *
+     * @return 생성된 ResponseCookie
+     */
+    private ResponseCookie createSaveCookie(String refreshToken) {
         return ResponseCookie.from("refreshToken", refreshToken) // 키 이름
                 .httpOnly(true) // JavaScript 접근 차단 (보안 핵심)
                 // HTTPS 에서만 전송 (운영 환경 필수, 테스트 시 false 가능)
