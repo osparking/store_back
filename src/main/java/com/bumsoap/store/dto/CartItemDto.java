@@ -16,6 +16,7 @@ public class CartItemDto extends ShapeCount{
   private long id;
   private LocalDateTime addTime; // 주문일시
   private BigDecimal subTotal;
+  private BigDecimal unitPrice;
   private String shapeLabel;
 
   public String getShapeLabel() {
