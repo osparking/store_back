@@ -3,9 +3,12 @@ package com.bumsoap.store.model;
 import com.bumsoap.store.util.YesNoConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
 
 @Entity
 @Table(name = "island_address")           // 실제 테이블명
+@Check(name = "is_jeju", constraints = "is_jeju IN ('Y', 'N')")
+@Check(name = "is_island", constraints = "is_island IN ('Y', 'N')")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,10 +27,10 @@ public class IslandAddress {
     private String address;
 
     @Convert(converter = YesNoConverter.class)
-    @Column(name = "is_jeju", columnDefinition = "CHAR(1) DEFAULT 'N'")
+    @Column(name = "is_jeju", columnDefinition = "CHAR(1)")
     private Boolean isJeju;
 
     @Convert(converter = YesNoConverter.class)
-    @Column(name = "is_island", columnDefinition = "CHAR(1) DEFAULT 'N'")
+    @Column(name = "is_island", columnDefinition = "CHAR(1)")
     private Boolean isIsland;
 }
