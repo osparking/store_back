@@ -8,6 +8,7 @@ import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.OrderItem;
+import com.bumsoap.store.repository.IslandAddressRepo;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.repository.RecipientRepoI;
@@ -104,7 +105,7 @@ public class OrderServ implements OrderServI {
 
         if (userId==theOrder.getUser().getId()) {
             theOrder.setReview(null);
-            theOrder.setStars((byte)0);
+            theOrder.setStars((byte) 0);
             theOrder.setReviewTime(null);
             theOrder.setOrderStatus(OrderStatus.PURCHASE_CONFIRMED);
             entityManager.persist(theOrder);
@@ -306,17 +307,31 @@ public class OrderServ implements OrderServI {
                 isJeju ? delivery.add(feeEtc.getDeliJeju()):delivery);
     }
 
+    private final IslandAddressRepo islandAddressRepo;
+
     @Override
     public BigDecimal findDeliveryFee(
             BigDecimal grandTotal, String zipcode) {
 
         FeeEtc feeEtc = feeEtcServ.readLatest();
+        BigDecimal addedFee = BigDecimal.ZERO;
+        var islandAddress = islandAddressRepo.findByZipcode(zipcode);
+
+        if (islandAddress.isPresent()) {
+            if (islandAddress.get().getIsJeju()) {
+                addedFee = feeEtc.getDeliJeju();
+            } else if (zipcode.startsWith("63")) {
+                addedFee = feeEtc.getDeliJeju().add(feeEtc.getDeliIsol());
+            } else {
+                addedFee = feeEtc.getDeliIsol();
+            }
+        }
+
         BigDecimal delivery =
                 grandTotal.compareTo(feeEtc.getDeliFreeMin()) >= 0
                         ? BigDecimal.ZERO:feeEtc.getDeliBasis();
 
-        return zipcode.startsWith("63")
-                ? delivery.add(feeEtc.getDeliJeju()):delivery;
+        return delivery.add(addedFee);
     }
 
     @Override
