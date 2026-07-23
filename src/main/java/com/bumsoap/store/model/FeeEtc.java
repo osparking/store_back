@@ -1,7 +1,7 @@
 package com.bumsoap.store.model;
 
+import com.bumsoap.store.util.BoxSize;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,31 +10,40 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class FeeEtc {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false)
-  private BigDecimal deliBasis; // 기본 배송비
-  @Column(nullable = false)
-  private BigDecimal deliJeju; // 제주도
-  @Column(nullable = false)
-  private BigDecimal deliIsol; // 벽오지(제주 외 도서 산간)
-  @Column(nullable = false)
-  private BigDecimal deliFreeMin; // 무배 최소 주문액
+    @Column(nullable = false)
+    private BoxSize boxSize; // 상자 내 비누 수량(예, 3개, 12개)
 
-  @Column(name = "apply_time", updatable = false, nullable = false,
-      columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-  private LocalDateTime applyTime = LocalDateTime.now();
+    @Column(nullable = false)
+    private BigDecimal areaSame; // 동일 권역
 
-  public FeeEtc(BigDecimal deliBasis, BigDecimal deliJeju,
-                BigDecimal deliIsol, BigDecimal deliFreeMin) {
-    this.deliBasis = deliBasis;
-    this.deliJeju = deliJeju;
-    this.deliIsol = deliIsol;
-    this.deliFreeMin = deliFreeMin;
-  }
+    @Column(nullable = false)
+    private BigDecimal areaDiff; // 다른 권역
+
+    @Column(nullable = false)
+    private BigDecimal areaJeju; // 제주 권역
+
+    private BigDecimal island; // 벽오지(제주 외 도서 산간)
+
+    private BigDecimal deliFreeMin; // 무배 최소 주문액
+
+    @Column(name = "apply_time", updatable = false, nullable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime applyTime = LocalDateTime.now();
+
+    public FeeEtc(BoxSize boxSize, BigDecimal areaSame,
+                  BigDecimal areaDiff, BigDecimal areaJeju,
+                  BigDecimal island, BigDecimal deliFreeMin) {
+        this.boxSize = boxSize;
+        this.areaSame = areaSame;
+        this.areaDiff = areaDiff;
+        this.areaJeju = areaJeju;
+        this.island = island;
+        this.deliFreeMin = deliFreeMin;
+    }
 }
