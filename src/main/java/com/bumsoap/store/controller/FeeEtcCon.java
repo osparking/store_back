@@ -21,7 +21,8 @@ public class FeeEtcCon {
   @GetMapping(UrlMap.GET_LATEST)
   public ResponseEntity<ApiResp> getFeeEtc() {
     try {
-      FeeEtc feeEtc = feeEtcServ.readLatest();
+//      FeeEtc feeEtc = feeEtcServ.readLatest();
+      FeeEtc feeEtc = null;
       return ResponseEntity.ok(new ApiResp("배송비 등 정보", feeEtc));
     } catch (Exception e) {
       return ResponseEntity.status(INTERNAL_SERVER_ERROR)

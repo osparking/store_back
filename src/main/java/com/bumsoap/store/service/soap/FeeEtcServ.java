@@ -2,12 +2,13 @@ package com.bumsoap.store.service.soap;
 
 import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.repository.FeeEtcRepo;
+import com.bumsoap.store.util.BoxSize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class FeeEtcServ implements FeeEtcServI{
+public class FeeEtcServ implements FeeEtcServI {
   private final FeeEtcRepo feeEtcRepo;
 
   @Override
@@ -16,7 +17,7 @@ public class FeeEtcServ implements FeeEtcServI{
   }
 
   @Override
-  public FeeEtc readLatest() {
-    return feeEtcRepo.findLatestFee();
+  public FeeEtc getDeliveryFeeOf(BoxSize size) {
+    return feeEtcRepo.findLatestFee(size);
   }
 }

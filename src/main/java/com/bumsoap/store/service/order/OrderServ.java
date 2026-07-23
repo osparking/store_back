@@ -6,7 +6,6 @@ import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
 import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.BsOrder;
-import com.bumsoap.store.model.FeeEtc;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.IslandAddressRepo;
 import com.bumsoap.store.repository.OrderItemRepo;
@@ -296,15 +295,18 @@ public class OrderServ implements OrderServI {
         }
 
         // 배송비 계산
-        FeeEtc feeEtc = feeEtcServ.readLatest();
-        BigDecimal delivery =
-                payment.compareTo(feeEtc.getDeliFreeMin()) >= 0
-                        ? BigDecimal.ZERO:feeEtc.getDeliBasis();
+//        FeeEtc feeEtc = feeEtcServ.readLatest();
+        BigDecimal delivery = BigDecimal.valueOf(3400);
+//                payment.compareTo(feeEtc.getDeliFreeMin()) >= 0
+//                        ? BigDecimal.ZERO:feeEtc.getDeliBasis();
 
         boolean isJeju = order.getRecipient().getAddressBasis()
                 .getZipcode().startsWith("63");
         return payment.add(
-                isJeju ? delivery.add(feeEtc.getDeliJeju()):delivery);
+                isJeju ? delivery.add(
+//                        feeEtc.getDeliJeju()
+                        BigDecimal.valueOf(3000)
+                ):delivery);
     }
 
     private final IslandAddressRepo islandAddressRepo;
@@ -313,23 +315,28 @@ public class OrderServ implements OrderServI {
     public BigDecimal findDeliveryFee(
             BigDecimal grandTotal, String zipcode) {
 
-        FeeEtc feeEtc = feeEtcServ.readLatest();
+        var baseFee03 = feeEtcServ.getDeliveryFeeOf(BoxSize.BOX_03);
+        var baseFee12 = feeEtcServ.getDeliveryFeeOf(BoxSize.BOX_12);
+
         BigDecimal addedFee = BigDecimal.ZERO;
         var islandAddress = islandAddressRepo.findByZipcode(zipcode);
+        var jejuFee = BigDecimal.valueOf(3000);
+        var islandFee = BigDecimal.valueOf(4000);
+        var deliFreeMin = BigDecimal.valueOf(40000);
 
         if (islandAddress.isPresent()) {
             if (islandAddress.get().getIsJeju()) {
-                addedFee = feeEtc.getDeliJeju();
+                addedFee = jejuFee;
             } else if (zipcode.startsWith("63")) {
-                addedFee = feeEtc.getDeliJeju().add(feeEtc.getDeliIsol());
+                addedFee = jejuFee.add(islandFee);
             } else {
-                addedFee = feeEtc.getDeliIsol();
+                addedFee = islandFee;
             }
         }
 
         BigDecimal delivery =
-                grandTotal.compareTo(feeEtc.getDeliFreeMin()) >= 0
-                        ? BigDecimal.ZERO:feeEtc.getDeliBasis();
+                grandTotal.compareTo(deliFreeMin) >= 0
+                        ? BigDecimal.ZERO:baseFee03.getAreaSame();
 
         return delivery.add(addedFee);
     }
