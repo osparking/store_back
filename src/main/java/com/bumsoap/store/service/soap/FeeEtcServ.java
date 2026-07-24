@@ -1,6 +1,6 @@
 package com.bumsoap.store.service.soap;
 
-import com.bumsoap.store.model.FeeEtc;
+import com.bumsoap.store.model.FeeDelivery;
 import com.bumsoap.store.repository.FeeEtcRepo;
 import com.bumsoap.store.util.BoxSize;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +12,12 @@ public class FeeEtcServ implements FeeEtcServI {
   private final FeeEtcRepo feeEtcRepo;
 
   @Override
-  public FeeEtc add(FeeEtc feeEtc) {
+  public FeeDelivery add(FeeDelivery feeEtc) {
     return feeEtcRepo.save(feeEtc);
   }
 
   @Override
-  public FeeEtc getDeliveryFeeOf(BoxSize size) {
+  public FeeDelivery getDeliveryFeeOf(BoxSize size) {
     return feeEtcRepo.findLatestFee(size);
   }
 }

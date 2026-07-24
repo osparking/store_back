@@ -1,6 +1,6 @@
 package com.bumsoap.store.data;
 
-import com.bumsoap.store.model.FeeEtc;
+import com.bumsoap.store.model.FeeDelivery;
 import com.bumsoap.store.repository.FeeEtcRepo;
 import com.bumsoap.store.util.BoxSize;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class InitialFeeEtcCreator implements ApplicationListener<ApplicationRead
         // Check if there's no existing inventory for delivery fee, etc.
         if (feeEtcRepo.count()==0) {
             // Create initial record of delivery fee and other value.
-            feeEtcRepo.save(new FeeEtc(BoxSize.BOX_03,
+            feeEtcRepo.save(new FeeDelivery(BoxSize.BOX_03,
                     BigDecimal.valueOf(4100),
                     BigDecimal.valueOf(4600),
                     BigDecimal.valueOf(7600),
@@ -32,7 +32,7 @@ public class InitialFeeEtcCreator implements ApplicationListener<ApplicationRead
                     BigDecimal.valueOf(40000)
             ));
 
-            feeEtcRepo.save(new FeeEtc(BoxSize.BOX_12,
+            feeEtcRepo.save(new FeeDelivery(BoxSize.BOX_12,
                     BigDecimal.valueOf(5100),
                     BigDecimal.valueOf(5600),
                     BigDecimal.valueOf(8600),

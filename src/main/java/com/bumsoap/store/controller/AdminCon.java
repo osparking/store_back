@@ -2,7 +2,7 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.model.Admin;
-import com.bumsoap.store.model.FeeEtc;
+import com.bumsoap.store.model.FeeDelivery;
 import com.bumsoap.store.model.SoapPrice;
 import com.bumsoap.store.request.FeeEtcAddReq;
 import com.bumsoap.store.request.SoapPriceAddReq;
@@ -67,7 +67,7 @@ public class AdminCon {
     @PostMapping(UrlMap.ADD_FEE_ETC)
     public ResponseEntity<ApiResp> addFeeEtc(@RequestBody FeeEtcAddReq request) {
         try {
-            var feeEtc = objMapper.mapToDto(request, FeeEtc.class);
+            var feeEtc = objMapper.mapToDto(request, FeeDelivery.class);
 
             return ResponseEntity.ok(
                 new ApiResp(Feedback.FEE_ETC_INSERTED, feeEtcServ.add(feeEtc)));
