@@ -2,7 +2,7 @@ package com.bumsoap.store.controller;
 
 import com.bumsoap.store.model.FeeDelivery;
 import com.bumsoap.store.response.ApiResp;
-import com.bumsoap.store.service.soap.FeeEtcServI;
+import com.bumsoap.store.service.soap.FeeDeliveryServI;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequestMapping(UrlMap.FEE_ETC)
 @RequiredArgsConstructor
 public class FeeEtcCon {
-  private final FeeEtcServI feeEtcServ;
+  private final FeeDeliveryServI feeEtcServ;
 
   @GetMapping(UrlMap.GET_LATEST)
   public ResponseEntity<ApiResp> getFeeEtc() {

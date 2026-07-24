@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class FeeEtcServ implements FeeEtcServI {
+public class FeeDeliveryServ implements FeeDeliveryServI {
   private final FeeDeliveryRepo feeEtcRepo;
 
   @Override

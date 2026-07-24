@@ -15,7 +15,7 @@ import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
-import com.bumsoap.store.service.soap.FeeEtcServI;
+import com.bumsoap.store.service.soap.FeeDeliveryServI;
 import com.bumsoap.store.util.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -46,7 +46,7 @@ public class OrderServ implements OrderServI {
     private final RecipientServI recipientServ;
     private final RecipientRepoI recipientRepo;
     private final AddressBasisServI addressBasisServ;
-    private final FeeEtcServI feeEtcServ;
+    private final FeeDeliveryServI feeEtcServ;
 
     @Autowired
     private OrderIdGenerator orderIdGenerator;

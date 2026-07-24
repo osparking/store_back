@@ -11,7 +11,7 @@ import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServInt;
 import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.service.question.QuestionServI;
-import com.bumsoap.store.service.soap.FeeEtcServI;
+import com.bumsoap.store.service.soap.FeeDeliveryServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
@@ -36,7 +36,7 @@ public class AdminCon {
     private final CustomerServInt customerServ;
     private final PriceServI priceServ;
     private final ObjMapper objMapper;
-    private final FeeEtcServI feeEtcServ;
+    private final FeeDeliveryServI feeEtcServ;
     private final QuestionServI questionServ;
     private final OrderServI orderServI;
 
