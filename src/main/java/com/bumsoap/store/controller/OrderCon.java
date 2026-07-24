@@ -131,8 +131,7 @@ public class OrderCon {
             @RequestBody DeliveryFeeReq feeReq) {
 
         try {
-            var deliveryFee = orderServ.findDeliveryFee(
-                    feeReq.getGrandTotal(), feeReq.getZipcode());
+            var deliveryFee = orderServ.findDeliveryFee(feeReq);
             return ResponseEntity.ok(
                     new ApiResp(Feedback.DELIVERY_FEE_FOUND, deliveryFee));
         } catch (InventoryException e) {
