@@ -1,7 +1,7 @@
 package com.bumsoap.store.service.soap;
 
 import com.bumsoap.store.model.FeeDelivery;
-import com.bumsoap.store.repository.FeeEtcRepo;
+import com.bumsoap.store.repository.FeeDeliveryRepo;
 import com.bumsoap.store.util.BoxSize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class FeeEtcServ implements FeeEtcServI {
-  private final FeeEtcRepo feeEtcRepo;
+  private final FeeDeliveryRepo feeEtcRepo;
 
   @Override
   public FeeDelivery add(FeeDelivery feeEtc) {

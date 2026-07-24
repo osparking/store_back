@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class FeeEtcRepoTest {
     @Autowired
-    private FeeEtcRepo feeEtcRepo;
+    private FeeDeliveryRepo feeEtcRepo;
 
     @Test
     void testIfFeeReadsWell() {

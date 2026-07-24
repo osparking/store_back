@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface FeeEtcRepo extends JpaRepository<FeeDelivery, Long> {
+public interface FeeDeliveryRepo extends JpaRepository<FeeDelivery, Long> {
     @Query("""
-            select fe from FeeEtc fe where fe.boxSize = :boxSize
+            select fe from FeeDelivery fe where fe.boxSize = :boxSize
             order by fe.id desc limit 1
             """)
     FeeDelivery findLatestFee(@Param("boxSize") BoxSize boxSize);
