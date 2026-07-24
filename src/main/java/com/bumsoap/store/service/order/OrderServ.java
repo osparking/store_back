@@ -6,16 +6,19 @@ import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.exception.OrderIdNotFoundEx;
 import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.model.FeeDelivery;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.repository.IslandAddressRepo;
 import com.bumsoap.store.repository.OrderItemRepo;
 import com.bumsoap.store.repository.OrderRepo;
 import com.bumsoap.store.repository.RecipientRepoI;
+import com.bumsoap.store.request.DeliveryFeeReq;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
 import com.bumsoap.store.service.soap.FeeDeliveryServI;
+import com.bumsoap.store.service.soap.FeeOtherServI;
 import com.bumsoap.store.util.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -36,6 +39,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.bumsoap.store.util.AreaType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -310,35 +315,82 @@ public class OrderServ implements OrderServI {
     }
 
     private final IslandAddressRepo islandAddressRepo;
+    private final FeeOtherServI feeOtherServ;
 
     @Override
-    public BigDecimal findDeliveryFee(
-            BigDecimal grandTotal, String zipcode) {
+    public BigDecimal findDeliveryFee(DeliveryFeeReq feeReq) {
+        var feeOther = feeOtherServ.getLatestFeeOther();
 
-        var baseFee03 = feeEtcServ.getDeliveryFeeOf(BoxSize.BOX_03);
-        var baseFee12 = feeEtcServ.getDeliveryFeeOf(BoxSize.BOX_12);
+        /**
+         * 우편번호로 같은 권역인지 판단한다.
+         */
+        String zipcode = feeReq.getZipcode();
+        int soapCount = feeReq.getSoapCount();
+        boolean sameArea = askIfSameArea(zipcode.substring(0, 2));
+        boolean isToJeju = zipcode.startsWith("63");
 
-        BigDecimal addedFee = BigDecimal.ZERO;
+        BigDecimal deliveryFee = BigDecimal.ZERO;
+
+        if (isToJeju) {
+            deliveryFee = getBaseFee(soapCount, JEJU_AREA);
+        } else if (sameArea) {
+            deliveryFee = getBaseFee(soapCount, SAME_AREA);
+        } else {
+            deliveryFee = getBaseFee(soapCount, DIFF_AREA);
+        }
+
         var islandAddress = islandAddressRepo.findByZipcode(zipcode);
-        var jejuFee = BigDecimal.valueOf(3000);
-        var islandFee = BigDecimal.valueOf(4000);
-        var deliFreeMin = BigDecimal.valueOf(40000);
+        BigDecimal islandFee = BigDecimal.ZERO;
 
         if (islandAddress.isPresent()) {
-            if (islandAddress.get().getIsJeju()) {
-                addedFee = jejuFee;
-            } else if (zipcode.startsWith("63")) {
-                addedFee = jejuFee.add(islandFee);
-            } else {
-                addedFee = islandFee;
+            if (islandAddress.get().getIsIsland()) {
+                islandFee = feeOther.getIslandAdd();
             }
         }
 
-        BigDecimal delivery =
-                grandTotal.compareTo(deliFreeMin) >= 0
-                        ? BigDecimal.ZERO:baseFee03.getAreaSame();
+        BigDecimal discount = BigDecimal.ZERO;
+        boolean isFreeFee = feeReq.getGrandTotal().compareTo(
+                feeOther.getDeliFreeMin()) >= 0;
 
-        return delivery.add(addedFee);
+        if (isFreeFee) {
+            discount = getBaseFee(soapCount, SAME_AREA);
+        }
+
+        BigDecimal delivery = deliveryFee.add(islandFee);
+
+        return delivery.subtract(discount);
+    }
+
+    private BigDecimal getBaseFee(int soapCount, AreaType areaType) {
+        var baseFee = new FeeDelivery[]{
+                feeEtcServ.getDeliveryFeeOf(BoxSize.BOX_03),
+                feeEtcServ.getDeliveryFeeOf(BoxSize.BOX_12)
+        };
+
+        var index = soapCount==3 ? 0:1;
+        BigDecimal deliveryFee;
+
+        switch (areaType) {
+            case JEJU_AREA:
+                deliveryFee = baseFee[index].getAreaJeju();
+                break;
+            case SAME_AREA:
+                deliveryFee = baseFee[index].getAreaSame();
+                break;
+            case DIFF_AREA:
+                deliveryFee = baseFee[index].getAreaDiff();
+                break;
+            default:
+                deliveryFee = BigDecimal.ZERO;
+        }
+        return deliveryFee;
+    }
+
+    private boolean askIfSameArea(String zipPrefix) {
+        int twoDigitInt = Integer.parseInt(zipPrefix);
+
+        // 서울(01~09), 경기(10~20), 인천(21~23)
+        return twoDigitInt >= 1 && twoDigitInt <= 23;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.bumsoap.store.service.order;
 
 import com.bumsoap.store.dto.*;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.request.DeliveryFeeReq;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.util.OrderStatus;
@@ -43,7 +44,7 @@ public interface OrderServI {
 
     BsOrder saveOrder(BsOrder order);
 
-    BigDecimal findDeliveryFee(BigDecimal grandTotal, String zipcode);
+    BigDecimal findDeliveryFee(DeliveryFeeReq deliveryFeeReq);
 
     BsOrder findOrderById(Long id);
 
