@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
-public class FeeEtc {
+public class FeeDelivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,22 +28,15 @@ public class FeeEtc {
     @Column(nullable = false)
     private BigDecimal areaJeju; // 제주 권역
 
-    private BigDecimal island; // 벽오지(제주 외 도서 산간)
-
-    private BigDecimal deliFreeMin; // 무배 최소 주문액
-
     @Column(name = "apply_time", updatable = false, nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime applyTime = LocalDateTime.now();
 
-    public FeeEtc(BoxSize boxSize, BigDecimal areaSame,
-                  BigDecimal areaDiff, BigDecimal areaJeju,
-                  BigDecimal island, BigDecimal deliFreeMin) {
+    public FeeDelivery(BoxSize boxSize, BigDecimal areaSame,
+                       BigDecimal areaDiff, BigDecimal areaJeju) {
         this.boxSize = boxSize;
         this.areaSame = areaSame;
         this.areaDiff = areaDiff;
         this.areaJeju = areaJeju;
-        this.island = island;
-        this.deliFreeMin = deliFreeMin;
     }
 }
