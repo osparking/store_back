@@ -16,5 +16,6 @@ import java.math.BigDecimal;
  */
 public class DeliveryFeeReq {
   private String zipcode;
+  private Integer soapCount;
   private BigDecimal grandTotal;
 }
