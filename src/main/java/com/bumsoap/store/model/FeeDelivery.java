@@ -1,5 +1,6 @@
 package com.bumsoap.store.model;
 
+import com.bumsoap.store.request.FeeDeliveryAddReq;
 import com.bumsoap.store.util.BoxSize;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -38,5 +39,11 @@ public class FeeDelivery {
         this.areaSame = areaSame;
         this.areaDiff = areaDiff;
         this.areaJeju = areaJeju;
+    }
+
+    public FeeDelivery(FeeDeliveryAddReq request) {
+        this(request.getBoxSize()==3 ? BoxSize.BOX_03:BoxSize.BOX_12,
+                request.getAreaSame(), request.getAreaDiff(),
+                request.getAreaJeju());
     }
 }
