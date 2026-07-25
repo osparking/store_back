@@ -38,6 +38,7 @@ public class UrlMap {
     public static final String TOGGLE_ENABLED = "/worker/{id}/toggle" ;
     public static final String ADD_PRICE = "/add_price";
     public static final String ADD_FEE_DELIVERY = "/add_fee_delivery";
+    public static final String ADD_FEE_OTHER = "/add_fee_other";
     public static final String ALL_QUESTIONS = "/all_questions";
     public static final String EMPLOYEE_DEPT = "/employee_dept";
     public static final String GET_SOAP_SALE_CHART = "/soap_sale_chart";
