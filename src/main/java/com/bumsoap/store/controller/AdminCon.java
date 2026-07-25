@@ -3,8 +3,10 @@ package com.bumsoap.store.controller;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.model.Admin;
 import com.bumsoap.store.model.FeeDelivery;
+import com.bumsoap.store.model.FeeOther;
 import com.bumsoap.store.model.SoapPrice;
 import com.bumsoap.store.request.FeeDeliveryAddReq;
+import com.bumsoap.store.request.FeeOtherAddReq;
 import com.bumsoap.store.request.SoapPriceAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
@@ -12,6 +14,7 @@ import com.bumsoap.store.service.CustomerServInt;
 import com.bumsoap.store.service.order.OrderServI;
 import com.bumsoap.store.service.question.QuestionServI;
 import com.bumsoap.store.service.soap.FeeDeliveryServI;
+import com.bumsoap.store.service.soap.FeeOtherServI;
 import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
@@ -37,6 +40,7 @@ public class AdminCon {
     private final PriceServI priceServ;
     private final ObjMapper objMapper;
     private final FeeDeliveryServI feeDeliveryServ;
+    private final FeeOtherServI feeOtherServ;
     private final QuestionServI questionServ;
     private final OrderServI orderServI;
 
@@ -47,7 +51,7 @@ public class AdminCon {
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, counts));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.DEPTS_READ_FAILURE, null ));
+                    new ApiResp(Feedback.DEPTS_READ_FAILURE, null));
         }
     }
 
@@ -60,7 +64,7 @@ public class AdminCon {
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, allQuestions));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.NOT_FOUND, null ));
+                    new ApiResp(Feedback.NOT_FOUND, null));
         }
     }
 
@@ -72,7 +76,7 @@ public class AdminCon {
                     feeDeliveryServ.add(new FeeDelivery(request))));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                new ApiResp(e.getMessage(), null));
+                    new ApiResp(e.getMessage(), null));
         }
     }
 
@@ -84,10 +88,24 @@ public class AdminCon {
             soapPrice.setUnitPrice(request.getUnitPrice());
             SoapPrice updated = priceServ.add(soapPrice);
             return ResponseEntity.ok(
-                new ApiResp(Feedback.PRICE_INSERT_SUCC, updated));
+                    new ApiResp(Feedback.PRICE_INSERT_SUCC, updated));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResp(e.getMessage(), null));
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
+    @PostMapping(UrlMap.ADD_FEE_OTHER)
+    public ResponseEntity<ApiResp> addFeeOther(
+            @RequestBody FeeOtherAddReq request) {
+        try {
+            return ResponseEntity.ok(new ApiResp(Feedback.FEE_OTHER_INSERTED,
+                    feeOtherServ.add(new FeeOther(
+                            request.getIslandAdd(),
+                            request.getDeliFreeMin()))));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
         }
     }
 
@@ -97,7 +115,7 @@ public class AdminCon {
             @PathVariable Long id) {
         try {
             int count = userServ.toggleEnabledColumn(id);
-            if (count == 1) {
+            if (count==1) {
                 return ResponseEntity.ok(
                         new ApiResp(Feedback.ENABLED_TOGGLED, null));
             } else {
@@ -116,7 +134,7 @@ public class AdminCon {
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, workers));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.NOT_FOUND, null ));
+                    new ApiResp(Feedback.NOT_FOUND, null));
         }
     }
 
@@ -127,7 +145,7 @@ public class AdminCon {
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, customers));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.NOT_FOUND, null ));
+                    new ApiResp(Feedback.NOT_FOUND, null));
         }
     }
 
@@ -138,14 +156,14 @@ public class AdminCon {
             @RequestParam("size") Integer size,
             @RequestParam("email") String email,
             @RequestParam("name") String name
-            ) {
+    ) {
         try {
             var customers =
                     customerServ.getCustomerPage(email, name, page, size);
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, customers));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.NOT_FOUND, null ));
+                    new ApiResp(Feedback.NOT_FOUND, null));
         }
     }
 
@@ -156,7 +174,7 @@ public class AdminCon {
             return ResponseEntity.ok(new ApiResp(Feedback.FOUND, soapSales));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    new ApiResp(Feedback.NOT_FOUND, null ));
+                    new ApiResp(Feedback.NOT_FOUND, null));
         }
     }
 
@@ -166,7 +184,7 @@ public class AdminCon {
     }
 
     @GetMapping(UrlMap.USER_COUNT_STAT)
-    public ResponseEntity<ApiResp> countUsersByMonthAndType(){
+    public ResponseEntity<ApiResp> countUsersByMonthAndType() {
         try {
             var userStat = userServ.countUsersByMonthAndType();
             return ResponseEntity.status(OK)
