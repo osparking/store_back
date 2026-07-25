@@ -4,7 +4,7 @@ import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.model.Admin;
 import com.bumsoap.store.model.FeeDelivery;
 import com.bumsoap.store.model.SoapPrice;
-import com.bumsoap.store.request.FeeEtcAddReq;
+import com.bumsoap.store.request.FeeDeliveryAddReq;
 import com.bumsoap.store.request.SoapPriceAddReq;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.service.AdminServ;
@@ -36,7 +36,7 @@ public class AdminCon {
     private final CustomerServInt customerServ;
     private final PriceServI priceServ;
     private final ObjMapper objMapper;
-    private final FeeDeliveryServI feeEtcServ;
+    private final FeeDeliveryServI feeDeliveryServ;
     private final QuestionServI questionServ;
     private final OrderServI orderServI;
 
@@ -64,13 +64,12 @@ public class AdminCon {
         }
     }
 
-    @PostMapping(UrlMap.ADD_FEE_ETC)
-    public ResponseEntity<ApiResp> addFeeEtc(@RequestBody FeeEtcAddReq request) {
+    @PostMapping(UrlMap.ADD_FEE_DELIVERY)
+    public ResponseEntity<ApiResp> addFeeEtc(@RequestBody
+                                             FeeDeliveryAddReq request) {
         try {
-            var feeEtc = objMapper.mapToDto(request, FeeDelivery.class);
-
-            return ResponseEntity.ok(
-                new ApiResp(Feedback.FEE_ETC_INSERTED, feeEtcServ.add(feeEtc)));
+            return ResponseEntity.ok(new ApiResp(Feedback.FEE_DELI_INSERTED,
+                    feeDeliveryServ.add(new FeeDelivery(request))));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ApiResp(e.getMessage(), null));
