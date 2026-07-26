@@ -99,6 +99,7 @@ public class VerifinTokenServ implements VerifinTokenServInt {
         var verificationToken = verifinTokenRepo.findVerificationToken(email);
 
         return verificationToken.isPresent() &&
+                hasTokenExpired(verificationToken.get().getToken()) &&
                 !verificationToken.get().getDiscarded();
     }
 
