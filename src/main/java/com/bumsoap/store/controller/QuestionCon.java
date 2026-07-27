@@ -52,12 +52,26 @@ public class QuestionCon {
 
     @DeleteMapping(UrlMap.DELETE_BY_ID2)
     @Transactional
-    public ResponseEntity<ApiResp> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResp> deleteFollowUp(@PathVariable("id") Long id) {
         try {
             questionServ.checkIfFollowUpExists(id);
             questionServ.deleteFollowUp(id);
             return ResponseEntity.ok(
                     new ApiResp(Feedback.DELETEED_FOLLOWUP_ID + id, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
+    @DeleteMapping(UrlMap.DELETE_BY_ID)
+    public ResponseEntity<ApiResp> delete(
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            questionServ.deleteQuestion(id, userDetails.getUsername());
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.DELETED_QUESTION_ID + id, null));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND)
                     .body(new ApiResp(e.getMessage(), null));
