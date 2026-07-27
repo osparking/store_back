@@ -137,6 +137,8 @@ public class Feedback {
     public static final String NOT_MY_QUESTION = "당신의 질문이 아님";
     public static final String FOLLOW_UP_SAVED = "질문 댓글 저장됨";
     public static final String DELETEED_FOLLOWUP_ID = "삭제된 댓글 ID: ";
+    public static final String DELETED_QUESTION_ID = "삭제된 질문 ID: ";
+    public static final String ANSWERED_QUESTION = "댓글 달린 질문 삭제 불가";
     public static final String SOAP_PRODUCE_STORED = "생산정보 저장 성공";
     public static final String SOAP_PRODUCE_UPDATED = "생산정보 갱신 성공";
 
