@@ -13,6 +13,9 @@ public interface QuestionServI {
     void deleteFollowUp(Long followUpId);
 
     @Transactional
+    boolean deleteQuestion(Long questionId, String username);
+
+    @Transactional
     FollowUp handleSaveFollowUp(FollowUpData followUpData);
 
     SearchResult<QuestionTableRowAdmin> getQuestionsPage(

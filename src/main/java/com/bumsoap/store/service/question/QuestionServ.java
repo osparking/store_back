@@ -2,8 +2,10 @@ package com.bumsoap.store.service.question;
 
 import com.bumsoap.store.dto.QuestionTableRowAdmin;
 import com.bumsoap.store.dto.SearchResult;
+import com.bumsoap.store.exception.AnsweredQuestionEx;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.FollowUp;
 import com.bumsoap.store.model.Question;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -36,6 +39,26 @@ public class QuestionServ implements QuestionServI {
     @Override
     public void deleteFollowUp(Long followUpId) {
         followUpRepo.deleteById(followUpId);
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteQuestion(Long questionId, String username) {
+        Optional<Question> qBox = questionRepo.findById(questionId);
+        if (qBox.isEmpty()) {
+            throw new IdNotFoundEx("부재인 질문 ID: " + questionId);
+        } else {
+            if (!qBox.get().getFollowUps().isEmpty()) {
+                throw new AnsweredQuestionEx(Feedback.ANSWERED_QUESTION);
+            }
+            String writerEmail = qBox.get().getUser().getEmail();
+            if (writerEmail.equals(username)) {
+                questionRepo.deleteById(questionId);
+            } else {
+                throw new UnauthorizedException("질문 삭제 권한 없음");
+            }
+            return true;
+        }
     }
 
     @Transactional
