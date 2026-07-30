@@ -279,6 +279,7 @@ public class UserCon {
                                           @RequestBody UserUpdateReq request) {
         try {
             BsUser user = userServ.getUserById(id);
+            boolean removeTokens = user.isEnabled() && !request.isEnabled();
 
             if (!BsUtils.isQualified(id, true, user.getUserType())) {
                 return ResponseEntity.status(UNAUTHORIZED).body(
@@ -291,7 +292,7 @@ public class UserCon {
             switch (UserType.valueOfLabel(request.getUserType())) {
                 case CUSTOMER:
                     var customer = objMapper.mapToDto(user, Customer.class);
-                    user = customerServ.add(customer);
+                    user = customerServ.add(customer, removeTokens);
                     break;
 
                 case WORKER:
@@ -399,7 +400,7 @@ public class UserCon {
                     var customer = objMapper.mapToDto(request, Customer.class);
                     Role customerRole = roleServ.findByName("ROLE_CUSTOMER");
                     customer.setRoles(Set.of(customerRole));
-                    user = customerServ.add(customer);
+                    user = customerServ.add(customer, false);
                     break;
                 case WORKER:
                     var worker = objMapper.mapToDto(request, Worker.class);
