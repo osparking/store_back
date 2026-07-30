@@ -5,7 +5,9 @@ import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.Customer;
 import com.bumsoap.store.repository.CustomerRepoI;
+import com.bumsoap.store.repository.VerifinTokenRepoI;
 import com.bumsoap.store.util.BsUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,7 @@ import java.util.stream.IntStream;
 public class CustomerServ implements CustomerServInt{
     private final CustomerRepoI customerRepo;
     private final EntityConverter<Customer, UserDto> converter;
+    private final VerifinTokenRepoI verifinTokenRepo;
 
     @Override
     public List<UserDto> findAllCustomers() {
@@ -38,7 +41,11 @@ public class CustomerServ implements CustomerServInt{
     }
 
     @Override
-    public Customer add(Customer customer) {
+    @Transactional
+    public Customer add(Customer customer, boolean removeTokens) {
+        if (removeTokens) {
+            verifinTokenRepo.deleteByUserId(customer.getId());
+        }
         return customerRepo.save(customer);
     }
 
