@@ -16,6 +16,6 @@ public class CustomerCon {
 
     @PostMapping("/add")
     public void add(@RequestBody Customer customer) {
-        customerServ.add(customer);
+        customerServ.add(customer, false);
     }
 }

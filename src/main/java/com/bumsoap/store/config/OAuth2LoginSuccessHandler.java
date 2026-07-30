@@ -141,7 +141,7 @@ public class OAuth2LoginSuccessHandler
                 customer.setEnabled(true);
                 customer.setSignUpMethod(loginSource.toString());
 
-                BsUser user = customerServ.add(customer);
+                BsUser user = customerServ.add(customer, false);
 
                 putAuth2Context("ROLE_CUSTOMER",
                         finalAttributes, idAttributeKey, oAuth2.toString());

@@ -95,7 +95,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             customer.setRoles(Set.of(customerRole));
             customer.setEnabled(true);
             customer.setSignUpMethod("EMAIL");
-            customer = customerServ.add(customer);
+            customer = customerServ.add(customer, false);
             System.out.println("생성된 고객 일련번호: " + i);
         }
     }
