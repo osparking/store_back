@@ -8,6 +8,7 @@ import com.bumsoap.store.security.jwt.JwtUtilBean;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.CustomerServInt;
 import com.bumsoap.store.service.role.RoleServInt;
+import com.bumsoap.store.service.token.RefreshTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.UserType;
@@ -17,6 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -49,6 +52,9 @@ public class OAuth2LoginSuccessHandler
 
     @Autowired
     private final RoleServInt roleServ;
+
+    @Autowired
+    private final RefreshTokenServInt refreshTokenServ;
 
     @Value("${frontend.base.url}")
     private String frontendUrl;
@@ -125,7 +131,7 @@ public class OAuth2LoginSuccessHandler
                     username = user.getEmail();
                     this.signUpSource =
                             LoginSource.valueOf(user.getSignUpMethod());
-                    redirectWithJwt(user, oauth2User, loginSource);
+                    redirectWithJwt(user, oauth2User, loginSource, response);
                 } else {
                     redirectToLogin(user.getEmail());
                 }
@@ -146,7 +152,7 @@ public class OAuth2LoginSuccessHandler
                 putAuth2Context("ROLE_CUSTOMER",
                         finalAttributes, idAttributeKey, oAuth2.toString());
                 this.signUpSource = LoginSource.valueOf(oAuth2);
-                redirectWithJwt(user, oauth2User, loginSource);
+                redirectWithJwt(user, oauth2User, loginSource, response);
             }
         }
         super.onAuthenticationSuccess(request, response, authentication);
@@ -160,7 +166,8 @@ public class OAuth2LoginSuccessHandler
      */
     private void redirectWithJwt(BsUser user,
                                  DefaultOAuth2User oAuth2User,
-                                 LoginSource loginSource) {
+                                 LoginSource loginSource,
+                                 HttpServletResponse response) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         Set<GrantedAuthority> authorities =
@@ -180,6 +187,10 @@ public class OAuth2LoginSuccessHandler
 
         this.setAlwaysUseDefaultTargetUrl(true);
 
+        // 리프레시 토큰 생성 및 DB 저장
+        var refresh = refreshTokenServ.createRefreshForUser(user.getId());
+        ResponseCookie refreshCookie = createSaveCookie(refresh);
+
         // Generate JWT token
         String jwtToken = jwtUtilBean.generateTokenForUser(userDetails);
 
@@ -188,7 +199,12 @@ public class OAuth2LoginSuccessHandler
                         frontendUrl + "/oauth2/redirect")
                 .queryParam("token", jwtToken)
                 .build().toUriString();
+
+        // ★ 응답에 Refresh Cookie 추가
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
         this.setDefaultTargetUrl(targetUrl);
+        this.setAlwaysUseDefaultTargetUrl(true);
     }
 
     private final TokenCache tokenCache;
@@ -202,5 +218,21 @@ public class OAuth2LoginSuccessHandler
                 .queryParam("token", tempToken)
                 .build().toUriString();
         this.setDefaultTargetUrl(targetUrl);
+    }
+
+    @Value("${auth.refresh.expirationSec}")
+    private int expirationSec;
+
+    private ResponseCookie createSaveCookie(String refreshToken) {
+        return ResponseCookie.from("refreshToken", refreshToken) // 키 이름
+                .httpOnly(true) // JavaScript 접근 차단 (보안 핵심)
+                // HTTPS 에서만 전송 (운영 환경 필수, 테스트 시 false 가능)
+                .secure(true)
+                // 모든 경로에서 쿠키 전송 (refresh 엔드포인트가
+                // - /autho/refresh_token 이므로 최소한 해당 경로 포함)
+                .path("/")
+                .maxAge(expirationSec) // (현장용) 1 주 / (시험용) 1 분
+                .sameSite("Strict") // CSRF 방지 (Strict 또는 Lax )
+                .build();
     }
 }
