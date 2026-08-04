@@ -61,7 +61,6 @@ public class RefreshTokenServ implements RefreshTokenServInt{
     public String createRefreshForUser(Long userId) {
         String refresh = UUID.randomUUID().toString();
         var user = userService.findById(userId);
-
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .tokenHash(DigestUtils.sha256Hex(refresh)) // Apache Commons Codec
