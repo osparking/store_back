@@ -10,6 +10,7 @@ import com.bumsoap.store.service.CustomerServInt;
 import com.bumsoap.store.service.role.RoleServInt;
 import com.bumsoap.store.service.token.RefreshTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
+import com.bumsoap.store.util.AuthUtil;
 import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.UserType;
 import jakarta.servlet.ServletException;
@@ -38,8 +39,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.bumsoap.store.util.BsUtils.createSaveCookie;
-
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler
@@ -54,6 +53,9 @@ public class OAuth2LoginSuccessHandler
 
     @Autowired
     private final RoleServInt roleServ;
+
+    @Autowired
+    private final AuthUtil  authUtil;
 
     @Autowired
     private final RefreshTokenServInt refreshTokenServ;
@@ -191,7 +193,7 @@ public class OAuth2LoginSuccessHandler
 
         // 리프레시 토큰 생성 및 DB 저장
         var refresh = refreshTokenServ.createRefreshForUser(user.getId());
-        ResponseCookie refreshCookie = createSaveCookie(refresh);
+        ResponseCookie refreshCookie = authUtil.createSaveCookie(refresh);
 
         // Generate JWT token
         String jwtToken = jwtUtilBean.generateTokenForUser(userDetails);
