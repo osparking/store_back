@@ -1,6 +1,7 @@
 package com.bumsoap.store.repository;
 
 import com.bumsoap.store.dto.ProducePageRow;
+import com.bumsoap.store.dto.SoapSaleDto;
 import com.bumsoap.store.model.SoapProduce;
 import com.bumsoap.store.row.SoapStock;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,15 @@ import java.util.List;
 
 @Repository
 public interface ProduceRepo extends JpaRepository<SoapProduce, Long> {
+    @Query(value = """
+            select sp.bs_shape as shape, sum(sp.quantity) soaps,
+            	DATE_FORMAT(sp.produce_date , '%y-%m') month
+            from soap_produce sp
+            where sp.produce_date >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)
+            group by month, sp.bs_shape
+            """, nativeQuery = true)
+    List<SoapSaleDto> getSoapProduceStat();
+
     @Query("""
             select new com.bumsoap.store.dto.ProducePageRow(
                 sp.id, sp.bsShape, sp.quantity, sp.produceDate,
