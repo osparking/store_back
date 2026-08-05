@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.produce;
 
+import com.bumsoap.store.dto.MonthLabelSales;
 import com.bumsoap.store.dto.ProduceDto;
 import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.ShapeSelItem;
@@ -10,6 +11,8 @@ import com.bumsoap.store.util.BsShape;
 import java.util.List;
 
 public interface ProduceServI {
+    List<MonthLabelSales> getSoapProduceChart();
+
     SoapProduce addProduce(
             Long registerWorkerId, AddProduceReq request);
 

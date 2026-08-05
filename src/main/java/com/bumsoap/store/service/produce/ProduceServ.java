@@ -1,8 +1,6 @@
 package com.bumsoap.store.service.produce;
 
-import com.bumsoap.store.dto.ProduceDto;
-import com.bumsoap.store.dto.SearchResult;
-import com.bumsoap.store.dto.ShapeSelItem;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.SoapProduce;
 import com.bumsoap.store.repository.ProduceRepo;
@@ -17,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,21 @@ import static com.bumsoap.store.util.BsUtils.getShortTimeStr;
 @RequiredArgsConstructor
 public class ProduceServ implements ProduceServI {
     private final ProduceRepo produceRepo;
+
+    @Override
+    public List<MonthLabelSales> getSoapProduceChart() {
+        Map<String, BigDecimal> valueMap = produceRepo
+                .getSoapProduceStat().stream().collect(Collectors.toMap(
+                        dto -> dto.getMonth() + dto.getShape(),
+                        SoapSaleDto::getSoaps
+                ));
+
+        return IntStream.rangeClosed(0, 5)
+                .mapToObj(i -> LocalDate.now().minusMonths(5 - i))
+                .map(date -> MonthLabelSales.fromMap(date.format(
+                        DateTimeFormatter.ofPattern("yy-MM")), valueMap))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public SoapProduce addProduce(
