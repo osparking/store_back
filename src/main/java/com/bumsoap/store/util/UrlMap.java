@@ -42,6 +42,7 @@ public class UrlMap {
     public static final String ALL_QUESTIONS = "/all_questions";
     public static final String EMPLOYEE_DEPT = "/employee_dept";
     public static final String GET_SOAP_SALE_CHART = "/soap_sale_chart";
+    public static final String GET_SOAP_PRODUCE_CHART = "/soap_produce_chart";
     /*== ADMIN / 관리자 끝 ==================================*/
 
     /*== PHOTO / 사진 시작 ====================================================*/
