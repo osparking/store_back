@@ -95,7 +95,8 @@ public class UrlMap {
     public static final String SHAPE_PRICE = "/{shape}/price";
     public static final String SOAP_SHAPES = "/shapes";
     public static final String SOAP_LABELS = "/labels";
-    public static final String REVIEW_PAGE = "/review_page";
+    public static final String REVIEW_PAGE = "/public/review_page";
+    public static final String AVERAGE_STARS = "/public/average_stars";
 
     /*== 주문-배송 주소 관련 항목 시작 ================================= */
     public static final String ORDER = API + "/order";
@@ -115,7 +116,6 @@ public class UrlMap {
     public static final String STATUS_LIST = "/status_list";
     public static final String GET_ORDER_DETAIL = "/{id}/get_details";
     public static final String GET_REVIEW_INFO = "/{oId}/review_info";
-    public static final String AVERAGE_STARS = "/average_stars";
     public static final String GET_SHAPE_COUNT = "/{userId}/get_shape_count";
 
     /*== 카트 관련 항목 시작 ================================= */
