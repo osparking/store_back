@@ -44,22 +44,27 @@ public class DatabaseViewCreator {
                 "DROP PROCEDURE IF EXISTS safe_delete_recipient";
         String createSql =
                 """
-                CREATE PROCEDURE bs_store.safe_delete_recipient(IN re_id INT)
-                BEGIN
-                    DECLARE order_exists INT;
-                    -- 주문 존재 여부 확인
-                    SELECT COUNT(*) INTO order_exists
-                    FROM bs_order
-                    WHERE recipient_id = re_id;
-                    -- 주문이 없을 때만 삭제
-                    IF order_exists = 0 THEN
-                        DELETE FROM recipient WHERE id = re_id;
-                        SELECT CONCAT('삭제된 고아 수신처 ID : ', re_id) AS message;
-                    ELSE
-                        SELECT CONCAT('유지 필요한 수신처 ID : ', re_id) AS message;
-                    END IF;
-                END
-                """;
+                        CREATE PROCEDURE bs_store.safe_delete_recipient(IN re_id INT)
+                        BEGIN
+                            DECLARE order_exists INT;
+                            DECLARE default_count INT;
+                            -- 주문 존재 여부 확인
+                            SELECT COUNT(*) INTO order_exists
+                            FROM bs_order
+                            WHERE recipient_id = re_id;
+                            -- 기본 주소로 사용 중 여부 확인
+                            select count(*) INTO default_count
+                            from bs_user bu
+                            where bu.recipient = re_id;
+                            -- 주문이 없을 때만 삭제
+                            IF order_exists = 0 and default_count = 0 THEN
+                                DELETE FROM recipient WHERE id = re_id;
+                                SELECT CONCAT('삭제된 고아 수신처 ID : ', re_id) AS message;
+                            ELSE
+                                SELECT CONCAT('유지 필요한 수신처 ID : ', re_id) AS message;
+                            END IF;
+                        END
+                        """;
         try {
             jdbcTemplate.execute(dropSql);
             jdbcTemplate.execute(createSql);
@@ -75,30 +80,30 @@ public class DatabaseViewCreator {
                 "DROP PROCEDURE IF EXISTS delete_customer_by_id";
         String createSql =
                 """
-                CREATE PROCEDURE bs_store.delete_customer_by_id(IN uid INT)
-                BEGIN
-                    START TRANSACTION;
-                
-                    -- 1. user_roles 테이블에서 해당 사용자와 연결된 행 삭제
-                    DELETE FROM user_roles
-                    WHERE user_id = uid;
-                
-                    -- 2. verification_token 테이블에서 해당 사용자와 연결된 행 삭제
-                    DELETE FROM verifin_token
-                    WHERE user_id = uid;
-                
-                    -- 3. customer 테이블에서 해당 사용자와 연결된 행 삭제
-                    DELETE FROM customer
-                    WHERE customer_id = uid;
-                
-                    -- 4. bs_user 테이블에서 해당 사용자 삭제
-                    DELETE FROM bs_user
-                    WHERE id = uid;
-                
-                    -- 모든 삭제 성공 시 커밋
-                    COMMIT;
-                END
-                """;
+                        CREATE PROCEDURE bs_store.delete_customer_by_id(IN uid INT)
+                        BEGIN
+                            START TRANSACTION;
+                        
+                            -- 1. user_roles 테이블에서 해당 사용자와 연결된 행 삭제
+                            DELETE FROM user_roles
+                            WHERE user_id = uid;
+                        
+                            -- 2. verification_token 테이블에서 해당 사용자와 연결된 행 삭제
+                            DELETE FROM verifin_token
+                            WHERE user_id = uid;
+                        
+                            -- 3. customer 테이블에서 해당 사용자와 연결된 행 삭제
+                            DELETE FROM customer
+                            WHERE customer_id = uid;
+                        
+                            -- 4. bs_user 테이블에서 해당 사용자 삭제
+                            DELETE FROM bs_user
+                            WHERE id = uid;
+                        
+                            -- 모든 삭제 성공 시 커밋
+                            COMMIT;
+                        END
+                        """;
         try {
             jdbcTemplate.execute(dropSql);
             jdbcTemplate.execute(createSql);
@@ -114,35 +119,35 @@ public class DatabaseViewCreator {
                 "DROP PROCEDURE IF EXISTS delete_customer_by_id";
         String createSql =
                 """
-                CREATE DEFINER=`root`@`localhost`
-                    PROCEDURE `bs_store`.`delete_worker_by_id`(IN uid INT)
-                BEGIN
-                    START TRANSACTION;
-                
-                    -- 1. user_roles 테이블에서 해당 사용자와 연결된 행 삭제
-                    DELETE FROM user_roles
-                    WHERE user_id = uid;
-                
-                    -- 2. verification_token 테이블에서 해당 사용자와 연결된 행 삭제
-                    DELETE FROM verifin_token
-                    WHERE user_id = uid;
-                
-                    -- 3. customer 테이블에서 해당 사용자와 연결된 행 삭제
-                    DELETE FROM worker
-                    WHERE worker_id = uid;
-                
-                    -- 4. customer 테이블에서 해당 사용자와 연결된 행 삭제
-                    DELETE FROM employee
-                    WHERE employee_id = uid;
-
-                    -- 5. bs_user 테이블에서 해당 사용자 삭제
-                    DELETE FROM bs_user
-                    WHERE id = uid;
-                
-                    -- 모든 삭제 성공 시 커밋
-                    COMMIT;
-                END
-                """;
+                        CREATE DEFINER=`root`@`localhost`
+                            PROCEDURE `bs_store`.`delete_worker_by_id`(IN uid INT)
+                        BEGIN
+                            START TRANSACTION;
+                        
+                            -- 1. user_roles 테이블에서 해당 사용자와 연결된 행 삭제
+                            DELETE FROM user_roles
+                            WHERE user_id = uid;
+                        
+                            -- 2. verification_token 테이블에서 해당 사용자와 연결된 행 삭제
+                            DELETE FROM verifin_token
+                            WHERE user_id = uid;
+                        
+                            -- 3. customer 테이블에서 해당 사용자와 연결된 행 삭제
+                            DELETE FROM worker
+                            WHERE worker_id = uid;
+                        
+                            -- 4. customer 테이블에서 해당 사용자와 연결된 행 삭제
+                            DELETE FROM employee
+                            WHERE employee_id = uid;
+                        
+                            -- 5. bs_user 테이블에서 해당 사용자 삭제
+                            DELETE FROM bs_user
+                            WHERE id = uid;
+                        
+                            -- 모든 삭제 성공 시 커밋
+                            COMMIT;
+                        END
+                        """;
         try {
             jdbcTemplate.execute(dropSql);
             jdbcTemplate.execute(createSql);
