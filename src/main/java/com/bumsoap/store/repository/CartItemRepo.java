@@ -10,15 +10,19 @@ import java.util.List;
 
 public interface CartItemRepo extends JpaRepository<CartItem, Long> {
     @Query(value = """
-            select ci.id,
-                   ci.add_time,
-                   ci.count,
-                   ci.shape,          -- ordinal 숫자 → byte shapeOrd
-                   ci.user_id,
-                   sp.unit_price
-            from cart_item ci
-            join soap_price sp on sp.bs_shape = ci.shape
-            where ci.user_id = :uid
+            SELECT
+                ci.id,
+                ci.add_time,
+                ci.count,
+                ci.shape,
+                ci.user_id,
+                (SELECT sp.unit_price
+                 FROM soap_price sp
+                 WHERE sp.bs_shape = ci.shape
+                 ORDER BY sp.unit_price
+                 LIMIT 1) AS unit_price
+            FROM cart_item ci
+            WHERE ci.user_id = :uid
             """, nativeQuery = true)
     List<CartItemRow> findByUserId(@Param("uid") Long uid);
 }
