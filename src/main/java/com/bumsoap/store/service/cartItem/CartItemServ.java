@@ -9,6 +9,7 @@ import com.bumsoap.store.model.CartItem;
 import com.bumsoap.store.repository.CartItemRepo;
 import com.bumsoap.store.request.CartUpdateReq;
 import com.bumsoap.store.service.produce.ProduceServI;
+import com.bumsoap.store.service.soap.PriceServI;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.SubTotaler;
@@ -27,6 +28,7 @@ public class CartItemServ implements CartItemServI {
   private final ObjMapper objMapper;
   private final SubTotaler subTotaler;
   private final ProduceServI produceServ;
+  private final PriceServI priceServ;
 
   @Transactional(rollbackOn =
       {InventoryException.class, UnauthorizedException.class})
@@ -42,6 +44,7 @@ public class CartItemServ implements CartItemServI {
         .map(item -> {
           var dto = objMapper.mapToDto(item, CartItemDto.class);
           dto.setSubTotal(subTotaler.getSubtotal(dto));
+          dto.setUnitPrice(priceServ.findSoapPrice(dto.getShape()));
           return dto;
         })
         .collect(Collectors.toList());
