@@ -1,7 +1,9 @@
 package com.bumsoap.store.service.order;
 
 import com.bumsoap.store.dto.*;
+import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.BsOrder;
+import com.bumsoap.store.request.AddOrderReq;
 import com.bumsoap.store.request.DeliveryFeeReq;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
@@ -42,7 +44,8 @@ public interface OrderServI {
     SearchResult<ReviewRow> serviceReviewPage(
             Integer page, Integer size);
 
-    BsOrder saveOrder(BsOrder order);
+    @Transactional(rollbackOn = InventoryException.class)
+    BsOrder saveOrder(AddOrderReq addOrderReq, BsOrder order);
 
     BigDecimal findDeliveryFee(DeliveryFeeReq deliveryFeeReq);
 

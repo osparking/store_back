@@ -8,10 +8,8 @@ import com.bumsoap.store.exception.UnauthorizedException;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.FeeDelivery;
 import com.bumsoap.store.model.OrderItem;
-import com.bumsoap.store.repository.IslandAddressRepo;
-import com.bumsoap.store.repository.OrderItemRepo;
-import com.bumsoap.store.repository.OrderRepo;
-import com.bumsoap.store.repository.RecipientRepoI;
+import com.bumsoap.store.repository.*;
+import com.bumsoap.store.request.AddOrderReq;
 import com.bumsoap.store.request.DeliveryFeeReq;
 import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
@@ -264,9 +262,15 @@ public class OrderServ implements OrderServI {
         }
     }
 
-    @Override
+    private final UserRepoI userRepo;
+
     @Transactional(rollbackOn = InventoryException.class)
-    public BsOrder saveOrder(BsOrder order) {
+    @Override
+    public BsOrder saveOrder(AddOrderReq addOrderReq, BsOrder order) {
+        var user = userRepo.findById(addOrderReq.getUserId()).orElseThrow(
+                () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND));
+        order.setUser(user);
+
         // recipient 저장 및 order 속성 변경
         // 상향식 순서로 하위 요소들을 저장하고, 저장 결과로 기존 멤버를 대체!
         var recipient = order.getRecipient();
@@ -288,6 +292,12 @@ public class OrderServ implements OrderServI {
         entityManager.flush();
 
         order.setOrderId(orderIdGenerator.generateOrderId(order));
+
+        // 기본 수신처 처리 지시 수행
+        if (addOrderReq.getMakeRecipientDefault()) {
+            user.setRecipient(order.getRecipient());
+        }
+        userRepo.save(user);
 
         return order;
     }
