@@ -7,7 +7,6 @@ import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.AddressBasis;
 import com.bumsoap.store.model.BsOrder;
 import com.bumsoap.store.model.Recipient;
-import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.*;
 import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.user.BsUserDetails;
@@ -39,7 +38,6 @@ public class OrderCon {
     private final AddressBasisServI addrBasisServ;
     private final ObjMapper objMapper;
     private final OrderServI orderServ;
-    private final UserRepoI userRepo;
 
     @PatchMapping(UrlMap.UPDATE_REVIEW)
     public ResponseEntity<ApiResp> update_review(
@@ -289,17 +287,7 @@ public class OrderCon {
             order.setOrderStatus(OrderStatus.PAY_WAIT);
             order.setRecipient(recipient);
 
-            var user = userRepo.findById(addOrderReq.getUserId()).orElseThrow(
-                    () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND));
-            order.setUser(user);
-            BsOrder orderSaved = orderServ.saveOrder(order);
-
-            // 기본 수신처 처리 지시 수행
-            if ("store".equals(addOrderReq.getDefaultRecipientAction())) {
-                user.setRecipient(order.getRecipient());
-            }
-            userRepo.save(user);
-
+            BsOrder orderSaved = orderServ.saveOrder(addOrderReq, order);
             var orderDto = objMapper.mapToDto(orderSaved, BsOrderDto.class);
             return ResponseEntity.ok(new ApiResp(Feedback.SOAP_ORDER_SAVED,
                     orderDto));
