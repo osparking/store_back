@@ -285,8 +285,6 @@ public class OrderServ implements OrderServI {
                     item.setOrder(order);
                 }
         );
-        order.setPayment(calculatePayment(order));
-
         order.setOrderId("");
         entityManager.persist(order);
         entityManager.flush();
@@ -300,28 +298,6 @@ public class OrderServ implements OrderServI {
         userRepo.save(user);
 
         return order;
-    }
-
-    private BigDecimal calculatePayment(BsOrder order) {
-        // 각 항목의 소계를 합한다.
-        BigDecimal payment = new BigDecimal(0);
-        for (var item : order.getItems()) {
-            payment = payment.add(item.getSubTotal());
-        }
-
-        // 배송비 계산
-//        FeeEtc feeEtc = feeEtcServ.readLatest();
-        BigDecimal delivery = BigDecimal.valueOf(3400);
-//                payment.compareTo(feeEtc.getDeliFreeMin()) >= 0
-//                        ? BigDecimal.ZERO:feeEtc.getDeliBasis();
-
-        boolean isJeju = order.getRecipient().getAddressBasis()
-                .getZipcode().startsWith("63");
-        return payment.add(
-                isJeju ? delivery.add(
-//                        feeEtc.getDeliJeju()
-                        BigDecimal.valueOf(3000)
-                ):delivery);
     }
 
     private final IslandAddressRepo islandAddressRepo;

@@ -4,6 +4,7 @@ import com.bumsoap.store.util.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -16,6 +17,7 @@ public class AddOrderReq {
   private RecipRegiReq recipRegiReq;
   private String orderStatus;
   private Boolean makeRecipientDefault;
+  private BigDecimal payment;
 
   public OrderStatus getOrderStatus() {
     return OrderStatus.valueOfLabel(orderStatus);
