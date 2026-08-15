@@ -69,12 +69,13 @@ public class AuthUtil {
     return ResponseCookie.from("refreshToken", refreshToken) // 키 이름
             .httpOnly(true) // JavaScript 접근 차단 (보안 핵심)
             // HTTPS 에서만 전송 (운영 환경 필수, 테스트 시 false 가능)
-            .secure(true)
+            .secure(false)
             // 모든 경로에서 쿠키 전송 (refresh 엔드포인트가
             // - /autho/refresh_token 이므로 최소한 해당 경로 포함)
             .path("/")
-            .maxAge(expirationSec) // (현장용) 1 주 / (시험용) 1 분
-            .sameSite("Strict") // CSRF 방지 (Strict 또는 Lax )
+            .domain("localhost")
+            .maxAge(expirationSec) // (현장용) 1 주 / (시험용) 10 분
+            .sameSite("Lax") // CSRF 방지 (Strict 또는 Lax )
             .build();
   }
 }
