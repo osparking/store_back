@@ -53,6 +53,28 @@ public class RefreshTokenServ implements RefreshTokenServInt{
         return refreshToken;
     }
 
+    /**
+     * 날것 RT 문자열의 해쉬를 구해 DB 에서 RT 행을 찾고, DB에 사용됨 기록함
+     *
+     * @param refresh 날것 RT 문자열
+     * @return 사용 가능한 RT 객체
+     */
+    @Transactional
+    @Override
+    public Boolean consultDeleteRefreshToken(String refresh) {
+        String hashedToken = DigestUtils.sha256Hex(refresh);
+        RefreshToken refreshToken = refreshRepo.findByTokenHash(hashedToken)
+                .orElseThrow(() -> new RefreshTokenException("RT 검색 실패"));
+
+        if (refreshToken.isValid()) {
+            // 발견된 정당한 RT 제거
+            refreshRepo.delete(refreshToken);
+        } else {
+            throw new RefreshTokenException("사용되었거나 만료된 RT");
+        }
+        return true;
+    }
+
     @Value("${auth.refresh.expirationSec}")
     private int expirationSec;
 

@@ -6,6 +6,9 @@ import jakarta.transaction.Transactional;
 public interface RefreshTokenServInt {
     RefreshToken consultConsumeRefreshToken(String refresh);
 
+    @Transactional
+    Boolean consultDeleteRefreshToken(String refresh);
+
     /**
      * 유저를 위하여 리프레시 토큰을 만들고, 이를 DB 에 저장한다.
      * @param userId
