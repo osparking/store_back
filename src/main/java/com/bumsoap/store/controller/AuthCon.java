@@ -172,6 +172,23 @@ public class AuthCon {
     private final WorkerServInt workerServ;
     private final RefreshTokenServInt refreshTokenServ;
 
+    @PostMapping(UrlMap.LOGOUT)
+    public ResponseEntity<ApiResp> logout(@CookieValue(value = "refreshToken",
+            required = false) String refreshToken) {
+        try {
+            JwtResponse jwtResponse = new JwtResponse();
+            var result = refreshTokenServ.consultDeleteRefreshToken(refreshToken);
+            String feedback = result ?
+                    Feedback.LOGOUT_SUCCESS:Feedback.LOGOUT_FAILURE;
+
+            return ResponseEntity.ok()
+                    .body(new ApiResp("", jwtResponse));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(BAD_REQUEST).body(
+                    new ApiResp("", null));
+        }
+    }
+
     @PostMapping(UrlMap.LOGIN)
     public ResponseEntity<ApiResp> login(@Valid @RequestBody LoginRequest request) {
         try {

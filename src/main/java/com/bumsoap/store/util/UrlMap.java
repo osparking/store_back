@@ -62,6 +62,7 @@ public class UrlMap {
     /*== Authentication / 인증 시작 =========================================*/
     public static final String AUTHO = API + "/autho";
     public static final String LOGIN = "/login";
+    public static final String LOGOUT = "/logout";
     public static final String EMAIL_ADDRESS = "/email_address";
     public static final String VERIFY_TOKEN = "/verify_token";
     public static final String REFRESH_TOKEN = "/refresh_token";
