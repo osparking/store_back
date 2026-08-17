@@ -51,6 +51,7 @@ public class Feedback {
     public static final String DISABLED_ACCOUNT = "사용 중지된 계정입니다.";
     public static final String EMP_NAMES_FAIL = "직원 이름 페이지 실패";
     public static final String EMAIL_FOUND = "소셜계정 이메일 발견됨";
+    public static final String NO_RT_OR_EXPIRED = "리프레시 토큰 부재 혹은 만료";
 
     /*************** 토큰 관련 메시지 ********************************/
     public static final String JWT_WRONG = "잘못된 토큰:";
