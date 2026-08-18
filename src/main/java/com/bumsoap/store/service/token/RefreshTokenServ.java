@@ -1,6 +1,6 @@
 package com.bumsoap.store.service.token;
 
-import com.bumsoap.store.exception.NoRefTokenFoundException;
+import com.bumsoap.store.exception.RefreshTokenException;
 import com.bumsoap.store.model.RefreshToken;
 import com.bumsoap.store.repository.RefreshTokenRepoI;
 import com.bumsoap.store.service.user.UserServInt;
@@ -42,10 +42,10 @@ public class RefreshTokenServ implements RefreshTokenServInt{
     public RefreshToken consultConsumeRefreshToken(String refresh) {
         String hashedToken = DigestUtils.sha256Hex(refresh);
         RefreshToken refreshToken = refreshRepo.findByTokenHash(hashedToken)
-                .orElseThrow(() -> new NoRefTokenFoundException("RT 검색 실패"));
+                .orElseThrow(() -> new RefreshTokenException("RT_NOT_FOUND"));
 
         if (!refreshToken.isValid()) {
-            throw new NoRefTokenFoundException("사용되었거나 만료된 RT");
+            throw new RefreshTokenException("RT_REVOKED_OR_EXPIRED");
         }
         // 발견된 사용가능한 RT 사용되었다고 표시함
         refreshToken.setRevoked(true);
@@ -64,13 +64,13 @@ public class RefreshTokenServ implements RefreshTokenServInt{
     public Boolean consultDeleteRefreshToken(String refresh) {
         String hashedToken = DigestUtils.sha256Hex(refresh);
         RefreshToken refreshToken = refreshRepo.findByTokenHash(hashedToken)
-                .orElseThrow(() -> new NoRefTokenFoundException("RT 검색 실패"));
+                .orElseThrow(() -> new RefreshTokenException("RT_NOT_FOUND"));
 
         if (refreshToken.isValid()) {
             // 발견된 정당한 RT 제거
             refreshRepo.delete(refreshToken);
         } else {
-            throw new NoRefTokenFoundException("사용되었거나 만료된 RT");
+            throw new RefreshTokenException("RT_REVOKED_OR_EXPIRED");
         }
         return true;
     }
