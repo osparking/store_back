@@ -16,6 +16,8 @@ import com.bumsoap.store.service.token.VerifinTokenServInt;
 import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -173,27 +175,44 @@ public class AuthCon {
     private final RefreshTokenServInt refreshTokenServ;
 
     @PostMapping(UrlMap.LOGOUT)
-    public ResponseEntity<ApiResp> logout(@CookieValue(value = "refreshToken",
-            required = false) String refreshToken) {
-        var cookieValue = "refreshToken=; Path=/; HttpOnly; Secure; " +
-                "SameSite=None; Max-Age=0";
+    public ResponseEntity<ApiResp> logout(
+            HttpServletRequest request,
+            @CookieValue(value = "refreshToken", required = false)
+            String refreshToken) {
+        // 1. (중요) 세션과 JSESSIONID 정리
         try {
-            if (refreshToken == null) {
+            if (refreshToken==null) { // RefreshToken 처리 (DB 삭제)
                 throw new RefreshTokenException("RT_MISSING");
             }
-            JwtResponse jwtResponse = new JwtResponse();
             refreshTokenServ.consultDeleteRefreshToken(refreshToken);
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, cookieValue)
-                    .body(new ApiResp(Feedback.LOGOUT_SUCCESS, null));
-        } catch (RefreshTokenException e) {
-            return ResponseEntity.ok().body(
-                    new ApiResp(e.getMessage(), null));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(BAD_REQUEST).body(
-                    new ApiResp(Feedback.LOGOUT_FAILURE, null));
+            System.out.println("Logout error: " + e.getMessage());
         }
+
+        // 2. (필수) 서버 내부 세션 무효화
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate(); // 세션에 저장된 모든 데이터 제거
+        }
+
+        // 3. (필수) Spring Security 컨텍스트 클리어 (메모리 내 인증 정보 제거)
+        SecurityContextHolder.clearContext();
+
+        // 4. (필수) JSESSIONID 쿠키 강제 만료 (Set-Cookie 헤더 추가)
+        //    Path를 반드시 "/"로 지정해야 웹앱 전체 경로에서 쿠키가 삭제됩니다.
+        String jsessionCookieStr = // (운영 환경이라면 Secure; 도 추가)
+                "JSESSIONID=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax";
+
+        // 5. (기존) RefreshToken 쿠키 만료 헤더
+        String refreshCookieStr =
+                "refreshToken=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0";
+
+        // 6. 최종 응답 반환 (두 개의 쿠키 삭제 헤더를 모두 포함)
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jsessionCookieStr)
+                .header(HttpHeaders.SET_COOKIE, refreshCookieStr)
+                .body(new ApiResp(Feedback.LOGOUT_SUCCESS, null));
     }
 
     @PostMapping(UrlMap.LOGIN)
