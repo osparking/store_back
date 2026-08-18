@@ -280,7 +280,7 @@ public class AuthCon {
             // 7. 최종 응답(AT 는 본문에, RT 는 헤더에 적재)
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                    .body(new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
+                    .body(new ApiResp(Feedback.REFRESHING_SUCCESS, jwtResponse));
         } catch (RefreshTokenException e) {
             return ResponseEntity.status(OK).body(
                     new ApiResp(e.getMessage(), null));
