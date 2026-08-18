@@ -1,6 +1,6 @@
 package com.bumsoap.store.controller;
 
-import com.bumsoap.store.exception.NoRefTokenFoundException;
+import com.bumsoap.store.exception.RefreshTokenException;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.RefreshToken;
 import com.bumsoap.store.repository.RefreshTokenRepoI;
@@ -179,7 +179,7 @@ public class AuthCon {
                 "SameSite=None; Max-Age=0";
         try {
             if (refreshToken == null) {
-                throw new NoRefTokenFoundException("전단 RT 제출 누락");
+                throw new RefreshTokenException("RT_MISSING");
             }
             JwtResponse jwtResponse = new JwtResponse();
             refreshTokenServ.consultDeleteRefreshToken(refreshToken);
@@ -187,9 +187,9 @@ public class AuthCon {
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookieValue)
                     .body(new ApiResp(Feedback.LOGOUT_SUCCESS, null));
-        } catch (NoRefTokenFoundException e) {
+        } catch (RefreshTokenException e) {
             return ResponseEntity.ok().body(
-                    new ApiResp(Feedback.NO_RT_OR_EXPIRED, null));
+                    new ApiResp(e.getMessage(), null));
         } catch (RuntimeException e) {
             return ResponseEntity.status(BAD_REQUEST).body(
                     new ApiResp(Feedback.LOGOUT_FAILURE, null));
@@ -258,7 +258,7 @@ public class AuthCon {
         try {
             // 1. 쿠키에 RT가 없는 경우 (required = false 로 설정하여 직접 예외 처리)
             if (refresh1==null || refresh1.isEmpty()) {
-                throw new NoRefTokenFoundException("리프레시 토큰 쿠키 부재");
+                throw new RefreshTokenException("RT_MISSING");
             }
             // 2. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
             RefreshToken refreshToken =
@@ -281,7 +281,7 @@ public class AuthCon {
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                     .body(new ApiResp(Feedback.AUTHEN_SUCCESS, jwtResponse));
-        } catch (NoRefTokenFoundException e) {
+        } catch (RefreshTokenException e) {
             return ResponseEntity.status(OK).body(
                     new ApiResp(e.getMessage(), null));
         } catch (Exception e) {
