@@ -39,7 +39,12 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
                        END AS answered,
                        latest_fu.user_id as last_writer_id,
                        latest_fu.id as followUpId,
-                       latest_fu.fuCount as followUpCount
+                       latest_fu.fuCount as followUpCount,
+                       IF(
+                         CHAR_LENGTH(REGEXP_REPLACE(latest_fu.content, '<[^>]*>', '')) > 23,
+                         CONCAT(SUBSTRING(REGEXP_REPLACE(latest_fu.content, '<[^>]*>', ''), 1, 20), '...'),
+                         REGEXP_REPLACE(latest_fu.content, '<[^>]*>', '')
+                       ) as fuContent
                     FROM question q
                     LEFT OUTER JOIN (
                         SELECT f1.*, f2.fuCount
