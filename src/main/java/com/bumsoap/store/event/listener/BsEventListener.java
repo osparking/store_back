@@ -62,14 +62,14 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
         StringBuilder content = new StringBuilder("<p>안녕하세요? '");
 
         content.append(user.getFullName());
-        content.append("' 고객님</p><br>");
+        content.append("' 고객님</p>");
         content.append("<p>귀하는 비밀번호 재설정을 요청하셨습니다.</p>");
         content.append("<p>다음 링크를 " + expiresAt);
         content.append(" 전에 클릭하여 비밀번호를 재설정하십시오.</p>");
-        content.append("<br><p><u><a href=\"");
+        content.append("<p><u><a href=\"");
         content.append(vUrl);
         content.append("\">비밀번호 재 설정</a></u></p>");
-        content.append("<br><p>고맙습니다.<br><br> 범이비누 계정 서비스");
+        content.append("<p>고맙습니다.<br><br> 범이비누 계정 서비스");
         emailManager.sendMail(user.getEmail(), subject, senderName,
                 content.toString());
     }
