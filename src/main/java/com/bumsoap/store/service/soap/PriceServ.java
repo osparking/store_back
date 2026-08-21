@@ -3,6 +3,7 @@ package com.bumsoap.store.service.soap;
 import com.bumsoap.store.model.SoapPrice;
 import com.bumsoap.store.repository.SoapPriceRepo;
 import com.bumsoap.store.row.SoapPriceRow;
+import com.bumsoap.store.util.BsParameters;
 import com.bumsoap.store.util.BsShape;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PriceServ implements PriceServI {
     private final SoapPriceRepo soapRepo;
+    private final BsParameters priceProvider;
 
     @Override
     public BigDecimal findSoapPrice(BsShape bsShape) {
@@ -32,6 +34,10 @@ public class PriceServ implements PriceServI {
 
     @Override
     public SoapPrice add(SoapPrice soapInven) {
-        return soapRepo.save(soapInven);
+        var price = soapRepo.save(soapInven);
+
+        priceProvider.init();
+
+        return price;
     }
 }
