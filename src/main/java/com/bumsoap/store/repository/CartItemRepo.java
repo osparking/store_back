@@ -19,7 +19,7 @@ public interface CartItemRepo extends JpaRepository<CartItem, Long> {
                 (SELECT sp.unit_price
                  FROM soap_price sp
                  WHERE sp.bs_shape = ci.shape
-                 ORDER BY sp.unit_price
+                 ORDER BY sp.apply_time desc
                  LIMIT 1) AS unit_price
             FROM cart_item ci
             WHERE ci.user_id = :uid
