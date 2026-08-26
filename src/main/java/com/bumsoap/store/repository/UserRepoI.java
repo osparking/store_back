@@ -102,6 +102,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     from bs_user bu
                     where bu.user_type = :user_type
                         and bu.full_name like concat('%', :name, '%')
+                    order by bu.full_name
                     """)
     Page<EmployeeNameRow> getEmployeeNames(@Param("user_type") int type,
                                            @Param("name") String name,
