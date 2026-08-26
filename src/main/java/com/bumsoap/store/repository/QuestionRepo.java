@@ -20,53 +20,53 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
 
     final static String SELECT_QUESTION =
             """
-                    SELECT
-                        q.id,
-                        IF(
-                            CHAR_LENGTH(REGEXP_REPLACE(q.title, '<[^>]*>', '')) > 18,
-                            CONCAT(SUBSTRING(REGEXP_REPLACE(q.title, '<[^>]*>', ''), 1, 15), '...'),
-                            REGEXP_REPLACE(q.title, '<[^>]*>', '')
-                        ) as title,
-                        q.insert_time,
-                        IF(
-                            CHAR_LENGTH(REGEXP_REPLACE(q.question, '<[^>]*>', '')) > 23,
-                            CONCAT(SUBSTRING(REGEXP_REPLACE(q.question, '<[^>]*>', ''), 1, 20), '...'),
-                            REGEXP_REPLACE(q.question, '<[^>]*>', '')
-                        ) as question,
-                       CASE
-                         WHEN latest_fu.user_id = 1 THEN '등록'
-                         ELSE '대기'
-                       END AS answered,
-                       latest_fu.user_id as last_writer_id,
-                       latest_fu.id as followUpId,
-                       latest_fu.fuCount as followUpCount,
-                       IF(
-                         CHAR_LENGTH(REGEXP_REPLACE(latest_fu.content, '<[^>]*>', '')) > 23,
-                         CONCAT(SUBSTRING(REGEXP_REPLACE(latest_fu.content, '<[^>]*>', ''), 1, 20), '...'),
-                         REGEXP_REPLACE(latest_fu.content, '<[^>]*>', '')
-                       ) as fuContent
-                    FROM question q
-                    LEFT OUTER JOIN (
-                        SELECT f1.*, f2.fuCount
-                        FROM follow_up f1
-                        INNER JOIN (
-                            SELECT question_id, MAX(id) as max_id, count(*) as fuCount
-                            FROM follow_up
-                            GROUP BY question_id
-                        ) f2 ON f1.question_id = f2.question_id and
-                                f1.id = f2.max_id
-                    ) latest_fu ON q.id = latest_fu.question_id
-                    """;
+            SELECT
+                q.id,
+                IF(
+                    CHAR_LENGTH(REGEXP_REPLACE(q.title, '<[^>]*>', '')) > 18,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(q.title, '<[^>]*>', ''), 1, 15), '...'),
+                    REGEXP_REPLACE(q.title, '<[^>]*>', '')
+                ) as title,
+                IFNULL(latest_fu.insert_time, q.insert_time) AS insert_time,
+                IF(
+                    CHAR_LENGTH(REGEXP_REPLACE(q.question, '<[^>]*>', '')) > 23,
+                    CONCAT(SUBSTRING(REGEXP_REPLACE(q.question, '<[^>]*>', ''), 1, 20), '...'),
+                    REGEXP_REPLACE(q.question, '<[^>]*>', '')
+                ) as question,
+               CASE
+                 WHEN latest_fu.user_id = 1 THEN '등록'
+                 ELSE '대기'
+               END AS answered,
+               latest_fu.user_id as last_writer_id,
+               latest_fu.id as followUpId,
+               latest_fu.fuCount as followUpCount,
+               IF(
+                 CHAR_LENGTH(REGEXP_REPLACE(latest_fu.content, '<[^>]*>', '')) > 23,
+                 CONCAT(SUBSTRING(REGEXP_REPLACE(latest_fu.content, '<[^>]*>', ''), 1, 20), '...'),
+                 REGEXP_REPLACE(latest_fu.content, '<[^>]*>', '')
+               ) as fuContent
+            FROM question q
+            LEFT OUTER JOIN (
+                SELECT f1.*, f2.fuCount
+                FROM follow_up f1
+                INNER JOIN (
+                    SELECT question_id, MAX(id) as max_id, count(*) as fuCount
+                    FROM follow_up
+                    GROUP BY question_id
+                ) f2 ON f1.question_id = f2.question_id and
+                        f1.id = f2.max_id
+            ) latest_fu ON q.id = latest_fu.question_id
+            """;
 
     @Query(nativeQuery = true,
-            value = SELECT_QUESTION + "order by q.insert_time desc")
+            value = SELECT_QUESTION + "order by answered, insert_time desc")
     Page<QuestionTableRowAdmin> listQuestionTableRowForAdmin(Pageable pageable);
 
     @Query(nativeQuery = true,
             value = SELECT_QUESTION +
                     """
                             where q.user_id = :userId
-                            order by q.insert_time desc
+                            order by answered, insert_time desc
                             """
     )
     Page<QuestionTableRowAdmin> listMyQuestionTableRows(
