@@ -89,6 +89,6 @@ public class BsUser {
     public String addedMonth() {
         int monInt = addDate.getMonthValue();
         int yearInt = addDate.getYear();
-        return String.format("%d-%02d월", yearInt, monInt);
+        return String.format("'%02d-%02d월", yearInt % 100, monInt);
     }
 }
