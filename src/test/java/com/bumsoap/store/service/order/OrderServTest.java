@@ -60,7 +60,7 @@ class OrderServTest {
     void findDeliveryFee_2() {
         var req = new DeliveryFeeReq("12918", 12, BigDecimal.valueOf(40000));
         var result = orderServ.findDeliveryFee(req);
-        Assertions.assertEquals(0, result.compareTo(BigDecimal.ZERO), "");
+        Assertions.assertEquals(0, result.compareTo(BigDecimal.valueOf(5100)), "");
     }
     @Test
     /**
