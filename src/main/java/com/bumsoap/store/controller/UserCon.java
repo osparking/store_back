@@ -7,6 +7,7 @@ import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.event.PwdResetReqEvent;
 import com.bumsoap.store.event.UserAuthEvent;
 import com.bumsoap.store.event.UserRegisterEvent;
+import com.bumsoap.store.event.WorkerDisableEvent;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.ExistingEmailEx;
 import com.bumsoap.store.exception.IdNotFoundEx;
@@ -15,6 +16,7 @@ import com.bumsoap.store.model.*;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.*;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.security.user.BsUserDetailsService;
 import com.bumsoap.store.service.AdminServ;
 import com.bumsoap.store.service.CustomerServ;
@@ -199,10 +201,18 @@ public class UserCon {
     }
 
     @PostMapping(UrlMap.DISABLE_BY_ID)
-    public ResponseEntity<ApiResp> disable(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResp> disable(
+            @AuthenticationPrincipal BsUserDetails userDetails,
+            @PathVariable("id") Long id) {
         try {
             if (BsUtils.isQualified(id, false, null)) {
                 String uName = userServ.disableById(id);
+                if (userDetails.getId() != id) {
+                    var worker = userServ.findById(id);
+
+                    publisher.publishEvent(new WorkerDisableEvent(
+                            this, worker.getFullName(), worker.getEmail()));
+                }
                 return ResponseEntity.ok(
                         new ApiResp(Feedback.DISABLED_USER_NAME + uName, null));
             } else {
