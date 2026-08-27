@@ -22,7 +22,7 @@ public class WorkerServ implements WorkerServInt {
 
     @Override
     public List<UserDto> findAllWorkers() {
-        var workers = workerRepo.findAll();
+        var workers = workerRepo.findAllByOrderByFullNameAsc();
         return workers.stream().map(this::mapWorkerToDtoUser).toList();
     }
 

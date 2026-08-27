@@ -14,6 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface WorkerRepoI extends JpaRepository<Worker, Long> {
+    List<Worker> findAllByOrderByFullNameAsc();
+
     @Query(nativeQuery = true,
             value = "select distinct w.dept from worker w")
     List<String> findAllDept();
