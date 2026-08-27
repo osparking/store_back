@@ -4,6 +4,7 @@ import com.bumsoap.store.email.EmailManager;
 import com.bumsoap.store.event.PwdResetReqEvent;
 import com.bumsoap.store.event.UserAuthEvent;
 import com.bumsoap.store.event.UserRegisterEvent;
+import com.bumsoap.store.event.WorkerDisableEvent;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import jakarta.mail.MessagingException;
@@ -36,6 +37,9 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
             }
             case PwdResetReqEvent pwdResetReqEvent -> {
                 handlePwdResetRequest(pwdResetReqEvent);
+            }
+            case WorkerDisableEvent workerDisableEvent -> {
+                handleWorkerDisabledEvent(workerDisableEvent);
             }
             default -> {
             }
@@ -86,6 +90,32 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void handleWorkerDisabledEvent(WorkerDisableEvent event) {
+        try {
+            sendAccountDisabledNotice(event.getFullName(), event.getEmail());
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sendAccountDisabledNotice(String fullName, String email)
+            throws MessagingException, UnsupportedEncodingException {
+        String subject = "계정 비성화 설정 통지";
+        String senderName = "범이비누";
+        String content = "<p>안녕하세요? '" + fullName +
+                "' 직원님</p><br>" +
+                "<p>귀하의 범이비누 계정은 관리자에 의하여 비활성화 되었습니다.</p>" +
+                "<p/>계정활성화는 다음 세 단계로 가능합니다.</p>" +
+                "<ol>" +
+                "<li>바른 자격정보로 로그인 시도</li>" +
+                "<li>표시되는 모달에 [활성화 요청] 버튼 클릭</li>" +
+                "<li>이메일 내용의 이메일 소유 확인 링크 클릭</li>" +
+                "</ol>" +
+                "<br><p>고맙습니다.<br><br> 범이비누 계정 서비스";
+
+        emailManager.sendMail(email, subject, senderName, content);
     }
 
     private void sendEnableEmail(BsUser user, String vUrl)
