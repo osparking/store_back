@@ -59,7 +59,8 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             worker.setFullName("직원" + i);
             worker.setMbPhone("0104567880" + (i - 1));
             worker.setEmail(workerEmail);
-            worker.setPassword(passwordEncoder.encode("1234"));
+            worker.setPassword(passwordEncoder.encode(
+                    System.getenv("BSUSER_WORKER")));
             worker.setUserType(UserType.WORKER);
             worker.setRoles(Set.of(workerRole));
             worker.setEnabled(true);
@@ -90,7 +91,8 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             customer.setFullName("고객" + i);
             customer.setMbPhone("01045670" + String.format("%03d", i - 1));
             customer.setEmail(defaultEmail);
-            customer.setPassword(passwordEncoder.encode("1234"));
+            customer.setPassword(passwordEncoder.encode(
+                    System.getenv("BSUSER_CUSTOMER")));
             customer.setUserType(UserType.CUSTOMER);
             customer.setRoles(Set.of(customerRole));
             customer.setEnabled(true);
@@ -114,7 +116,8 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
         admin.setFullName("관리자");
         admin.setMbPhone("01012345678");
         admin.setEmail(defaultEmail);
-        admin.setPassword(passwordEncoder.encode("1234"));
+        admin.setPassword(passwordEncoder.encode(
+                System.getenv("BSUSER_ADMIN")));
         admin.setUserType(UserType.ADMIN);
         admin.setEnabled(true);
         admin.setSignUpMethod("EMAIL");
