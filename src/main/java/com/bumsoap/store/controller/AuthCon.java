@@ -1,6 +1,7 @@
 package com.bumsoap.store.controller;
 
 import com.bumsoap.store.exception.RefreshTokenException;
+import com.bumsoap.store.exception.SocialLoginRequiredException;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.RefreshToken;
 import com.bumsoap.store.repository.RefreshTokenRepoI;
@@ -20,6 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -30,6 +33,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -132,7 +136,7 @@ public class AuthCon {
                     new ApiResp(Feedback.TWO_FA_CODE_ERROR, null));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResp(
-                    Feedback.NOT_FOUND_EMAIL + username, "로그인 이중 검증"));
+                    Feedback.NOT_FOUND_EMAIL, "로그인 이중 검증"));
         }
     }
 
@@ -192,7 +196,7 @@ public class AuthCon {
         // 2. (필수) 서버 내부 세션 무효화
         HttpSession session = request.getSession(false);
 
-        if (session != null) {
+        if (session!=null) {
             session.invalidate(); // 세션에 저장된 모든 데이터 제거
         }
 
@@ -215,9 +219,28 @@ public class AuthCon {
                 .body(new ApiResp(Feedback.LOGOUT_SUCCESS, null));
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthCon.class);
+    private final UserDetailsService userDetailsService;
+
     @PostMapping(UrlMap.LOGIN)
     public ResponseEntity<ApiResp> login(@Valid @RequestBody LoginRequest request) {
         try {
+            BsUser user = userService.getByEmail(request.getEmail());
+
+            if (user==null) {
+                return ResponseEntity.status(UNAUTHORIZED)
+                        .body(new ApiResp(Feedback.NOT_FOUND_EMAIL, null));
+            } else {
+                var signUpMethod = user.getSignUpMethod();
+
+                if (!"EMAIL".equals(signUpMethod)) {
+                    LoginSource source = LoginSource.valueOf(signUpMethod);
+                    var message = source.getLabel() + Feedback.TRY_SOCIAL_LOGIN;
+
+                    throw new SocialLoginRequiredException(message);
+                }
+            }
+
             if (workerServ.isAccountDeleted(request.getEmail())) {
                 throw new AccountExpiredException(Feedback.WRONG_CREDENTIAL);
             }
@@ -252,10 +275,15 @@ public class AuthCon {
         } catch (AccountExpiredException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(
                     new ApiResp(e.getMessage(), null));
+        } catch (SocialLoginRequiredException e) {
+            // ✅ 소셜 계정으로 유도하는 400 응답
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResp(e.getMessage(), null));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(
-                    new ApiResp(e.getMessage(), Feedback.BAD_CREDENTIAL));
+                    new ApiResp(Feedback.BAD_CREDENTIAL, null));
         } catch (RuntimeException e) {
+            logger.error("Unexpected login error: ", e);
             BsUser user = userService.getByEmail(request.getEmail());
             if (user==null) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR)
