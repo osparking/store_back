@@ -165,7 +165,7 @@ public class UserServ implements UserServInt {
     public BsUser getByEmail(String email) {
         Optional<BsUser> user = userRepo.findByEmail(email);
         return user.orElseThrow(() -> new DataNotFoundException(
-                Feedback.NOT_FOUND_EMAIL + email));
+                Feedback.WRONG_CREDENTIAL));
     }
 
     @Override

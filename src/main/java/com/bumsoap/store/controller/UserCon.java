@@ -353,7 +353,7 @@ public class UserCon {
                     Feedback.PWD_RESET_EMAIL_SENT, hourMin));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResp(
-                    Feedback.NOT_FOUND_EMAIL + request.getEmail(), null));
+                    Feedback.NOT_FOUND_EMAIL, null));
         }
     }
 
@@ -450,7 +450,7 @@ public class UserCon {
         try {
             var userOpt = userRepo.findByEmail(email);
             user = userOpt.orElseThrow(() -> new DataNotFoundException(
-                    Feedback.NOT_FOUND_EMAIL + email));
+                    Feedback.NOT_FOUND_EMAIL));
 
             var userDto = objMapper.mapToDto(user, UserDto.class);
             String vToken = UUID.randomUUID().toString();

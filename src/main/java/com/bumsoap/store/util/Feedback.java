@@ -40,9 +40,9 @@ public class Feedback {
     /*************** 계정 관련 메시지 ********************************/
     public static final String CNF_PASSWORD_WRONG = "새 비밀번호 확인 불일치";
     public static final String NO_PHOTO_SUBMITTED = "사진 제출 누락 오류";
-    public static final String NOT_FOUND_EMAIL = "존재하지 않는 이메일:";
+    public static final String NOT_FOUND_EMAIL = "자격정보 오류";
     public static final String LOGIN_SUCCESS = "로그인 인증 성공";
-    public static final String BAD_CREDENTIAL = "자격정보 불일치";
+    public static final String BAD_CREDENTIAL = NOT_FOUND_EMAIL;
     public static final String PASSWORDS_MISMATCH = "두 비밀번호 불일치";
     public static final String LOGIN_FAILURE = "로그인 인증 예외:";
     public static final String LOGOUT_SUCCESS = "로그아웃 성공";

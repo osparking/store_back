@@ -26,7 +26,7 @@ public class AuthUtil {
         yield userRepo.findByEmail(email)
             .map(BsUserDetails::buildUserDetails)
             .orElseThrow(() -> new RuntimeException
-                (Feedback.NOT_FOUND_EMAIL + email));
+                (Feedback.NOT_FOUND_EMAIL));
       }
       default -> null;
     };
@@ -43,7 +43,7 @@ public class AuthUtil {
         yield userRepo.findByEmail(email)
             .map(BsUser::getId)
             .orElseThrow(() -> new RuntimeException
-                (Feedback.NOT_FOUND_EMAIL + email));
+                (Feedback.NOT_FOUND_EMAIL));
       }
       default -> null;
     };
