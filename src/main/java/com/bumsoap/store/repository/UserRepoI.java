@@ -56,7 +56,7 @@ public interface UserRepoI extends JpaRepository<BsUser, Long> {
                     SELECT r.full_name, r.mb_phone, ab.zipcode,
                     	r.doro_zbun, ab.road_address,
                     	ab.z_bun_address, r.address_detail
-                    FROM bs_store.bs_user bu
+                    FROM bumsoap.bs_user bu
                     join recipient r on r.id = bu.recipient
                     join address_basis ab on ab.id = r.addr_basis_id
                     where bu.id = :id;

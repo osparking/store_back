@@ -44,7 +44,7 @@ public class DatabaseViewCreator {
                 "DROP PROCEDURE IF EXISTS safe_delete_recipient";
         String createSql =
                 """
-                        CREATE PROCEDURE bs_store.safe_delete_recipient(IN re_id INT)
+                        CREATE PROCEDURE bumsoap.safe_delete_recipient(IN re_id INT)
                         BEGIN
                             DECLARE order_exists INT;
                             DECLARE default_count INT;
@@ -80,7 +80,7 @@ public class DatabaseViewCreator {
                 "DROP PROCEDURE IF EXISTS delete_customer_by_id";
         String createSql =
                 """
-                        CREATE PROCEDURE bs_store.delete_customer_by_id(IN uid INT)
+                        CREATE PROCEDURE bumsoap.delete_customer_by_id(IN uid INT)
                         BEGIN
                             START TRANSACTION;
                         
@@ -120,7 +120,7 @@ public class DatabaseViewCreator {
         String createSql =
                 """
                         CREATE DEFINER=`root`@`localhost`
-                            PROCEDURE `bs_store`.`delete_worker_by_id`(IN uid INT)
+                            PROCEDURE `bumsoap`.`delete_worker_by_id`(IN uid INT)
                         BEGIN
                             START TRANSACTION;
                         
