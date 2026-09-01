@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import static com.bumsoap.store.util.BsUtils.getNow_HH_MM;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -302,6 +303,7 @@ public class AuthCon {
     @PostMapping(UrlMap.REFRESH_TOKEN)
     public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken",
             required = false) String refresh1) {
+        logger.debug("토큰 refresh 시도 시간: {}", getNow_HH_MM());
         try {
             // 1. 쿠키에 RT가 없는 경우 (required = false 로 설정하여 직접 예외 처리)
             if (refresh1==null || refresh1.isEmpty()) {

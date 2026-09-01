@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,7 +31,7 @@ public class BsUtils {
      * @return "H시 m분" 형식의 문자열, null 입력 시 빈 문자열 반환
      */
     public static String formatHourMinute(LocalDateTime dateTime) {
-        if (dateTime == null) {
+        if (dateTime==null) {
             return "";
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H시 m분");
@@ -53,6 +54,7 @@ public class BsUtils {
 
     /**
      * 현재 로그인한 유저가 특정 유저(ID)의 정보레 접근할 자격이 있는지 판단.
+     *
      * @param userId 특정 유저 ID
      * @return 자격 유무 - 참: 자격이 있음. 거짓: 자격이 없음
      */
@@ -60,12 +62,12 @@ public class BsUtils {
         var authen = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authen.getAuthorities().stream().anyMatch(
                 role -> "ROLE_ADMIN".equals(role.toString()));
-        Long loginId = ((BsUserDetails)authen.getPrincipal()).getId();
+        Long loginId = ((BsUserDetails) authen.getPrincipal()).getId();
 
         if (Objects.equals(userId, loginId)) {
             return true;
         } else if (isUpdate) {
-            return isAdmin && (type == UserType.WORKER);
+            return isAdmin && (type==UserType.WORKER);
         } else {
             return isAdmin;
         }
@@ -82,7 +84,7 @@ public class BsUtils {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = auth.getAuthorities().stream().anyMatch(
                 role -> "ROLE_ADMIN".equals(role.toString()));
-        Long loginId = ((BsUserDetails)auth.getPrincipal()).getId();
+        Long loginId = ((BsUserDetails) auth.getPrincipal()).getId();
 
         return isAdmin || Objects.equals(writerId, loginId);
     }
@@ -102,6 +104,17 @@ public class BsUtils {
 
         // Format the BigDecimal to a String
         return formatter.format(money);
+    }
+
+    public static String getNow_HH_MM() {
+        // 1. 현재 시간 가져오기 (LocalTime.new() 대신 now() 사용)
+        LocalTime now = LocalTime.now();
+
+        // 2. 포맷 지정 (HH: 24시간제 시, mm: 분)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        // 3. 포맷팅 적용 및 로깅
+        return now.format(formatter);
     }
 
 }
