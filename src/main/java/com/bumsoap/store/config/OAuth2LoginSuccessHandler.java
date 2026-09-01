@@ -179,6 +179,9 @@ public class OAuth2LoginSuccessHandler
                 String accessToken = authorizedClient.getAccessToken().getTokenValue();
                 String mbPhone = fetchPhoneNumber(accessToken);
 
+                if (mbPhone==null || mbPhone.isEmpty()) {
+                    mbPhone = "01000000000";
+                }
                 customer.setMbPhone(mbPhone);
                 customer.setEmail(email);
                 customer.setUserType(UserType.CUSTOMER);
