@@ -13,30 +13,30 @@ import com.bumsoap.store.service.user.UserServInt;
 import com.bumsoap.store.util.AuthUtil;
 import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.UserType;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -85,17 +85,46 @@ public class OAuth2LoginSuccessHandler
                 .setAuthentication(securityAuth);
     }
 
+    @Autowired
+    private OAuth2AuthorizedClientService authorizedClientService;
+
+    private String fetchPhoneNumber(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        String url = "https://people.googleapis.com/v1/people/me?personFields=phoneNumbers";
+
+        try {
+            ResponseEntity<JsonNode> response = restTemplate
+                    .exchange(url, HttpMethod.GET, entity, JsonNode.class);
+            JsonNode phoneNumbers = Objects.requireNonNull(response.getBody())
+                    .path("phoneNumbers");
+            if (phoneNumbers.isArray() && !phoneNumbers.isEmpty()) {
+                return phoneNumbers.get(0).path("value").asText();
+            }
+        } catch (Exception e) {
+            logger.error("Failed to fetch phone number from Google People API", e);
+        }
+        return null;
+    }
+
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication)
             throws ServletException, IOException {
+
         OAuth2AuthenticationToken oAuth2AuthenticationToken
                 = (OAuth2AuthenticationToken) authentication;
-        String oAuth2 = oAuth2AuthenticationToken
-                .getAuthorizedClientRegistrationId().toUpperCase();
-        LoginSource loginSource = LoginSource.valueOf(oAuth2.toUpperCase());
+        String registrationId = oAuth2AuthenticationToken
+                .getAuthorizedClientRegistrationId();
+
+
+        String oAuth2 = registrationId.toUpperCase();
+        LoginSource loginSource = LoginSource.valueOf(oAuth2);
         var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
         Map<String, Object> attributes = oauth2User.getAttributes();
 
@@ -142,8 +171,15 @@ public class OAuth2LoginSuccessHandler
             } catch (AccountNotFoundException e) {
                 // 이메일이 DB 에 부재인 경우 처리
                 Customer customer = new Customer();
-
                 customer.setFullName(name);
+
+                String userName = oAuth2AuthenticationToken.getName();
+                OAuth2AuthorizedClient authorizedClient = authorizedClientService
+                        .loadAuthorizedClient(registrationId, userName);
+                String accessToken = authorizedClient.getAccessToken().getTokenValue();
+                String mbPhone = fetchPhoneNumber(accessToken);
+
+                customer.setMbPhone(mbPhone);
                 customer.setEmail(email);
                 customer.setUserType(UserType.CUSTOMER);
                 customer.setRoles(
@@ -154,7 +190,7 @@ public class OAuth2LoginSuccessHandler
                 BsUser user = customerServ.add(customer, false);
 
                 putAuth2Context("ROLE_CUSTOMER",
-                        finalAttributes, idAttributeKey, oAuth2.toString());
+                        finalAttributes, idAttributeKey, oAuth2);
                 this.signUpSource = LoginSource.valueOf(oAuth2);
                 redirectWithJwt(user, oauth2User, loginSource, response);
             }
