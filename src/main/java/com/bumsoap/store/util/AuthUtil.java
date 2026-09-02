@@ -58,6 +58,15 @@ public class AuthUtil {
     return header.substring(7);
   }
 
+  @Value("${cookie.domain}")
+  private String cookieDomain;
+
+  @Value("${cookie.secure}")
+  private boolean cookieSecure;
+
+  @Value("${cookie.same-site}")
+  private String sameSite;
+
   @Value("${auth.refresh.expirationSec}")
   private int expirationSec;
   /**
@@ -69,13 +78,13 @@ public class AuthUtil {
     return ResponseCookie.from("refreshToken", refreshToken) // 키 이름
             .httpOnly(true) // JavaScript 접근 차단 (보안 핵심)
             // HTTPS 에서만 전송 (운영 환경 필수, 테스트 시 false 가능)
-            .secure(false)
+            .secure(cookieSecure) // 환경에 따라 true/false
             // 모든 경로에서 쿠키 전송 (refresh 엔드포인트가
             // - /autho/refresh_token 이므로 최소한 해당 경로 포함)
             .path("/")
-            .domain("localhost")
+            .domain(cookieDomain) // localhost 또는 bum-soap.com
             .maxAge(expirationSec) // (현장용) 1 주 / (시험용) 10 분
-            .sameSite("Lax") // CSRF 방지 (Strict 또는 Lax )
+            .sameSite(sameSite) // 크로스사이트 허용
             .build();
   }
 }
