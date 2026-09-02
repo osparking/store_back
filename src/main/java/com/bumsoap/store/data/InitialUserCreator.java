@@ -81,9 +81,6 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             if (i % 5 == 0) {
                 defaultEmail = "buyer" + i + "@email.com";
             }
-            if (i == 1) {
-                defaultEmail = "jbpark03@naver.com";
-            }
             if (userRepo.existsByEmail(defaultEmail)) {
                 continue;
             }
