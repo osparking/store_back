@@ -1,5 +1,6 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.RefreshTokenException;
 import com.bumsoap.store.exception.SocialLoginRequiredException;
 import com.bumsoap.store.model.BsUser;
@@ -273,7 +274,7 @@ public class AuthCon {
             }
             return ResponseEntity.status(status).body(
                     new ApiResp(message, null));
-        } catch (AccountExpiredException e) {
+        } catch (AccountExpiredException | DataNotFoundException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(
                     new ApiResp(e.getMessage(), null));
         } catch (SocialLoginRequiredException e) {
