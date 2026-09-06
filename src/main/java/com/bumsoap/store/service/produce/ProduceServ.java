@@ -32,6 +32,11 @@ public class ProduceServ implements ProduceServI {
     private final ProduceRepo produceRepo;
 
     @Override
+    public List<SoapStock> getSoapStock() {
+        return produceRepo.getSoapStock();
+    }
+
+    @Override
     public List<MonthLabelSales> getSoapProduceChart() {
         Map<String, BigDecimal> valueMap = produceRepo
                 .getSoapProduceStat().stream().collect(Collectors.toMap(
