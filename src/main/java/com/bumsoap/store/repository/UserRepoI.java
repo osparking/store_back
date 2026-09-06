@@ -1,5 +1,6 @@
 package com.bumsoap.store.repository;
 
+import com.bumsoap.store.dto.DeletedWorkerInfoDto;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
@@ -20,6 +21,10 @@ import java.util.Optional;
 public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
     boolean existsByEmail(String email);
+
+    @Query(nativeQuery = true,
+            value = "select bu.email, bu.full_name from bs_user bu where id = :id")
+    Optional<DeletedWorkerInfoDto> findNameEmailById(@Param("id") long id);
 
     @Modifying
     @Query(nativeQuery = true, value =
