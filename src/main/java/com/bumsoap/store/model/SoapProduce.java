@@ -37,4 +37,9 @@ public class SoapProduce {
         this.produceDate = request.getProduceDate();
         this.producerId = request.getProducerId();
     }
+
+    public String getResult() {
+        return String.format("비누 생산 결과 - 외형: %s, 수량: %d",
+                bsShape.toString(), quantity);
+    }
 }

@@ -20,6 +20,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepoI extends JpaRepository<BsUser, Long> {
 
+    Optional<BsUser> findFirstByUserType(UserType userType);
+
     boolean existsByEmail(String email);
 
     @Query(nativeQuery = true,
