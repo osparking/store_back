@@ -18,6 +18,7 @@ public class AddOrderReq {
   private String orderStatus;
   private Boolean makeRecipientDefault;
   private BigDecimal payment;
+  private BigDecimal delivery;
 
   public OrderStatus getOrderStatus() {
     return OrderStatus.valueOfLabel(orderStatus);

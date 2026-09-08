@@ -49,6 +49,9 @@ public class BsOrder {
     @Column(nullable = false)
     private BigDecimal payment;
 
+    @Column(nullable = false)
+    private BigDecimal delivery;
+
     @Column(name = "order_time", updatable = false, nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime orderTime = LocalDateTime.now(); // 주문일시

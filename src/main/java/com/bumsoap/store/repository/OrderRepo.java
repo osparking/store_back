@@ -104,8 +104,8 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
                     bo.order_status, bo.order_name,
                     bo.review, bo.stars, bu.full_name as customer,
                     bo.review_time, r.full_name as recipient,
-                    bo.user_id, bo.payment, bo.waybill_no,
-                    ab.zipcode, ab.road_address,
+                    bo.user_id, bo.payment, bo.delivery,
+                    bo.waybill_no, ab.zipcode, ab.road_address,
                     r.address_detail, r.mb_phone
             from bs_order bo
             join bs_user bu on bu.id = bo.user_id
