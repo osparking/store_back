@@ -20,11 +20,12 @@ public class OrderPageRow {
   private String recipient;
   private Long userId;
   private BigDecimal payment;
+  private BigDecimal delivery;
 
   public OrderPageRow(Long id, String orderId, Timestamp orderTime,
                       int orderStatus, String orderName,
-                      String customer, String recipient,
-                      Long userId, BigDecimal payment) {
+                      String customer, String recipient, Long userId,
+                      BigDecimal payment, BigDecimal delivery) {
     this.id = id;
     this.orderId = orderId;
     this.orderTime = orderTime.toLocalDateTime();
@@ -34,6 +35,7 @@ public class OrderPageRow {
     this.recipient = recipient;
     this.userId = userId;
     this.payment = payment;
+    this.delivery = delivery;
   }
 
   public String getOrderStatus() {
