@@ -27,7 +27,7 @@ public interface QuestionRepo extends JpaRepository<Question, Long> {
                     CONCAT(SUBSTRING(REGEXP_REPLACE(q.title, '<[^>]*>', ''), 1, 15), '...'),
                     REGEXP_REPLACE(q.title, '<[^>]*>', '')
                 ) as title,
-                IFNULL(latest_fu.insert_time, q.insert_time) AS insert_time,
+                COALESCE(latest_fu.insert_time, q.update_time,q.insert_time) AS insert_time,
                 IF(
                     CHAR_LENGTH(REGEXP_REPLACE(q.question, '<[^>]*>', '')) > 23,
                     CONCAT(SUBSTRING(REGEXP_REPLACE(q.question, '<[^>]*>', ''), 1, 20), '...'),

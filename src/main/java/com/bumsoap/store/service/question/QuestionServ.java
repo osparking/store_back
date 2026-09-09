@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,7 +85,7 @@ public class QuestionServ implements QuestionServI {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<QuestionTableRowAdmin> questionPage = null;
 
-        if (userId == null) {
+        if (userId==null) {
             questionPage = questionRepo.listQuestionTableRowForAdmin(pageable);
         } else {
             questionPage = questionRepo.listMyQuestionTableRows(userId, pageable);
@@ -110,14 +111,25 @@ public class QuestionServ implements QuestionServI {
     @Transactional
     @Override
     public Question handleSaveQuestion(QuestionSaveReq request) {
-        var question = new Question(request);
-        var userId = request.getUserId();
-        var user = userRepo.findById(userId).orElseThrow(
-                () -> new IdNotFoundEx("유저 ID: " + userId));
+        Question savedQuestion = null;
 
-        question.setUser(user);
+        if (request.getId()==0) {
+            var question = new Question(request);
+            var userId = request.getUserId();
+            var user = userRepo.findById(userId).orElseThrow(
+                    () -> new IdNotFoundEx("유저 ID: " + userId));
 
-        return questionRepo.save(question);
+            question.setUser(user);
+            savedQuestion = questionRepo.save(question);
+        } else {
+            var question = questionRepo.findById(request.getId()).orElseThrow(
+                    () -> new IdNotFoundEx("질문 ID: " + request.getId()));
+            question.setTitle(request.getTitle());
+            question.setQuestion(request.getQuestion());
+            question.setUpdateTime(LocalDateTime.now());
+            savedQuestion = question;
+        }
+        return savedQuestion;
     }
 
     @Override
