@@ -54,6 +54,16 @@ public class ReviewRow {
     return dateTime == null ? "(없음)" : "'" + dateTime.format(formatter);
   }
 
+  public static String getTimeStrOrNull(LocalDateTime dateTime) {
+    // DateTimeFormatter를 사용하여 포맷 지정
+    var formatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일 HH:mm");
+
+    // 한국어 로케일 적용 (선택사항)
+    formatter = formatter.withLocale(Locale.KOREAN);
+
+    return dateTime == null ? null : "'" + dateTime.format(formatter);
+  }
+
   public String getShapesList() {
     return ordinalsToLabels(shapesList);
   }
