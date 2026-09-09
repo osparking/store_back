@@ -120,7 +120,7 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
             	bo.order_status, bo.order_name,
             	bu.full_name as customer,
             	r.full_name as recipient,
-            	bo.user_id, bo.payment
+            	bo.user_id, bo.payment, bo.delivery
             from bs_order bo
             join bs_user bu on bu.id = bo.user_id
             join recipient r on r.id = bo.recipient_id
