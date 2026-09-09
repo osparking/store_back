@@ -229,9 +229,12 @@ public class QuestionCon {
                 </ul>
                 <br>- 범이비누 질문 등록 알림 체계""";
 
+        var inputTime = mappedOne.getUpdateTime()==null
+                ? mappedOne.getInsertTime():mappedOne.getUpdateTime();
+
         String content = String.format(EMAIL_TEMPLATE,
                 mappedOne.getTitle(),
-                formatKoreanDateTime(mappedOne.getInsertTime()),
+                formatKoreanDateTime(inputTime),
                 userRepoI.getEmailById(userId),
                 getPlainContent(mappedOne.getQuestion(), 100));
 
