@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -44,6 +46,7 @@ public class OrderCon {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody ReviewUpdateReq updateReq) {
         try {
+            checkImageSize(updateReq.getReview());
             var user = (BsUserDetails) userDetails;
             var result = orderServ.updateReview(updateReq, user.getId());
             if (result) {
@@ -56,6 +59,22 @@ public class OrderCon {
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
+        }
+    }
+
+    private void checkImageSize(String reviewContent) {
+        Pattern pattern = Pattern.compile("data:image/[^;]+;base64,([^\"]+)\"");
+        Matcher matcher = pattern.matcher(reviewContent);
+        long totalBytes = 0;
+
+        while (matcher.find()) {
+            String base64 = matcher.group(1);
+            long padding = base64.chars().filter(c -> c == '=').count();
+            totalBytes += (base64.length() * 3L) / 4 - padding;
+        }
+
+        if (totalBytes > 1024 * 1024 * 5) {
+            throw new IllegalArgumentException("모든 영상의 합은 5MB 이내만 가능합니다.");
         }
     }
 
