@@ -1,10 +1,7 @@
 package com.bumsoap.store.event.listener;
 
 import com.bumsoap.store.email.EmailManager;
-import com.bumsoap.store.event.PwdResetReqEvent;
-import com.bumsoap.store.event.UserAuthEvent;
-import com.bumsoap.store.event.UserRegisterEvent;
-import com.bumsoap.store.event.WorkerDisableEvent;
+import com.bumsoap.store.event.*;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.service.token.VerifinTokenServInt;
 import jakarta.mail.MessagingException;
@@ -29,6 +26,9 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         switch (event) {
+            case TokenReissuedEvent reissuedEvent -> {
+                handleTokenReissuedEvent(reissuedEvent);
+            }
             case UserRegisterEvent registerE -> {
                 handleUserRegisterEvent(registerE);
             }
@@ -43,6 +43,18 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
             }
             default -> {
             }
+        }
+    }
+
+    private void handleTokenReissuedEvent(TokenReissuedEvent event) {
+        StringBuilder verificationUrl = new StringBuilder(frontendBaseUrl);
+
+        verificationUrl.append("/email_verifin?token=");
+        verificationUrl.append(event.getVerificationCode());
+        try {
+            sendReissuedEmail(event.getUser(), verificationUrl.toString());
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -163,6 +175,23 @@ public class BsEventListener implements ApplicationListener<ApplicationEvent> {
         content.append("' 고객님</p>");
         content.append("<p>저희 범이비누에 등록하신데 감사드립니다.");
         content.append("다만, 계정 등록은 다음 링크를 클릭하셔야 완성됩니다.</p>");
+        content.append("<a href=\"");
+        content.append(verifUrl);
+        content.append("\">이메일 소유 확인</a>");
+        content.append("<p>고맙습니다.<br> 범이비누 등록 서비스");
+        emailManager.sendMail(user.getEmail(), subject, senderName,
+                content.toString());
+    }
+
+    private void sendReissuedEmail(BsUser user, String verifUrl)
+            throws MessagingException, UnsupportedEncodingException {
+        String subject = "자신 이메일을 검증하세요.";
+        String senderName = "범이비누";
+        StringBuffer content = new StringBuffer("<p>안녕하세요? '");
+        content.append(user.getFullName());
+        content.append("' 고객님</p>");
+        content.append("<p>귀하의 저희 범이비누 계정 정상화를 위하여 재 발급된 ");
+        content.append("링크를 보내드리니 이를 클릭하고 다음 단계를 밟으십시오.</p>");
         content.append("<a href=\"");
         content.append(verifUrl);
         content.append("\">이메일 소유 확인</a>");
