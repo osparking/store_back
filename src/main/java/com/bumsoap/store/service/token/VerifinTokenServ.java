@@ -1,6 +1,6 @@
 package com.bumsoap.store.service.token;
 
-import com.bumsoap.store.event.UserRegisterEvent;
+import com.bumsoap.store.event.TokenReissuedEvent;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.model.VerifinToken;
@@ -161,7 +161,7 @@ public class VerifinTokenServ implements VerifinTokenServInt {
 
         String newTokenStr = UUID.randomUUID().toString();
         verifinTokenRepo.save(new VerifinToken(newTokenStr, user));
-        publisher.publishEvent(new UserRegisterEvent(user, newTokenStr));
+        publisher.publishEvent(new TokenReissuedEvent(user, newTokenStr));
 
         return TokenResult.REISSUED;
     }
