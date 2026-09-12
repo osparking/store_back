@@ -12,6 +12,7 @@ import com.bumsoap.store.response.ApiResp;
 import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.order.OrderServI;
+import com.bumsoap.store.service.s3.S3Service;
 import com.bumsoap.store.util.BsUtils;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.OrderStatus;
@@ -40,13 +41,14 @@ public class OrderCon {
     private final AddressBasisServI addrBasisServ;
     private final ObjMapper objMapper;
     private final OrderServI orderServ;
+    private final S3Service s3Service;
 
     @PatchMapping(UrlMap.UPDATE_REVIEW)
     public ResponseEntity<ApiResp> update_review(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody ReviewUpdateReq updateReq) {
         try {
-            checkImageSize(updateReq.getReview());
+            s3Service.validateReviewContent(updateReq.getReview());
             var user = (BsUserDetails) userDetails;
             var result = orderServ.updateReview(updateReq, user.getId());
             if (result) {

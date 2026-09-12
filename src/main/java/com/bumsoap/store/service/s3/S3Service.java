@@ -12,7 +12,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.countMatches;
@@ -97,23 +96,5 @@ public class S3Service {
             case "comment/image" -> "comments/images/";
             default -> throw new IllegalArgumentException("Unknown domain: " + domain);
         };
-    }
-
-    private boolean isAllowedMime(String mime, String domain) {
-        if (domain.endsWith("/video")) {
-            return Set.of("video/mp4", "video/webm", "video/quicktime").contains(mime);
-        }
-        if (domain.endsWith("/image")) {
-            return Set.of("image/jpeg", "image/png", "image/gif", "image/webp").contains(mime);
-        }
-        return false;
-    }
-
-    private String extractExt(String fileName) {
-        int dot = fileName.lastIndexOf('.');
-        if (dot < 0) {
-            throw new IllegalArgumentException("확장자가 없는 파일명입니다.");
-        }
-        return fileName.substring(dot + 1).toLowerCase();
     }
 }
