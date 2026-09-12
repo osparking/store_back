@@ -13,6 +13,8 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.countMatches;
 
@@ -40,6 +42,24 @@ public class S3Service {
         }
         if (imageCount > MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("사진은 최대 3개까지 첨부할 수 있습니다.");
+        }
+        checkMediaUrls(html);
+    }
+
+    private static final Pattern MEDIA_SRC_PATTERN =
+            Pattern.compile("(?:<video|<img)[^>]+src=\"([^\"]+)\"",
+                    Pattern.CASE_INSENSITIVE);
+
+    private void checkMediaUrls(String html) {
+        if (html == null) return;
+        Matcher m = MEDIA_SRC_PATTERN.matcher(html);
+        String expectedPrefix = publicUrl + "/";
+
+        while (m.find()) {
+            String src = m.group(1);
+            if (!src.startsWith(expectedPrefix)) {
+                throw new IllegalArgumentException("허용되지 않은 미디어 URL입니다.");
+            }
         }
     }
 
