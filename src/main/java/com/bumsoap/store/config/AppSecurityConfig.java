@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -79,6 +80,8 @@ public class AppSecurityConfig {
                         .hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HOUSE_URLS)
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_WORKER")
+                        .requestMatchers(HttpMethod.POST, POST_URLS)
+                        .authenticated()
                         .requestMatchers(URLS)
                         .authenticated()
                         .anyRequest().permitAll())
@@ -91,7 +94,7 @@ public class AppSecurityConfig {
         return http.build();
     }
 
-    private static String[] PRRMIT_URLS = {
+    private static final String[] PRRMIT_URLS = {
             "/api/s1/soap/public/**",
             "/api/s1/user/add",
             "/api/s1/user/enable",
@@ -102,12 +105,16 @@ public class AppSecurityConfig {
             "/api/s1/worker/get_all_dept"
     };
 
-    private static String[] HOUSE_URLS = {
+    private static final String[] HOUSE_URLS = {
             "/api/s1/store_ingred/**",
             "/api/s1/worker/**"
     };
 
-    private static String[] URLS = {
+    private static final String[] POST_URLS = {
+            "/api/s1/media/presigned_url"
+    };
+
+    private static final String[] URLS = {
             "/api/s1/fee_etc/**",
             "/api/s1/user/**",
             "/api/s1/photo/**",
