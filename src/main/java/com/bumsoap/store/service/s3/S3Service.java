@@ -17,8 +17,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.commons.lang3.StringUtils.countMatches;
-
 @Service
 @RequiredArgsConstructor
 public class S3Service {
@@ -34,15 +32,32 @@ public class S3Service {
     private static final int MAX_VIDEO_COUNT = 1;
     private static final int MAX_IMAGE_COUNT = 3;
 
+    private static final Pattern VIDEO_TAG_PATTERN =
+            Pattern.compile("<video\\b[^>]*>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern IMG_TAG_PATTERN =
+            Pattern.compile("<img\\b[^>]*>", Pattern.CASE_INSENSITIVE);
+
+    private int countMatches(String html, Pattern pattern) {
+        if (html==null) return 0;
+        Matcher m = pattern.matcher(html);
+        int count = 0;
+        while (m.find()) count++;
+        return count;
+    }
+
     public void validateReviewContent(String html) {
-        int videoCount = countMatches(html, "<video");
-        int imageCount = countMatches(html, "<img");
+        int videoCount = countMatches(html, VIDEO_TAG_PATTERN);
+        int imageCount = countMatches(html, IMG_TAG_PATTERN);
 
         if (videoCount > MAX_VIDEO_COUNT) {
-            throw new IllegalArgumentException("영상은 최대 1개까지 첨부할 수 있습니다.");
+            throw new IllegalArgumentException(
+                    "동영상은 최대 " + MAX_VIDEO_COUNT + "개까지 첨부할 수 있습니다."
+            );
         }
         if (imageCount > MAX_IMAGE_COUNT) {
-            throw new IllegalArgumentException("사진은 최대 3개까지 첨부할 수 있습니다.");
+            throw new IllegalArgumentException(
+                    "사진은 최대 " + MAX_IMAGE_COUNT + "개까지 첨부할 수 있습니다."
+            );
         }
         checkReviewMediaUrls(html);
     }
@@ -55,7 +70,7 @@ public class S3Service {
             Set.of("review/video", "review/image");
 
     private void checkReviewMediaUrls(String html) {
-        if (html == null) return;
+        if (html==null) return;
         Matcher m = MEDIA_SRC_PATTERN.matcher(html);
         while (m.find()) {
             String src = m.group(1);
@@ -82,7 +97,7 @@ public class S3Service {
     public PresignedUrlResponse generateMediaUploadUrl(PresignedUrlRequest req) {
         // ① MIME 화이트리스트 검증 + 확장자 유도
         String ext = MIME_TO_EXT.get(req.contentType());
-        if (ext == null) {
+        if (ext==null) {
             throw new IllegalArgumentException(
                     "지원하지 않는 형식입니다: " + req.contentType()
             );
@@ -116,11 +131,12 @@ public class S3Service {
 
     private String resolvePrefix(String domain) {
         return switch (domain) {
-            case "review/video"  -> "reviews/videos/";
-            case "review/image"  -> "reviews/images/";
-            case "question/image"-> "questions/images/";
+            case "review/video" -> "reviews/videos/";
+            case "review/image" -> "reviews/images/";
+            case "question/image" -> "questions/images/";
             case "comment/image" -> "comments/images/";
-            default -> throw new IllegalArgumentException("Unknown domain: " + domain);
+            default ->
+                    throw new IllegalArgumentException("Unknown domain: " + domain);
         };
     }
 }
