@@ -51,7 +51,7 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
     private void insertWorkersIfNotExists() {
         Role workerRole = roleServ.findByName("ROLE_WORKER");
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 30; i++) {
             String workerEmail = "worker" + i + "@email.com";
             if (userRepo.existsByEmail(workerEmail)) {
                 continue;
@@ -59,14 +59,14 @@ public class InitialUserCreator implements ApplicationListener<ApplicationReadyE
             Worker worker = new Worker();
 
             worker.setFullName("직원" + i);
-            worker.setMbPhone("0104567880" + (i - 1));
+            worker.setMbPhone("010456788" + String.format("%02d", i-1));
             worker.setEmail(workerEmail);
             worker.setPassword(passwordEncoder.encode(
                     System.getenv("BSUSER_WORKER")));
             worker.setUserType(UserType.WORKER);
             worker.setRoles(Set.of(workerRole));
             worker.setEnabled(true);
-            worker.setDept("생산부");
+            worker.setDept(i % 3 == 0 ? "관리부" : "생산부");
             worker.setSignUpMethod("EMAIL");
             worker = workerServ.add(worker);
 
