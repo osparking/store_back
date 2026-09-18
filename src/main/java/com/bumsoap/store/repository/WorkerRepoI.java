@@ -49,5 +49,7 @@ public interface WorkerRepoI extends JpaRepository<Worker, Long> {
                     """)
     Optional<Boolean> isAccountDeleted(@Param("email") String email);
 
-    Page<Worker> getWorkersByDept(String dept, Pageable pageable);
+    @Query("SELECT w FROM Worker w " +
+            "WHERE (:dept IS NULL OR :dept = '' OR w.dept = :dept)")
+    Page<Worker> getWorkersByDept(@Param("dept") String dept, Pageable pageable);
 }
