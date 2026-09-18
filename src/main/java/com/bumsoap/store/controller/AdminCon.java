@@ -151,6 +151,20 @@ public class AdminCon {
         }
     }
 
+    @GetMapping(UrlMap.GET_WORKER_PAGE)
+    public ResponseEntity<ApiResp> getWorkerPage(
+            @RequestParam("dept") String dept,
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size
+    ) {
+        try {
+            var workers = workerServ.getWorkerPage(dept, page, size);
+            return ResponseEntity.ok(new ApiResp(Feedback.FOUND, workers));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ApiResp(Feedback.NOT_FOUND, null));
+        }
+    }
 
     @GetMapping(UrlMap.GET_CUSTOMER_PAGE)
     public ResponseEntity<ApiResp> getCustomerPage(
