@@ -1,9 +1,6 @@
 package com.bumsoap.store.service.worker;
 
-import com.bumsoap.store.dto.DeletedWorkerInfoDto;
-import com.bumsoap.store.dto.EntityConverter;
-import com.bumsoap.store.dto.PeopleByDept;
-import com.bumsoap.store.dto.UserDto;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.email.EmailManager;
 import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.UserRepoI;
@@ -12,12 +9,17 @@ import com.bumsoap.store.service.photo.PhotoServInt;
 import com.bumsoap.store.util.BsUtils;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
 
@@ -112,5 +114,29 @@ public class WorkerServ implements WorkerServInt {
     @Override
     public Boolean isAccountDeleted(String email) {
         return workerRepo.isAccountDeleted(email).orElse(false);
+    }
+
+    @Override
+    public SearchResult<UserDto> getWorkerPage(String dept,
+                                               Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Worker> workerPage = workerRepo.getWorkersByDept(dept, pageable);
+        Page<UserDto> userDtoPage = workerPage.map(this::mapWorkerToDtoUser);
+        int totalPages = workerPage.getTotalPages();
+        List<Integer> pageNumbers = null;
+
+        if (totalPages > 0) {
+            pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+        }
+
+        var result = new SearchResult<UserDto>(userDtoPage,
+                userDtoPage.getNumber() + 1,
+                size,
+                totalPages,
+                pageNumbers
+        );
+        return result;
     }
 }

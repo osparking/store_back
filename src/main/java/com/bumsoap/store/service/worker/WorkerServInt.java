@@ -1,6 +1,7 @@
 package com.bumsoap.store.service.worker;
 
 import com.bumsoap.store.dto.PeopleByDept;
+import com.bumsoap.store.dto.SearchResult;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.Worker;
 
@@ -20,4 +21,6 @@ public interface WorkerServInt {
     Worker add(Worker worker);
 
     Boolean isAccountDeleted(String email);
+
+    SearchResult<UserDto> getWorkerPage(String dept, Integer page, Integer size);
 }
