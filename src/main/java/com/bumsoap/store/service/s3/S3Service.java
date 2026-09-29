@@ -1,11 +1,15 @@
 package com.bumsoap.store.service.s3;
 
+import com.bumsoap.store.dto.MediaDeleteResponse;
 import com.bumsoap.store.dto.PresignedUrlRequest;
 import com.bumsoap.store.dto.PresignedUrlResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
@@ -16,12 +20,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class S3Service {
 
     private final S3Presigner s3Presigner;
+    private final S3Client s3Client;   // 생성자 주입 (Lombok @RequiredArgsConstructor가 처리)
 
     @Value("${aws.s3.bucket}")
     private String bucket;
@@ -66,18 +72,22 @@ public class S3Service {
             Pattern.compile("(?:<video|<img)[^>]+src=\"([^\"]+)\"",
                     Pattern.CASE_INSENSITIVE);
 
-    private static final Set<String> REVIEW_DOMAINS =
-            Set.of("review/video", "review/image");
+    private static final Set<String> ALLOWED_UPLOAD_DOMAINS = Set.of(
+            "review/video", "review/image", "question/image", "comment/image");
 
     private void checkReviewMediaUrls(String html) {
-        if (html==null) return;
+        if (html == null) return;
+
+        // 허용 prefix 목록을 미리 계산
+        Set<String> allowedPrefixes = ALLOWED_UPLOAD_DOMAINS.stream()
+                .map(this::resolvePrefix)
+                .collect(Collectors.toSet());
+
         Matcher m = MEDIA_SRC_PATTERN.matcher(html);
         while (m.find()) {
             String src = m.group(1);
-            boolean allowed = REVIEW_DOMAINS.stream()
-                    .map(this::resolvePrefix)   // ✅ 같은 함수 재사용
+            boolean allowed = allowedPrefixes.stream()
                     .anyMatch(prefix -> src.startsWith(publicUrl + "/" + prefix));
-
             if (!allowed) {
                 throw new IllegalArgumentException("허용되지 않은 미디어 URL입니다.");
             }
@@ -138,5 +148,46 @@ public class S3Service {
             default ->
                     throw new IllegalArgumentException("Unknown domain: " + domain);
         };
+    }
+
+    /**
+     * 퍼블릭 URL을 S3 key로 변환.
+     * 우리 버킷/허용 prefix가 아니면 예외.
+     */
+    public String extractKeyFromUrl(String fileUrl) {
+        if (fileUrl==null || !fileUrl.startsWith(publicUrl + "/")) {
+            throw new IllegalArgumentException("허용되지 않은 URL입니다.");
+        }
+        String key = fileUrl.substring(publicUrl.length() + 1);   // "reviews/videos/uuid.mp4"
+
+        // prefix 화이트리스트 검증 (기존 resolvePrefix 결과 재사용)
+        boolean allowed = ALLOWED_UPLOAD_DOMAINS.stream()
+                .map(this::resolvePrefix)
+                .anyMatch(key::startsWith);
+
+        if (!allowed) {
+            throw new IllegalArgumentException("삭제할 수 없는 경로입니다: " + key);
+        }
+        return key;
+    }
+
+    /**
+     * S3 객체 삭제. 이미 없어도 예외 던지지 않음 (idempotent).
+     */
+    public MediaDeleteResponse deleteMedia(String fileUrl) {
+        String key = extractKeyFromUrl(fileUrl);
+
+        try {
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build());
+        } catch (S3Exception e) {
+            // 404는 이미 지워진 것이므로 성공 취급
+            if (e.statusCode()!=404) {
+                throw e;
+            }
+        }
+        return new MediaDeleteResponse(true, key);
     }
 }

@@ -1,5 +1,7 @@
 package com.bumsoap.store.controller;
 
+import com.bumsoap.store.dto.MediaDeleteRequest;
+import com.bumsoap.store.dto.MediaDeleteResponse;
 import com.bumsoap.store.dto.PresignedUrlRequest;
 import com.bumsoap.store.dto.PresignedUrlResponse;
 import com.bumsoap.store.service.s3.S3Service;
@@ -39,5 +41,22 @@ public class ReviewMediaController {
     public ResponseEntity<PresignedUrlResponse> getUploadUrl(
             @RequestBody @Valid PresignedUrlRequest request) {
         return ResponseEntity.ok(s3Service.generateMediaUploadUrl(request));
+    }
+
+    @PostMapping(UrlMap.DELETE_URL)
+    @RateLimiter(name = "presignedUrl", fallbackMethod = "fallbackDeleteUrl")
+    public ResponseEntity<MediaDeleteResponse> deleteMedia(
+            @RequestBody @Valid MediaDeleteRequest request) {
+        return ResponseEntity.ok(s3Service.deleteMedia(request.fileUrl()));
+    }
+
+    /**
+     * 삭제 요청 횟수 초과 시 Fallback
+     */
+    public ResponseEntity<?> fallbackDeleteUrl(
+            MediaDeleteRequest request, RequestNotPermitted t) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(Map.of("message", "삭제 요청이 너무 잦습니다."));
     }
 }
