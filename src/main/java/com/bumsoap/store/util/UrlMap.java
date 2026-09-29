@@ -148,5 +148,5 @@ public class UrlMap {
     /*== 미디어(사진, 동영상) 관련 항목 =========*/
     public static final String MEDIA = API + "/media";
     public static final String PRESIGNED_URL = "/presigned_url";
-
+    public static final String DELETE_URL = "/delete_url";
 }

@@ -1,6 +1,9 @@
 package com.bumsoap.store.service.store;
 
-import com.bumsoap.store.dto.*;
+import com.bumsoap.store.dto.EntityConverter;
+import com.bumsoap.store.dto.SearchResult;
+import com.bumsoap.store.dto.StoreIngreDto;
+import com.bumsoap.store.dto.StoreIngreRow;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.StoreIngre;
 import com.bumsoap.store.repository.StoreIngreRepoI;
@@ -49,8 +52,8 @@ public class StoreIngreServ implements StoreIngreServI {
 
   @Override
   public SearchResult<StoreIngreDto> getIngredientPage(String name,
-                                  Optional<Integer> page,
-                                  Optional<Integer> size) {
+                                                       Optional<Integer> page,
+                                                       Optional<Integer> size) {
     int pageSize = size.orElse(provider.getPageSize());
     Pageable pageable = PageRequest.of(page.orElse(1) - 1, pageSize);
     Page<StoreIngreRow> ingredientPage = null;
