@@ -140,6 +140,35 @@ public class S3Service {
         );
     }
 
+    /**
+     * HTML 안의 모든 tmp 미디어 URL을 정식 URL로 승격.
+     */
+    public String promoteAllTmpUrls(String html) {
+        if (html == null || html.isBlank()) return html;
+
+        Matcher m = MEDIA_SRC_PATTERN.matcher(html);
+        StringBuilder sb = new StringBuilder();
+        int lastEnd = 0;
+        boolean changed = false;
+
+        while (m.find()) {
+            String src = m.group(1);
+            if (!src.contains("/tmp/")) continue;   // tmp 아니면 건너뜀
+
+            String promoted = promoteFromTmp(src);  // 기존 메서드 재사용
+
+            sb.append(html, lastEnd, m.start(1));   // src 앞부분까지 그대로 복사
+            sb.append(promoted);                    // src 자리만 치환
+            lastEnd = m.end(1);
+            changed = true;
+        }
+
+        if (!changed) return html;   // tmp가 하나도 없으면 원본 그대로
+
+        sb.append(html.substring(lastEnd));
+        return sb.toString();
+    }
+
     public String promoteFromTmp(String tmpUrl) {
         String tmpKey = extractKeyFromUrl(tmpUrl);   // "reviews/videos/tmp/uuid.mp4"
 
