@@ -51,7 +51,7 @@ public class OrderCon {
             s3Service.validateReviewContent(updateReq.getReview());
             var user = (BsUserDetails) userDetails;
             var result = orderServ.updateReview(updateReq, user.getId());
-            if (result) {
+            if (result.isSaved()) {
                 return ResponseEntity.ok(new ApiResp(
                         Feedback.REVIEW_UPDATED, result));
             } else {
