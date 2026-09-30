@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -117,12 +118,12 @@ public class S3Service {
         String prefix = resolvePrefix(req.domain());
 
         // ③ 키 생성 (UUID + MIME에서 유도한 확장자)
-        String key = prefix + UUID.randomUUID() + "." + ext;
+        String tmpKey = prefix + "tmp/" + UUID.randomUUID() + "." + ext;
 
         // ④ Presigned PUT URL
         PutObjectRequest putReq = PutObjectRequest.builder()
                 .bucket(bucket)
-                .key(key)
+                .key(tmpKey)
                 .contentType(req.contentType())
                 .build();
 
@@ -135,8 +136,30 @@ public class S3Service {
 
         return new PresignedUrlResponse(
                 presigned.url().toString(),
-                publicUrl + "/" + key
+                publicUrl + "/" + tmpKey
         );
+    }
+
+    public String promoteFromTmp(String tmpUrl) {
+        String tmpKey = extractKeyFromUrl(tmpUrl);   // "reviews/videos/tmp/uuid.mp4"
+
+        if (!tmpKey.contains("/tmp/")) {
+            return tmpUrl;   // 이미 정식 위치면 그대로
+        }
+
+        String finalKey = tmpKey.replace("/tmp/", "/");   // "reviews/videos/uuid.mp4"
+
+        // S3에서 복사 후 tmp 삭제
+        s3Client.copyObject(CopyObjectRequest.builder()
+                .sourceBucket(bucket).sourceKey(tmpKey)
+                .destinationBucket(bucket).destinationKey(finalKey)
+                .build());
+
+        s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(bucket).key(tmpKey)
+                .build());
+
+        return publicUrl + "/" + finalKey;
     }
 
     private String resolvePrefix(String domain) {
