@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.order;
 
+import com.bumsoap.store.data.HtmlSaveResult;
 import com.bumsoap.store.dto.*;
 import com.bumsoap.store.exception.InventoryException;
 import com.bumsoap.store.model.BsOrder;
@@ -24,7 +25,7 @@ public interface OrderServI {
     boolean deleteReview(Long reqeust, Long userId);
 
     @Transactional
-    boolean updateReview(ReviewUpdateReq reqeust, Long userId);
+    HtmlSaveResult updateReview(ReviewUpdateReq reqeust, Long userId);
 
     boolean updateOrderStatus(Long id, OrderStatus status);
 

@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.order;
 
+import com.bumsoap.store.data.HtmlSaveResult;
 import com.bumsoap.store.dto.*;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.InventoryException;
@@ -15,6 +16,7 @@ import com.bumsoap.store.request.ReviewUpdateReq;
 import com.bumsoap.store.request.UpdateWaybillNoReq;
 import com.bumsoap.store.service.address.AddressBasisServI;
 import com.bumsoap.store.service.recipient.RecipientServI;
+import com.bumsoap.store.service.s3.S3Service;
 import com.bumsoap.store.service.soap.FeeDeliveryServI;
 import com.bumsoap.store.service.soap.FeeOtherServI;
 import com.bumsoap.store.util.*;
@@ -78,21 +80,25 @@ public class OrderServ implements OrderServI {
                 .collect(Collectors.toList());
     }
 
+    private final S3Service s3Service;
+
     @Transactional
     @Override
-    public boolean updateReview(ReviewUpdateReq reqeust, Long userId) {
+    public HtmlSaveResult updateReview(ReviewUpdateReq reqeust, Long userId) {
         Long orderId = reqeust.getId();
         var theOrder = orderRepo.findById(orderId).orElseThrow(
                 () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
         if (userId==theOrder.getUser().getId()) {
+            String promoted = s3Service.promoteAllTmpUrls(reqeust.getReview());
             int updateCount = orderRepo.updateReviewById(orderId,
-                    reqeust.getReview(), reqeust.getStars());
+                    promoted, reqeust.getStars());
             var nextStatus = reqeust.getReview()==null ?
                     OrderStatus.PURCHASE_CONFIRMED:OrderStatus.REVIEWED;
             int statusCount = orderRepo.updateOrderStatusByOrderId(orderId,
                     nextStatus);
+            boolean isSaved = updateCount==1 && statusCount==1;
 
-            return (updateCount==1 && statusCount==1);
+            return new HtmlSaveResult(isSaved, promoted);
         } else {
             throw new UnauthorizedException(
                     Feedback.NOT_BELONG_TO_YOU + orderId);
