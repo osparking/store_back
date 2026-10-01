@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+import static com.bumsoap.store.dto.ReviewRow.formatKoreanDateTime;
+
 @Data
 @NoArgsConstructor
 public class MyReviewRow {
@@ -13,7 +15,7 @@ public class MyReviewRow {
   private LocalDateTime orderTime;
   private String reviewPreview;
   private byte stars;
-  private LocalDateTime reviewTime;
+  private String reviewTime;
   private Long id; // 주문 ID
 
   public MyReviewRow(String orderName, Timestamp orderTime,
@@ -23,7 +25,7 @@ public class MyReviewRow {
     this.orderTime = orderTime.toLocalDateTime();
     this.reviewPreview = reviewPreview;
     this.stars = stars;
-    this.reviewTime = reviewTime.toLocalDateTime();
+    this.reviewTime = formatKoreanDateTime(reviewTime.toLocalDateTime());
     this.id = id;
   }
 }
