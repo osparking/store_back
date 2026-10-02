@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -84,21 +85,21 @@ public class OrderServ implements OrderServI {
 
     @Transactional
     @Override
-    public HtmlSaveResult updateReview(ReviewUpdateReq reqeust, Long userId) {
-        Long orderId = reqeust.getId();
-        var theOrder = orderRepo.findById(orderId).orElseThrow(
+    public HtmlSaveResult updateReview(ReviewUpdateReq updateReq, Long userId) {
+        Long orderId = updateReq.getId();
+        var bsOrder = orderRepo.findById(orderId).orElseThrow(
                 () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
-        if (userId==theOrder.getUser().getId()) {
-            String promoted = s3Service.promoteAllTmpUrls(reqeust.getReview());
-            int updateCount = orderRepo.updateReviewById(orderId,
-                    promoted, reqeust.getStars());
-            var nextStatus = reqeust.getReview()==null ?
+        if (userId==bsOrder.getUser().getId()) {
+            String promoted = s3Service.promoteAllTmpUrls(updateReq.getReview());
+            var nextStatus = updateReq.getReview()==null ?
                     OrderStatus.PURCHASE_CONFIRMED:OrderStatus.REVIEWED;
-            int statusCount = orderRepo.updateOrderStatusByOrderId(orderId,
-                    nextStatus);
-            boolean isSaved = updateCount==1 && statusCount==1;
 
-            return new HtmlSaveResult(isSaved, promoted);
+            bsOrder.setStars(updateReq.getStars());
+            bsOrder.setReview(promoted);
+            bsOrder.setReviewTime(LocalDateTime.now());
+            bsOrder.setOrderStatus(nextStatus);
+
+            return new HtmlSaveResult(true, promoted);
         } else {
             throw new UnauthorizedException(
                     Feedback.NOT_BELONG_TO_YOU + orderId);
