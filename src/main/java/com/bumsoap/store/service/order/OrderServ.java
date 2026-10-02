@@ -93,13 +93,14 @@ public class OrderServ implements OrderServI {
             String promoted = s3Service.promoteAllTmpUrls(updateReq.getReview());
             var nextStatus = updateReq.getReview()==null ?
                     OrderStatus.PURCHASE_CONFIRMED:OrderStatus.REVIEWED;
-
             bsOrder.setStars(updateReq.getStars());
             bsOrder.setReview(promoted);
-            bsOrder.setReviewTime(LocalDateTime.now());
+
+            var reviewTime = LocalDateTime.now();
+            bsOrder.setReviewTime(reviewTime);
             bsOrder.setOrderStatus(nextStatus);
 
-            return new HtmlSaveResult(true, promoted);
+            return new HtmlSaveResult(true, promoted, reviewTime);
         } else {
             throw new UnauthorizedException(
                     Feedback.NOT_BELONG_TO_YOU + orderId);
