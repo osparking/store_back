@@ -9,4 +9,6 @@ public class LoginRequest {
     private String email;
     @NotBlank
     private String password;
+
+    private Boolean save_login = false;
 }

@@ -74,7 +74,7 @@ public class AuthUtil {
    * @param refreshToken 리스레시 토큰     *
    * @return 생성된 ResponseCookie
    */
-  public ResponseCookie createSaveCookie(String refreshToken) {
+  public ResponseCookie createSaveCookie(String refreshToken, boolean saveLogin) {
     return ResponseCookie.from("refreshToken", refreshToken) // 키 이름
             .httpOnly(true) // JavaScript 접근 차단 (보안 핵심)
             // HTTPS 에서만 전송 (운영 환경 필수, 테스트 시 false 가능)
@@ -83,7 +83,7 @@ public class AuthUtil {
             // - /autho/refresh_token 이므로 최소한 해당 경로 포함)
             .path("/autho")
             .domain(cookieDomain) // localhost 또는 bum-soap.com
-            .maxAge(expirationSec) // (현장용) 1 주 / (시험용) 10 분
+            .maxAge(saveLogin ? expirationSec : -1) // (현장용) 1 주 / (시험용) 10 분
             .sameSite(sameSite) // 크로스사이트 허용
             .build();
   }

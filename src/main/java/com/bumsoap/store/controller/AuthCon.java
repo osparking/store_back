@@ -258,7 +258,8 @@ public class AuthCon {
              * 리프레시 토큰을 만들고, DB 에 저장하며, 반응에 포함한다.
              */
             var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
-            ResponseCookie refreshCookie = authUtil.createSaveCookie(refresh);
+            ResponseCookie refreshCookie =
+                    authUtil.createSaveCookie(refresh, request.getSave_login());
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
 
             return ResponseEntity.ok()
@@ -325,7 +326,8 @@ public class AuthCon {
             JwtResponse jwtResponse = new JwtResponse(details.getId(), jwt);
 
             // 6. 응답 헤더 - 리프레시를 HttpOnly 쿠키로 설정
-            ResponseCookie refreshCookie = authUtil.createSaveCookie(refresh2);
+            ResponseCookie refreshCookie =
+                    authUtil.createSaveCookie(refresh2, false);
 
             // 7. 최종 응답(AT 는 본문에, RT 는 헤더에 적재)
             return ResponseEntity.ok()
