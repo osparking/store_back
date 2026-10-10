@@ -332,6 +332,7 @@ public class AuthCon {
                     .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                     .body(new ApiResp(Feedback.REFRESHING_SUCCESS, jwtResponse));
         } catch (RefreshTokenException e) {
+            logger.info(e.getMessage());
             return ResponseEntity.status(UNAUTHORIZED).body(
                     new ApiResp(e.getMessage(), null));
         } catch (Exception e) {
