@@ -232,7 +232,7 @@ public class OAuth2LoginSuccessHandler
 
         // 리프레시 토큰 생성 및 DB 저장
         var refresh = refreshTokenServ.createRefreshForUser(user.getId());
-        ResponseCookie refreshCookie = authUtil.createSaveCookie(refresh);
+        ResponseCookie refreshCookie = authUtil.createSaveCookie(refresh, false);
 
         // Generate JWT token
         String jwtToken = jwtUtilBean.generateTokenForUser(userDetails);
