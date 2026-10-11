@@ -81,8 +81,7 @@ public class AuthUtil {
             .secure(cookieSecure) // 환경에 따라 true/false
             // 모든 경로에서 쿠키 전송 (refresh 엔드포인트가
             // - /autho/refresh_token 이므로 최소한 해당 경로 포함)
-            .path("/autho")
-            .domain(cookieDomain) // localhost 또는 bum-soap.com
+            .path("/")
             .maxAge(saveLogin ? expirationSec : -1) // (현장용) 1 주 / (시험용) 10 분
             .sameSite(sameSite) // 크로스사이트 허용
             .build();
