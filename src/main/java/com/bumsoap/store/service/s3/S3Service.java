@@ -1,5 +1,6 @@
 package com.bumsoap.store.service.s3;
 
+import com.bumsoap.store.data.HtmlSaveResult;
 import com.bumsoap.store.dto.MediaDeleteResponse;
 import com.bumsoap.store.dto.PresignedGetUrlResponse;
 import com.bumsoap.store.dto.PresignedUrlRequest;
@@ -146,51 +147,65 @@ public class S3Service {
     }
 
     public PresignedGetUrlResponse generatePresignedGetUrl(@NotBlank String key) {
+        PresignedGetObjectRequest presigned = fetchPresignedGetMediaRequest(key);
+
+        return new PresignedGetUrlResponse(presigned.url().toString());
+    }
+
+    private PresignedGetObjectRequest fetchPresignedGetMediaRequest(String key) {
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofMinutes(10))
                 .getObjectRequest(r -> r.bucket(bucket).key(key))
                 .build();
-        PresignedGetObjectRequest presigned = s3Presigner.presignGetObject(presignRequest);
-
-        return new PresignedGetUrlResponse(presigned.url().toString());
+        return s3Presigner.presignGetObject(presignRequest);
     }
 
     /**
      * HTML 안의 모든 tmp 미디어 URL을 정식 URL로 승격.
      */
-    public String promoteAllTmpUrls(String html) {
-        if (html == null || html.isBlank()) return html;
+    public HtmlSaveResult promotedAndPresigndUrls(String html) {
+        var result = new HtmlSaveResult(html);
+
+        if (html == null || html.isBlank()) return result;
 
         Matcher m = MEDIA_SRC_PATTERN.matcher(html);
-        StringBuilder sb = new StringBuilder();
-        int lastEnd = 0;
-        boolean changed = false;
+        StringBuilder promotedUrls = new StringBuilder();
+        /**
+         * HTML 안의 모든 미디어 src URL을 미리 서명된 읽는-권한 URL로 변경
+         */
+        StringBuilder display_urls = new StringBuilder();
+        int promotedEnd = 0;
+        int displaysEnd = 0;
 
         while (m.find()) {
             String src = m.group(1);
-            if (!src.contains("/tmp/")) continue;   // tmp 아니면 건너뜀
+            String key = extractKeyFromUrl(src);   // "reviews/videos/tmp/uuid.mp4"
 
-            String promoted = promoteFromTmp(src);  // 기존 메서드 재사용
+            if (src.contains("/tmp/")) {
+                String promoted = promoteFromTmp(key);  // 기존 메서드 재사용
 
-            sb.append(html, lastEnd, m.start(1));   // src 앞부분까지 그대로 복사
-            sb.append(promoted);                    // src 자리만 치환
-            lastEnd = m.end(1);
-            changed = true;
+                promotedUrls.append(html, promotedEnd, m.start(1)); // src 앞부분까지 그대로 복사
+                promotedUrls.append(promoted);                    // src 자리만 치환
+                promotedEnd = m.end(1);
+                key = extractKeyFromUrl(promoted);
+            }
+            // display_urls 갱신
+            var response = fetchPresignedGetMediaRequest(key);
+
+            display_urls.append(html, displaysEnd, m.start(1));   // src 앞부분까지 그대로 복사
+            display_urls.append(response.url().toString());       // src 자리만 치환
+            displaysEnd = m.end(1);
         }
 
-        if (!changed) return html;   // tmp가 하나도 없으면 원본 그대로
+        promotedUrls.append(html.substring(promotedEnd));
+        display_urls.append(html.substring(displaysEnd));
+        result.setHtmlPromoted(promotedUrls.toString());
+        result.setHtmlDisplay(display_urls.toString());
 
-        sb.append(html.substring(lastEnd));
-        return sb.toString();
+        return result;
     }
 
-    private String promoteFromTmp(String tmpUrl) {
-        String tmpKey = extractKeyFromUrl(tmpUrl);   // "reviews/videos/tmp/uuid.mp4"
-
-        if (!tmpKey.contains("/tmp/")) {
-            return tmpUrl;   // 이미 정식 위치면 그대로
-        }
-
+    private String promoteFromTmp(String tmpKey) {
         String finalKey = tmpKey.replace("/tmp/", "/");   // "reviews/videos/uuid.mp4"
 
         // S3에서 복사 후 tmp 삭제

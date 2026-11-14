@@ -12,5 +12,11 @@ import java.time.LocalDateTime;
 public class HtmlSaveResult {
     boolean isSaved;
     String htmlPromoted;
+    String htmlDisplay;
     LocalDateTime reviewTime;
+
+    public HtmlSaveResult(String html) {
+        this.htmlPromoted = html;
+        this.htmlDisplay = html;
+    }
 }

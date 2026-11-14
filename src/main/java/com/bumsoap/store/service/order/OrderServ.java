@@ -89,18 +89,21 @@ public class OrderServ implements OrderServI {
         Long orderId = updateReq.getId();
         var bsOrder = orderRepo.findById(orderId).orElseThrow(
                 () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
+
         if (userId==bsOrder.getUser().getId()) {
-            String promoted = s3Service.promoteAllTmpUrls(updateReq.getReview());
+            var result = s3Service.promotedAndPresigndUrls(updateReq.getReview());
             var nextStatus = updateReq.getReview()==null ?
                     OrderStatus.PURCHASE_CONFIRMED:OrderStatus.REVIEWED;
+
             bsOrder.setStars(updateReq.getStars());
-            bsOrder.setReview(promoted);
+            bsOrder.setReview(result.getHtmlPromoted());
 
             var reviewTime = LocalDateTime.now();
             bsOrder.setReviewTime(reviewTime);
             bsOrder.setOrderStatus(nextStatus);
 
-            return new HtmlSaveResult(true, promoted, reviewTime);
+            return new HtmlSaveResult(true,
+                    result.getHtmlPromoted(), result.getHtmlDisplay(), reviewTime);
         } else {
             throw new UnauthorizedException(
                     Feedback.NOT_BELONG_TO_YOU + orderId);
