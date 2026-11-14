@@ -6,6 +6,7 @@ import com.bumsoap.store.util.UrlMap;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +40,8 @@ public class ReviewMediaController {
 
     @GetMapping(UrlMap.PRESIGNED_GET_URL)
     public ResponseEntity<PresignedGetUrlResponse> responsePresignedGetUrl(
-            @RequestBody @Valid PresignedGetUrlRequest request) {
-        return ResponseEntity.ok(
-                s3Service.generatePresignedGetUrl(request.key()));
+            @RequestParam("key") @NotBlank String key) {
+        return ResponseEntity.ok(s3Service.generatePresignedGetUrl(key));
     }
 
     @PostMapping(UrlMap.DELETE_URL)
