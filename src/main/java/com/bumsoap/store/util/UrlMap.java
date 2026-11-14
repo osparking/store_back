@@ -149,4 +149,5 @@ public class UrlMap {
     public static final String MEDIA = API + "/media";
     public static final String PRESIGNED_URL = "/presigned_url";
     public static final String DELETE_URL = "/delete_url";
+    public static final String PRESIGNED_GET_URL = "/presigned_get_url";
 }

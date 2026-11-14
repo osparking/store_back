@@ -1,9 +1,6 @@
 package com.bumsoap.store.controller;
 
-import com.bumsoap.store.dto.MediaDeleteRequest;
-import com.bumsoap.store.dto.MediaDeleteResponse;
-import com.bumsoap.store.dto.PresignedUrlRequest;
-import com.bumsoap.store.dto.PresignedUrlResponse;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.service.s3.S3Service;
 import com.bumsoap.store.util.UrlMap;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
@@ -12,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -41,6 +35,13 @@ public class ReviewMediaController {
     public ResponseEntity<PresignedUrlResponse> getUploadUrl(
             @RequestBody @Valid PresignedUrlRequest request) {
         return ResponseEntity.ok(s3Service.generateMediaUploadUrl(request));
+    }
+
+    @GetMapping(UrlMap.PRESIGNED_GET_URL)
+    public ResponseEntity<PresignedGetUrlResponse> responsePresignedGetUrl(
+            @RequestBody @Valid PresignedGetUrlRequest request) {
+        return ResponseEntity.ok(
+                s3Service.generatePresignedGetUrl(request.key()));
     }
 
     @PostMapping(UrlMap.DELETE_URL)

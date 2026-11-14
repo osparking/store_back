@@ -1,8 +1,10 @@
 package com.bumsoap.store.service.s3;
 
 import com.bumsoap.store.dto.MediaDeleteResponse;
+import com.bumsoap.store.dto.PresignedGetUrlResponse;
 import com.bumsoap.store.dto.PresignedUrlRequest;
 import com.bumsoap.store.dto.PresignedUrlResponse;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
@@ -136,8 +140,19 @@ public class S3Service {
 
         return new PresignedUrlResponse(
                 presigned.url().toString(),
-                publicUrl + "/" + tmpKey
+                publicUrl + "/" + tmpKey,
+                tmpKey
         );
+    }
+
+    public PresignedGetUrlResponse generatePresignedGetUrl(@NotBlank String key) {
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10))
+                .getObjectRequest(r -> r.bucket(bucket).key(key))
+                .build();
+        PresignedGetObjectRequest presigned = s3Presigner.presignGetObject(presignRequest);
+
+        return new PresignedGetUrlResponse(presigned.url().toString());
     }
 
     /**
@@ -169,7 +184,7 @@ public class S3Service {
         return sb.toString();
     }
 
-    public String promoteFromTmp(String tmpUrl) {
+    private String promoteFromTmp(String tmpUrl) {
         String tmpKey = extractKeyFromUrl(tmpUrl);   // "reviews/videos/tmp/uuid.mp4"
 
         if (!tmpKey.contains("/tmp/")) {
