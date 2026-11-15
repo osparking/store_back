@@ -28,6 +28,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.bumsoap.store.util.BsUtils.MEDIA_SRC_PATTERN;
+
 @Service
 @RequiredArgsConstructor
 public class S3Service {
@@ -50,7 +52,7 @@ public class S3Service {
             Pattern.compile("<img\\b[^>]*>", Pattern.CASE_INSENSITIVE);
 
     private int countMatches(String html, Pattern pattern) {
-        if (html==null) return 0;
+        if (html == null) return 0;
         Matcher m = pattern.matcher(html);
         int count = 0;
         while (m.find()) count++;
@@ -73,10 +75,6 @@ public class S3Service {
         }
         checkReviewMediaUrls(html);
     }
-
-    private static final Pattern MEDIA_SRC_PATTERN =
-            Pattern.compile("(?:<video|<img)[^>]+src=\"([^\"]+)\"",
-                    Pattern.CASE_INSENSITIVE);
 
     private static final Set<String> ALLOWED_UPLOAD_DOMAINS = Set.of(
             "review/video", "review/image", "question/image", "comment/image");
@@ -113,7 +111,7 @@ public class S3Service {
     public PresignedUrlResponse generateMediaUploadUrl(PresignedUrlRequest req) {
         // ① MIME 화이트리스트 검증 + 확장자 유도
         String ext = MIME_TO_EXT.get(req.contentType());
-        if (ext==null) {
+        if (ext == null) {
             throw new IllegalArgumentException(
                     "지원하지 않는 형식입니다: " + req.contentType()
             );
@@ -205,6 +203,39 @@ public class S3Service {
         return result;
     }
 
+    /**
+     * HTML 안의 모든 미디어 src URL을 미리 서명된 읽는-권한 URL로 변경
+     *
+     * @param html
+     * @param m    : 미디어 태그 src 속성 값만 추출함.
+     * @return
+     */
+    public String convertUrlsPresignedGets(String html, Matcher m) {
+        if (html == null || html.isBlank()) return html;
+
+        StringBuilder convertedPart = new StringBuilder();
+        int addPoint = 0;
+        boolean changed = false;
+
+        while (m.find()) {
+            String src = m.group(1);
+            String key = extractKeyFromUrl(src); // "reviews/images/tmp/7a-75-8c.png"
+
+            // 기존 url을 미리 서명되었고, 읽을 권한요청 객체화
+            var predGetImageRequest = fetchPresignedGetMediaRequest(key);
+
+            convertedPart.append(html, addPoint, m.start(1)); // src 앞부분까지 그대로 복사
+            convertedPart.append(predGetImageRequest.url().toString()); // src 자리만 치환
+            addPoint = m.end(1);
+            changed = true;
+        }
+        if (!changed) return html;
+
+        convertedPart.append(html.substring(addPoint));
+
+        return convertedPart.toString();
+    }
+
     private String promoteFromTmp(String tmpKey) {
         String finalKey = tmpKey.replace("/tmp/", "/");   // "reviews/videos/uuid.mp4"
 
@@ -227,8 +258,7 @@ public class S3Service {
             case "review/image" -> "reviews/images/";
             case "question/image" -> "questions/images/";
             case "comment/image" -> "comments/images/";
-            default ->
-                    throw new IllegalArgumentException("Unknown domain: " + domain);
+            default -> throw new IllegalArgumentException("Unknown domain: " + domain);
         };
     }
 
@@ -237,7 +267,7 @@ public class S3Service {
      * 우리 버킷/허용 prefix가 아니면 예외.
      */
     public String extractKeyFromUrl(String fileUrl) {
-        if (fileUrl==null || !fileUrl.startsWith(publicUrl + "/")) {
+        if (fileUrl == null || !fileUrl.startsWith(publicUrl + "/")) {
             throw new IllegalArgumentException("허용되지 않은 URL입니다.");
         }
         String key = fileUrl.substring(publicUrl.length() + 1);   // "reviews/videos/uuid.mp4"
@@ -266,7 +296,7 @@ public class S3Service {
                     .build());
         } catch (S3Exception e) {
             // 404는 이미 지워진 것이므로 성공 취급
-            if (e.statusCode()!=404) {
+            if (e.statusCode() != 404) {
                 throw e;
             }
         }

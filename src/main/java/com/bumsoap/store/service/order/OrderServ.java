@@ -38,10 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.bumsoap.store.util.AreaType.*;
+import static com.bumsoap.store.util.BsUtils.MEDIA_SRC_PATTERN;
 
 @Service
 @RequiredArgsConstructor
@@ -90,10 +92,10 @@ public class OrderServ implements OrderServI {
         var bsOrder = orderRepo.findById(orderId).orElseThrow(
                 () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
 
-        if (userId==bsOrder.getUser().getId()) {
+        if (userId == bsOrder.getUser().getId()) {
             var result = s3Service.promotedAndPresigndUrls(updateReq.getReview());
-            var nextStatus = updateReq.getReview()==null ?
-                    OrderStatus.PURCHASE_CONFIRMED:OrderStatus.REVIEWED;
+            var nextStatus = updateReq.getReview() == null ?
+                    OrderStatus.PURCHASE_CONFIRMED : OrderStatus.REVIEWED;
 
             bsOrder.setStars(updateReq.getStars());
             bsOrder.setReview(result.getHtmlPromoted());
@@ -116,7 +118,7 @@ public class OrderServ implements OrderServI {
         var theOrder = orderRepo.findById(orderId).orElseThrow(
                 () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
 
-        if (userId==theOrder.getUser().getId()) {
+        if (userId == theOrder.getUser().getId()) {
             theOrder.setReview(null);
             theOrder.setStars((byte) 0);
             theOrder.setReviewTime(null);
@@ -134,7 +136,7 @@ public class OrderServ implements OrderServI {
     @Transactional
     public boolean updateOrderStatus(Long id, OrderStatus status) {
         int updateCount = orderRepo.updateOrderStatusByOrderId(id, status);
-        return (updateCount==1);
+        return (updateCount == 1);
     }
 
     @Transactional
@@ -144,7 +146,7 @@ public class OrderServ implements OrderServI {
                 request.getWaybillNo());
         int count2 = orderRepo.updateOrderStatusByOrderId(request.getId(),
                 request.getStatus());
-        return (count1==1 && count2==1);
+        return (count1 == 1 && count2 == 1);
     }
 
     @Override
@@ -154,7 +156,14 @@ public class OrderServ implements OrderServI {
         var orderDto = orderInfoDto.orElseThrow(
                 () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + orderId));
 
+        String review = orderDto.getReview();
+        Matcher m = MEDIA_SRC_PATTERN.matcher(review);
+        String converted = s3Service.convertUrlsPresignedGets(review, m);
+
+        orderDto.setHtmlDisplay(converted);
+
         int totalSoapCount = 0;
+
         for (var item : orderItems) {
             totalSoapCount += item.getCount();
         }
@@ -364,7 +373,7 @@ public class OrderServ implements OrderServI {
                 feeEtcServ.getDeliveryFeeOf(BoxSize.BOX_12)
         };
 
-        var index = soapCount==3 ? 0:1;
+        var index = soapCount == 3 ? 0 : 1;
         BigDecimal deliveryFee;
 
         switch (areaType) {
@@ -419,7 +428,7 @@ public class OrderServ implements OrderServI {
 
         // 추가, 새 목록 중, ID가 null 인 항목 수집
         var newItems = order.getItems().stream()
-                .filter(item -> item.getId()==null)
+                .filter(item -> item.getId() == null)
                 .toList();
 
         newItems.forEach(item -> {
@@ -430,7 +439,7 @@ public class OrderServ implements OrderServI {
 
         // 갱신, 새 목록 중, ID 가 있는 항목에 대해 읽은 주문의 항목에 성질값 복사
         order.getItems().stream()
-                .filter(item -> item.getId()!=null)
+                .filter(item -> item.getId() != null)
                 .forEach(item ->
                         readOrder.getItems().stream()
                                 .filter(readItem -> item.getId().equals(readItem.getId()))

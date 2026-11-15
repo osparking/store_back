@@ -102,7 +102,8 @@ public interface OrderRepo extends JpaRepository<BsOrder, Long> {
     @Query(value = """
             select bo.id, bo.order_id, bo.order_time,
                     bo.order_status, bo.order_name,
-                    bo.review, bo.stars, bu.full_name as customer,
+                    bo.review, NULL as html_display, 
+                    bo.stars, bu.full_name as customer,
                     bo.review_time, r.full_name as recipient,
                     bo.user_id, bo.payment, bo.delivery,
                     bo.waybill_no, ab.zipcode, ab.road_address,

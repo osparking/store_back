@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class BsUtils {
     private static final int EXPIRE_MIN = 10;
@@ -117,4 +118,7 @@ public class BsUtils {
         return now.format(formatter);
     }
 
+    public static final Pattern MEDIA_SRC_PATTERN =
+            Pattern.compile("(?:<video|<img)[^>]+src=\"([^\"]+)\"",
+                    Pattern.CASE_INSENSITIVE);
 }
