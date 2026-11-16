@@ -172,9 +172,8 @@ public class OrderServ implements OrderServI {
     @Override
     public ReviewInfo serviceReviewInfo(Long oId) {
         var reviewInfoOpt = orderRepo.findReviewInfo(oId);
-        var reviewInfo = reviewInfoOpt.orElseThrow(
+        return reviewInfoOpt.orElseThrow(
                 () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + oId));
-        return reviewInfo;
     }
 
     @Override

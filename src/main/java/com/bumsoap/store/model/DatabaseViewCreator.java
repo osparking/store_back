@@ -116,11 +116,10 @@ public class DatabaseViewCreator {
     @EventListener(ContextRefreshedEvent.class)
     public void createDeleteWorkerByIdProcedure() {
         String dropSql =
-                "DROP PROCEDURE IF EXISTS delete_customer_by_id";
+                "DROP PROCEDURE IF EXISTS delete_worker_by_id";
         String createSql =
                 """
-                        CREATE DEFINER=`root`@`localhost`
-                            PROCEDURE `bumsoap`.`delete_worker_by_id`(IN uid INT)
+                        CREATE PROCEDURE `bumsoap`.`delete_worker_by_id`(IN uid INT)
                         BEGIN
                             START TRANSACTION;
                         

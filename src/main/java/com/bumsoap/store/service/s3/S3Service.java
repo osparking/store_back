@@ -183,6 +183,7 @@ public class S3Service {
             changed = true;
         }
         if (!changed) return html;
+
         urlsSB.append(html.substring(endPt));
 
         String urlsPromoted = urlsSB.toString();
