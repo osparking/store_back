@@ -38,12 +38,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.bumsoap.store.util.AreaType.*;
-import static com.bumsoap.store.util.BsUtils.MEDIA_SRC_PATTERN;
 
 @Service
 @RequiredArgsConstructor
@@ -93,19 +91,21 @@ public class OrderServ implements OrderServI {
                 () -> new IdNotFoundEx("없는 주문 ID: " + orderId));
 
         if (userId == bsOrder.getUser().getId()) {
-            var result = s3Service.promotedAndPresigndUrls(updateReq.getReview());
-            var nextStatus = updateReq.getReview() == null ?
-                    OrderStatus.PURCHASE_CONFIRMED : OrderStatus.REVIEWED;
+            String review = updateReq.getReview();
+            // url 도 tmp 없게 되고, S3 에서 영상도 images 로 승급됨.
+            String promotedUrls = s3Service.promoteImageUrls(review);
 
             bsOrder.setStars(updateReq.getStars());
-            bsOrder.setReview(result.getHtmlPromoted());
+            bsOrder.setReview(promotedUrls);
 
             var reviewTime = LocalDateTime.now();
-            bsOrder.setReviewTime(reviewTime);
-            bsOrder.setOrderStatus(nextStatus);
 
-            return new HtmlSaveResult(true,
-                    result.getHtmlPromoted(), result.getHtmlDisplay(), reviewTime);
+            bsOrder.setReviewTime(reviewTime);
+            bsOrder.setOrderStatus(OrderStatus.REVIEWED);
+
+            String viewableUrls = s3Service.viewableImageUrls(promotedUrls);
+
+            return new HtmlSaveResult(true, promotedUrls, viewableUrls, reviewTime);
         } else {
             throw new UnauthorizedException(
                     Feedback.NOT_BELONG_TO_YOU + orderId);
@@ -157,8 +157,7 @@ public class OrderServ implements OrderServI {
                 () -> new IdNotFoundEx(Feedback.ORDER_ID_NOT_FOUND + orderId));
 
         String review = orderDto.getReview();
-        Matcher m = MEDIA_SRC_PATTERN.matcher(review);
-        String converted = s3Service.convertUrlsPresignedGets(review, m);
+        String converted = s3Service.viewableImageUrls(review);
 
         orderDto.setHtmlDisplay(converted);
 

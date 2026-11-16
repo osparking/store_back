@@ -1,6 +1,5 @@
 package com.bumsoap.store.service.s3;
 
-import com.bumsoap.store.data.HtmlSaveResult;
 import com.bumsoap.store.dto.MediaDeleteResponse;
 import com.bumsoap.store.dto.PresignedGetUrlResponse;
 import com.bumsoap.store.dto.PresignedUrlRequest;
@@ -161,19 +160,14 @@ public class S3Service {
     /**
      * HTML 안의 모든 tmp 미디어 URL을 정식 URL로 승격.
      */
-    public HtmlSaveResult promotedAndPresigndUrls(String html) {
-        var result = new HtmlSaveResult(html);
-
-        if (html == null || html.isBlank()) return result;
+    public String promoteImageUrls(String html) {
+        if (html == null || html.isBlank()) return html;
 
         Matcher m = MEDIA_SRC_PATTERN.matcher(html);
-        StringBuilder promotedUrls = new StringBuilder();
-        /**
-         * HTML 안의 모든 미디어 src URL을 미리 서명된 읽는-권한 URL로 변경
-         */
-        StringBuilder display_urls = new StringBuilder();
-        int promotedEnd = 0;
-        int displaysEnd = 0;
+        StringBuilder urlsSB = new StringBuilder();
+
+        int endPt = 0;
+        boolean changed = false;
 
         while (m.find()) {
             String src = m.group(1);
@@ -182,36 +176,33 @@ public class S3Service {
             if (src.contains("/tmp/")) {
                 String promoted = promoteFromTmp(key);  // 기존 메서드 재사용
 
-                promotedUrls.append(html, promotedEnd, m.start(1)); // src 앞부분까지 그대로 복사
-                promotedUrls.append(promoted);                    // src 자리만 치환
-                promotedEnd = m.end(1);
-                key = extractKeyFromUrl(promoted);
+                urlsSB.append(html, endPt, m.start(1)); // src 앞부분까지 그대로 복사
+                urlsSB.append(promoted);                    // src 자리만 치환
+                endPt = m.end(1);
             }
-            // display_urls 갱신
-            var response = fetchPresignedGetMediaRequest(key);
-
-            display_urls.append(html, displaysEnd, m.start(1));   // src 앞부분까지 그대로 복사
-            display_urls.append(response.url().toString());       // src 자리만 치환
-            displaysEnd = m.end(1);
+            changed = true;
         }
+        if (!changed) return html;
+        urlsSB.append(html.substring(endPt));
 
-        promotedUrls.append(html.substring(promotedEnd));
-        display_urls.append(html.substring(displaysEnd));
-        result.setHtmlPromoted(promotedUrls.toString());
-        result.setHtmlDisplay(display_urls.toString());
+        String urlsPromoted = urlsSB.toString();
+        // data-key의 tmp 제거 (src와 동일한 규칙)
+        urlsPromoted = urlsPromoted.replaceAll(
+                "(data-key=\"[^\"]*?)/tmp/", "$1/");
 
-        return result;
+        return urlsPromoted;
     }
 
     /**
      * HTML 안의 모든 미디어 src URL을 미리 서명된 읽는-권한 URL로 변경
      *
      * @param html
-     * @param m    : 미디어 태그 src 속성 값만 추출함.
      * @return
      */
-    public String convertUrlsPresignedGets(String html, Matcher m) {
+    public String viewableImageUrls(String html) {
         if (html == null || html.isBlank()) return html;
+
+        Matcher m = MEDIA_SRC_PATTERN.matcher(html);
 
         StringBuilder convertedPart = new StringBuilder();
         int addPoint = 0;
