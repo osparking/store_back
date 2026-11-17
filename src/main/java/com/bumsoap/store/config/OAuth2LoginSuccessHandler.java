@@ -55,7 +55,7 @@ public class OAuth2LoginSuccessHandler
     private final RoleServInt roleServ;
 
     @Autowired
-    private final AuthUtil  authUtil;
+    private final AuthUtil authUtil;
 
     @Autowired
     private final RefreshTokenServInt refreshTokenServ;
@@ -128,10 +128,10 @@ public class OAuth2LoginSuccessHandler
         var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
         Map<String, Object> attributes = oauth2User.getAttributes();
 
-        if (loginSource==LoginSource.GOOGLE
-                || loginSource==LoginSource.NAVER) {
+        if (loginSource == LoginSource.GOOGLE
+                || loginSource == LoginSource.NAVER) {
 
-            if (loginSource==LoginSource.NAVER) {
+            if (loginSource == LoginSource.NAVER) {
                 attributes = (Map<String, Object>) attributes.get("response");
             }
             String name = attributes.getOrDefault("name", "").toString();
@@ -166,7 +166,7 @@ public class OAuth2LoginSuccessHandler
                             LoginSource.valueOf(user.getSignUpMethod());
                     redirectWithJwt(user, oauth2User, loginSource, response);
                 } else {
-                    redirectToLogin(user.getEmail());
+                    redirectToLogin(user.getEmail(), response);
                 }
             } catch (AccountNotFoundException e) {
                 // 이메일이 DB 에 부재인 경우 처리
@@ -179,7 +179,7 @@ public class OAuth2LoginSuccessHandler
                 String accessToken = authorizedClient.getAccessToken().getTokenValue();
                 String mbPhone = fetchPhoneNumber(accessToken);
 
-                if (mbPhone==null || mbPhone.isEmpty()) {
+                if (mbPhone == null || mbPhone.isEmpty()) {
                     mbPhone = "01000000000";
                 }
                 customer.setMbPhone(mbPhone);
@@ -198,7 +198,7 @@ public class OAuth2LoginSuccessHandler
                 redirectWithJwt(user, oauth2User, loginSource, response);
             }
         }
-        super.onAuthenticationSuccess(request, response, authentication);
+//        super.onAuthenticationSuccess(request, response, authentication);
     }
 
     /**
@@ -210,7 +210,7 @@ public class OAuth2LoginSuccessHandler
     private void redirectWithJwt(BsUser user,
                                  DefaultOAuth2User oAuth2User,
                                  LoginSource loginSource,
-                                 HttpServletResponse response) {
+                                 HttpServletResponse response) throws IOException {
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         Set<GrantedAuthority> authorities =
@@ -245,14 +245,16 @@ public class OAuth2LoginSuccessHandler
 
         // ★ 응답에 Refresh Cookie 추가
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.sendRedirect(targetUrl);
 
-        this.setDefaultTargetUrl(targetUrl);
-        this.setAlwaysUseDefaultTargetUrl(true);
+//        this.setDefaultTargetUrl(targetUrl);
+//        this.setAlwaysUseDefaultTargetUrl(true);
     }
 
     private final TokenCache tokenCache;
 
-    private void redirectToLogin(String email) {
+    private void redirectToLogin(String email, HttpServletResponse response)
+            throws IOException {
         String tempToken = tokenCache.put(email, 300);
 
         // Redirect to the frontend with the email address
@@ -260,6 +262,6 @@ public class OAuth2LoginSuccessHandler
                         frontendUrl + "/login")
                 .queryParam("token", tempToken)
                 .build().toUriString();
-        this.setDefaultTargetUrl(targetUrl);
+        response.sendRedirect(targetUrl);
     }
 }
