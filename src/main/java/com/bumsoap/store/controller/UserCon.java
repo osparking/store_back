@@ -1,9 +1,7 @@
 package com.bumsoap.store.controller;
 
-import com.bumsoap.store.dto.ObjMapper;
-import com.bumsoap.store.dto.RecipientDto;
+import com.bumsoap.store.dto.*;
 import com.bumsoap.store.dto.SearchResult;
-import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.event.PwdResetReqEvent;
 import com.bumsoap.store.event.UserAuthEvent;
 import com.bumsoap.store.event.UserRegisterEvent;
@@ -36,6 +34,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,6 +69,31 @@ public class UserCon {
     private final BsUserDetailsService bsUserDetailsService;
     private final BsParameters provider;
     private final EmployeeServInt employeeServ;
+
+    @GetMapping(UrlMap.ME)
+    public ResponseEntity<ApiResp> getME(
+            @AuthenticationPrincipal BsUserDetails userDetails) {
+        try {
+            BsUserDetails user;
+
+            user = (BsUserDetails) userDetails;
+            List<String> roles = user.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority).toList();
+
+            boolean isAdmin = roles.contains("ROLE_ADMIN");
+            boolean isWorker = roles.contains("ROLE_WROKER");
+
+            UserMeDto userMeDto = new UserMeDto(user.getId(), user.getEmail(),
+                    user.getMbPhone(), isAdmin, isWorker, user.getLoginMethod(),
+                    user.getSignUpMethod(), user.isTwoFaAEnabled());
+
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.ME_FOUND, userMeDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @GetMapping(UrlMap.EMPLOYEE_NAME_PAGE)
     public ResponseEntity<ApiResp> getProduces(

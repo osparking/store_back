@@ -26,6 +26,7 @@ public class UrlMap {
     public static final String GET_DETAILS = "/get_details";
     public static final String EMPLOYEE_NAME_PAGE = "/employee_name_page";
     public static final String ENABLE = "/enable";
+    public static final String ME = "/me";
     /*== USER / 유저 끝 ==================================*/
 
     /*== ADMIN / 관리자 시작 ====================================================*/
