@@ -10,10 +10,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.bumsoap</groupId>
-  <artifactId>store</artifactId>
+  <artifactId>BumSoap</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>store</name>
-  <description>bum soap web store</description>
+  <name>BumSoap</name>
+  <description>BumSoap store homepage</description>
   <url/>
   <licenses>
     <license/>
