@@ -122,7 +122,6 @@ public class OAuth2LoginSuccessHandler
         String registrationId = oAuth2AuthenticationToken
                 .getAuthorizedClientRegistrationId();
 
-
         String oAuth2 = registrationId.toUpperCase();
         LoginSource loginSource = LoginSource.valueOf(oAuth2);
         var oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
@@ -154,7 +153,8 @@ public class OAuth2LoginSuccessHandler
             final Map<String, Object> finalAttributes = attributes;
 
             try {
-                var user = userService.getBsUserByEmail(email);
+                var user = userService.getOA2loginUser(email, loginSource);
+
                 // 등록된 유저의 OAuth 2 로그인 처리
                 if (user.isEnabled()) {
                     Collection<Role> roles = user.getRoles();

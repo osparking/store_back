@@ -202,6 +202,17 @@ public class UserServ implements UserServInt {
         return authentication;
     }
 
+    @Transactional
+    @Override
+    public BsUser getOA2loginUser(String email,
+                                  LoginSource loginSource)
+            throws AccountNotFoundException {
+        BsUser user = getBsUserByEmail(email);
+        user.setLoginMethod(loginSource.getLabel());
+
+        return user;
+    }
+
     @Override
     public BsUser getByEmail(String email) {
         Optional<BsUser> user = userRepo.findByEmail(email);

@@ -4,6 +4,7 @@ import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.request.LoginRequest;
+import com.bumsoap.store.util.LoginSource;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
@@ -40,6 +41,11 @@ public interface UserServInt {
 
     @Transactional
     Authentication authenticate(LoginRequest request);
+
+    @Transactional
+    BsUser getOA2loginUser(String email,
+                           LoginSource loginSource)
+            throws AccountNotFoundException;
 
     BsUser getByEmail(@NotBlank String email);
 
