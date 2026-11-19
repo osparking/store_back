@@ -3,8 +3,11 @@ package com.bumsoap.store.service.user;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.request.LoginRequest;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.core.Authentication;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
@@ -34,6 +37,9 @@ public interface UserServInt {
     BsUser getUserById(Long id);
 
     UserDto getUserDtoById(Long id);
+
+    @Transactional
+    Authentication authenticate(LoginRequest request);
 
     BsUser getByEmail(@NotBlank String email);
 

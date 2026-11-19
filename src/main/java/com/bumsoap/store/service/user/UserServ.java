@@ -5,15 +5,23 @@ import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
+import com.bumsoap.store.exception.SocialLoginRequiredException;
 import com.bumsoap.store.exception.UserTypeNotFouncEx;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.repository.UserRepoI;
+import com.bumsoap.store.request.LoginRequest;
 import com.bumsoap.store.service.TotpService;
+import com.bumsoap.store.service.worker.WorkerServInt;
 import com.bumsoap.store.util.Feedback;
+import com.bumsoap.store.util.LoginSource;
 import com.bumsoap.store.util.UserType;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -159,6 +167,39 @@ public class UserServ implements UserServInt {
         } else {
             throw new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id);
         }
+    }
+
+    private final WorkerServInt workerServ;
+    private final AuthenticationManager authenticationManager;
+
+    @Transactional
+    @Override
+    public Authentication authenticate(LoginRequest request) {
+        BsUser user = getByEmail(request.getEmail());
+
+        if (user==null) {
+            throw new DataNotFoundException(Feedback.NOT_FOUND_EMAIL);
+        } else {
+            var signUpMethod = user.getSignUpMethod();
+
+            if (!"EMAIL".equals(signUpMethod)) {
+                LoginSource source = LoginSource.valueOf(signUpMethod);
+                var message = source.getLabel() + Feedback.TRY_SOCIAL_LOGIN;
+
+                throw new SocialLoginRequiredException(message);
+            }
+        }
+
+        if (workerServ.isAccountDeleted(request.getEmail())) {
+            throw new AccountExpiredException(Feedback.WRONG_CREDENTIAL);
+        }
+
+        var authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(), request.getPassword()));
+        user.setLoginMethod(LoginSource.EMAIL.name());
+
+        return authentication;
     }
 
     @Override

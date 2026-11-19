@@ -31,7 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -227,32 +226,11 @@ public class AuthCon {
     @PostMapping(UrlMap.LOGIN)
     public ResponseEntity<ApiResp> login(@Valid @RequestBody LoginRequest request) {
         try {
-            BsUser user = userService.getByEmail(request.getEmail());
+            var authentication = userService.authenticate(request);
 
-            if (user==null) {
-                return ResponseEntity.status(UNAUTHORIZED)
-                        .body(new ApiResp(Feedback.NOT_FOUND_EMAIL, null));
-            } else {
-                var signUpMethod = user.getSignUpMethod();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                if (!"EMAIL".equals(signUpMethod)) {
-                    LoginSource source = LoginSource.valueOf(signUpMethod);
-                    var message = source.getLabel() + Feedback.TRY_SOCIAL_LOGIN;
-
-                    throw new SocialLoginRequiredException(message);
-                }
-            }
-
-            if (workerServ.isAccountDeleted(request.getEmail())) {
-                throw new AccountExpiredException(Feedback.WRONG_CREDENTIAL);
-            }
-            var authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(), request.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(
-                    authentication);
             var userDetails = (BsUserDetails) authentication.getPrincipal();
-            userDetails.setLoginMethod(LoginSource.EMAIL.getLabel());
             String jwt = jwtUtilBean.generateTokenForUser(userDetails);
             /**
              * 리프레시 토큰을 만들고, DB 에 저장하며, 반응에 포함한다.

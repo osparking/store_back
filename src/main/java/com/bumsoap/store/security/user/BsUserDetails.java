@@ -43,7 +43,7 @@ public class BsUserDetails implements UserDetails {
             .collect(Collectors.toList());
         return new BsUserDetails(user.getId(), user.getEmail(),
             user.getPassword(), user.getFullName(), user.isEnabled(),
-            authorities, user.getSignUpMethod(), null,
+            authorities, user.getSignUpMethod(), user.getLoginMethod(),
             user.isTwoFaEnabled(), user.getMbPhone());
     }
 

@@ -72,20 +72,19 @@ public class UserCon {
 
     @GetMapping(UrlMap.ME)
     public ResponseEntity<ApiResp> getME(
-            @AuthenticationPrincipal BsUserDetails userDetails) {
+            @AuthenticationPrincipal BsUserDetails bsUserDetails) {
         try {
-            BsUserDetails user;
-
-            user = (BsUserDetails) userDetails;
-            List<String> roles = user.getAuthorities().stream()
+            List<String> roles = bsUserDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority).toList();
 
             boolean isAdmin = roles.contains("ROLE_ADMIN");
             boolean isWorker = roles.contains("ROLE_WROKER");
 
-            UserMeDto userMeDto = new UserMeDto(user.getId(), user.getEmail(),
-                    user.getMbPhone(), isAdmin, isWorker, user.getLoginMethod(),
-                    user.getSignUpMethod(), user.isTwoFaAEnabled());
+            UserMeDto userMeDto = new UserMeDto(bsUserDetails.getId(),
+                    bsUserDetails.getEmail(), bsUserDetails.getMbPhone(),
+                    isAdmin, isWorker, bsUserDetails.getLoginMethod(),
+                    bsUserDetails.getSignUpMethod(),
+                    bsUserDetails.isTwoFaAEnabled());
 
             return ResponseEntity.ok(
                     new ApiResp(Feedback.ME_FOUND, userMeDto));
