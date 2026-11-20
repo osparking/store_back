@@ -337,7 +337,7 @@ public class AuthCon {
 
             // 6. 응답 헤더 - 리프레시를 HttpOnly 쿠키로 설정
             ResponseCookie refreshCookie =
-                    authUtil.createSaveCookie(refresh2, false);
+                    authUtil.createSaveCookie(refresh2, refreshToken.isSaveLogin());
 
             // 7. 최종 응답(AT 는 본문에, RT 는 헤더에 적재)
             return ResponseEntity.ok()
