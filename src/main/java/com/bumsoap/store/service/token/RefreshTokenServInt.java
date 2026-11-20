@@ -15,5 +15,5 @@ public interface RefreshTokenServInt {
      * @return
      */
     @Transactional
-    String createRefreshForUser(Long userId);
+    String createRefreshForUser(Long userId, boolean saveLogin);
 }

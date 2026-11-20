@@ -56,6 +56,9 @@ public class RefreshToken {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "save_login", nullable = false)
+    private boolean saveLogin;
+
     /**
      * 토큰이 아직 유효한지 확인하는 편의 메서드
      * (사용 가능하고, 만료일이 지나지 않은 경우 참, 아니면 거짓 반환)

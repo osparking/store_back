@@ -198,7 +198,6 @@ public class OAuth2LoginSuccessHandler
                 redirectWithJwt(user, oauth2User, loginSource, response);
             }
         }
-//        super.onAuthenticationSuccess(request, response, authentication);
     }
 
     /**
@@ -231,7 +230,7 @@ public class OAuth2LoginSuccessHandler
         this.setAlwaysUseDefaultTargetUrl(true);
 
         // 리프레시 토큰 생성 및 DB 저장
-        var refresh = refreshTokenServ.createRefreshForUser(user.getId());
+        var refresh = refreshTokenServ.createRefreshForUser(user.getId(), false);
         ResponseCookie refreshCookie = authUtil.createSaveCookie(refresh, false);
 
         // Generate JWT token

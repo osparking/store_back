@@ -82,7 +82,8 @@ public class UserCon {
 
             UserMeDto userMeDto = new UserMeDto(bsUserDetails.getId(),
                     bsUserDetails.getEmail(), bsUserDetails.getMbPhone(),
-                    isAdmin, isWorker, bsUserDetails.getLoginMethod(),
+                    roles, isAdmin, isWorker,
+                    bsUserDetails.getLoginMethod(),
                     bsUserDetails.getSignUpMethod(),
                     bsUserDetails.isTwoFaAEnabled());
 

@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -179,6 +180,15 @@ public class AuthCon {
     private final WorkerServInt workerServ;
     private final RefreshTokenServInt refreshTokenServ;
 
+    @Value("${cookie.domain}")
+    private String cookieDomain;
+
+    @Value("${cookie.secure}")
+    private boolean cookieSecure;
+
+    @Value("${cookie.same-site}")
+    private String sameSite;
+
     @PostMapping(UrlMap.LOGOUT)
     public ResponseEntity<ApiResp> logout(
             HttpServletRequest request,
@@ -191,7 +201,7 @@ public class AuthCon {
             }
             refreshTokenServ.consultDeleteRefreshToken(refreshToken);
         } catch (RuntimeException e) {
-            System.out.println("Logout error: " + e.getMessage());
+            logger.error("Logout error: {}", e.getMessage());
         }
 
         // 2. (필수) 서버 내부 세션 무효화
@@ -206,18 +216,39 @@ public class AuthCon {
 
         // 4. (필수) JSESSIONID 쿠키 강제 만료 (Set-Cookie 헤더 추가)
         //    Path를 반드시 "/"로 지정해야 웹앱 전체 경로에서 쿠키가 삭제됩니다.
-        String jsessionCookieStr = // (운영 환경이라면 Secure; 도 추가)
-                "JSESSIONID=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax";
+        HttpHeaders headers = getHeaders();
 
-        // 5. (기존) RefreshToken 쿠키 만료 헤더
-        String refreshCookieStr =
-                "refreshToken=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0";
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new ApiResp(Feedback.LOGOUT_SUCCESS, null));
+    }
+
+    private HttpHeaders getHeaders() {
+        // (운영 환경이라면 Secure; 도 추가)
+        ResponseCookie js = ResponseCookie.from("JSESSIONID", "")
+                .path("/")
+                .httpOnly(true)
+                .domain(cookieDomain)
+                .secure(cookieSecure)
+                .sameSite(sameSite)
+                .maxAge(0)
+                .build();
+
+        // (기존) RefreshToken 쿠키 만료 헤더
+        ResponseCookie rt = ResponseCookie.from("refreshToken", "")
+                .path("/")
+                .httpOnly(true)
+                .domain(cookieDomain)
+                .secure(cookieSecure)
+                .sameSite(sameSite)
+                .maxAge(0)
+                .build();
 
         // 6. 최종 응답 반환 (두 개의 쿠키 삭제 헤더를 모두 포함)
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jsessionCookieStr)
-                .header(HttpHeaders.SET_COOKIE, refreshCookieStr)
-                .body(new ApiResp(Feedback.LOGOUT_SUCCESS, null));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, js.toString());
+        headers.add(HttpHeaders.SET_COOKIE, rt.toString());
+        return headers;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(AuthCon.class);
@@ -235,7 +266,8 @@ public class AuthCon {
             /**
              * 리프레시 토큰을 만들고, DB 에 저장하며, 반응에 포함한다.
              */
-            var refresh = refreshTokenServ.createRefreshForUser(userDetails.getId());
+            var refresh = refreshTokenServ.createRefreshForUser(
+                    userDetails.getId(), request.getSave_login());
             ResponseCookie refreshCookie =
                     authUtil.createSaveCookie(refresh, request.getSave_login());
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
@@ -298,7 +330,8 @@ public class AuthCon {
             String jwt = jwtUtilBean.generateTokenForUser(details);
 
             // 4. 리프레시 토큰을 만들고, DB 에 저장
-            var refresh2 = refreshTokenServ.createRefreshForUser(details.getId());
+            var refresh2 = refreshTokenServ.createRefreshForUser(
+                    details.getId(), refreshToken.isSaveLogin());
 
             // 5. 응답 본문 - JWT 만 포함
             JwtResponse jwtResponse = new JwtResponse(details.getId(), jwt);

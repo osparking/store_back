@@ -44,7 +44,7 @@ public class JwtUtilBean {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
         return Jwts.builder().setSubject(userDetails.getUsername())
-                .claim("id", userDetails.getId())
+//                .claim("id", userDetails.getId())
                 .claim("email", userDetails.getEmail())
                 .claim("fullName", userDetails.getFullName())
                 .claim("mbPhone", userDetails.getMbPhone())

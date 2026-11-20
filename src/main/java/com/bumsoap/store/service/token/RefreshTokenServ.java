@@ -66,12 +66,7 @@ public class RefreshTokenServ implements RefreshTokenServInt{
         RefreshToken refreshToken = refreshRepo.findByTokenHash(hashedToken)
                 .orElseThrow(() -> new RefreshTokenException("RT_NOT_FOUND"));
 
-        if (refreshToken.isValid()) {
-            // 발견된 정당한 RT 제거
-            refreshRepo.delete(refreshToken);
-        } else {
-            throw new RefreshTokenException("RT_REVOKED_OR_EXPIRED");
-        }
+        refreshRepo.delete(refreshToken);   // 유효/만료 무관 삭제
         return true;
     }
 
@@ -80,14 +75,14 @@ public class RefreshTokenServ implements RefreshTokenServInt{
 
     @Transactional
     @Override
-    public String createRefreshForUser(Long userId) {
+    public String createRefreshForUser(Long userId, boolean saveLogin) {
         String refresh = UUID.randomUUID().toString();
         var user = userService.findById(userId);
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .tokenHash(DigestUtils.sha256Hex(refresh)) // Apache Commons Codec
-//                .expiryDate(LocalDateTime.now().plusWeeks(1))
                 .expiryDate(LocalDateTime.now().plusSeconds(expirationSec))
+                .saveLogin(saveLogin)
                 .build();
 
         refreshRepo.save(refreshToken);
