@@ -195,13 +195,12 @@ public class AuthCon {
             @CookieValue(value = "refreshToken", required = false)
             String refreshToken) {
         // 1. (중요) 세션과 JSESSIONID 정리
-        try {
-            if (refreshToken==null) { // RefreshToken 처리 (DB 삭제)
-                throw new RefreshTokenException("RT_MISSING");
+        if (refreshToken != null) { // RefreshToken 처리 (DB 삭제)
+            try {
+                refreshTokenServ.consultDeleteRefreshToken(refreshToken);
+            } catch (RefreshTokenException e) {
+                logger.info("Logout: RT already invalid - {}", e.getMessage());
             }
-            refreshTokenServ.consultDeleteRefreshToken(refreshToken);
-        } catch (RuntimeException e) {
-            logger.error("Logout error: {}", e.getMessage());
         }
 
         // 2. (필수) 서버 내부 세션 무효화
