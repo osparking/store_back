@@ -4,13 +4,19 @@ import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.model.OrderItem;
 import com.bumsoap.store.request.AddItemReq;
 import com.bumsoap.store.response.ApiResp;
+import com.bumsoap.store.security.user.BsUserDetails;
 import com.bumsoap.store.service.orderItem.OrderItemServI;
 import com.bumsoap.store.util.Feedback;
 import com.bumsoap.store.util.UrlMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -36,8 +42,10 @@ public class OrderItemCon {
   }
 
   @GetMapping(UrlMap.GET_SHAPE_COUNT)
-  public ResponseEntity<ApiResp> findShapeCount(@PathVariable Long userId) {
+  public ResponseEntity<ApiResp> findShapeCount(
+          @AuthenticationPrincipal UserDetails userDetails) {
     try {
+      Long userId = ((BsUserDetails)userDetails).getId();
       var shapeCounts = orderItemServ.findSoapCountByShapeForUser(userId);
 
       return ResponseEntity.ok(

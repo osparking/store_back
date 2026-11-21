@@ -119,7 +119,7 @@ public class UrlMap {
     public static final String STATUS_LIST = "/status_list";
     public static final String GET_ORDER_DETAIL = "/{id}/get_details";
     public static final String GET_REVIEW_INFO = "/{oId}/review_info";
-    public static final String GET_SHAPE_COUNT = "/{userId}/get_shape_count";
+    public static final String GET_SHAPE_COUNT = "/get_shape_count";
 
     /*== 카트 관련 항목 시작 ================================= */
     public static final String CART = API + "/cart";
