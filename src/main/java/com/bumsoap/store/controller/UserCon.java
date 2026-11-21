@@ -267,9 +267,11 @@ public class UserCon {
     }
 
     @GetMapping(UrlMap.SOAPS_MONTH)
-    public ResponseEntity<ApiResp> getSoapsMonth(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResp> getSoapsMonth(
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            var results = userServ.getSoapsMonthOfUser(id);
+            Long userId = ((BsUserDetails)userDetails).getId();
+            var results = userServ.getSoapsMonthOfUser(userId);
 
             return ResponseEntity.ok(new ApiResp("월별 구매량 읽음", results));
         } catch (Exception e) {
