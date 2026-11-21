@@ -240,12 +240,13 @@ public class OrderCon {
 
     @GetMapping(UrlMap.MY_ROWS)
     public ResponseEntity<ApiResp> getMyRows(
-            @RequestParam("userId") int userId,
             @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size) {
-
+            @RequestParam("size") Optional<Integer> size,
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
+            Long userId = ((BsUserDetails)userDetails).getId();
             var result = orderServ.serviceMyOrders(userId, page, size);
+
             return ResponseEntity.ok(
                     new ApiResp(Feedback.MY_ORDERS_FOUND, result));
         } catch (Exception e) {
