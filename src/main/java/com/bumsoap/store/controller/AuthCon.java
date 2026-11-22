@@ -25,10 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
@@ -57,7 +54,7 @@ public class AuthCon {
     @GetMapping("/email")
     public ResponseEntity<?> getEmailByToken(@RequestParam String token) {
         String email = tokenCache.getAndRemove(token);
-        if (email==null) {
+        if (email == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Invalid or expired token"));
         }
@@ -100,7 +97,7 @@ public class AuthCon {
     public ResponseEntity<?> get2FAstatus() {
         var details = authUtil.loggedInUserDetails();
 
-        if (details==null) {
+        if (details == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Feedback.NOT_FOUND);
         } else {
@@ -164,10 +161,10 @@ public class AuthCon {
             TokenResult result = verifinTokenService.verifyToken(token);
             // 만료된 토큰의 경우 새 토큰을 발급하고 새 이메일을 보낸다.
             HttpStatus status = HttpStatus.OK;
-            if (result==TokenResult.EXPIRED) {
+            if (result == TokenResult.EXPIRED) {
                 result = verifinTokenService.reIssueToken(token);
             }
-            if (result==TokenResult.INVALID) {
+            if (result == TokenResult.INVALID) {
                 status = HttpStatus.GONE;
             }
             return ResponseEntity.status(status).body(new ApiResp(result.label, null));
@@ -206,7 +203,7 @@ public class AuthCon {
         // 2. (필수) 서버 내부 세션 무효화
         HttpSession session = request.getSession(false);
 
-        if (session!=null) {
+        if (session != null) {
             session.invalidate(); // 세션에 저장된 모든 데이터 제거
         }
 
@@ -297,7 +294,7 @@ public class AuthCon {
         } catch (RuntimeException e) {
             logger.error("Unexpected login error: ", e);
             BsUser user = userService.getByEmail(request.getEmail());
-            if (user==null) {
+            if (user == null) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                         .body(new ApiResp(e.getMessage(), null));
             } else {
@@ -317,7 +314,7 @@ public class AuthCon {
         logger.debug("토큰 refresh 시도 시간: {}", getNow_HH_MM());
         try {
             // 1. 쿠키에 RT가 없는 경우 (required = false 로 설정하여 직접 예외 처리)
-            if (refresh1==null || refresh1.isEmpty()) {
+            if (refresh1 == null || refresh1.isEmpty()) {
                 throw new RefreshTokenException("RT_MISSING");
             }
             // 2. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
@@ -345,11 +342,32 @@ public class AuthCon {
                     .body(new ApiResp(Feedback.REFRESHING_SUCCESS, jwtResponse));
         } catch (RefreshTokenException e) {
             logger.info(e.getMessage());
-            return ResponseEntity.status(UNAUTHORIZED).body(
-                    new ApiResp(e.getMessage(), null));
+            return ResponseEntity
+                    .status(decideStatusCode(e.getMessage()))
+                    .body(new ApiResp(
+                            "리프레시 토큰 예외입니다.", null, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
         }
+    }
+
+    private HttpStatusCode decideStatusCode(String exceptionMessage) {
+        HttpStatusCode code = UNAUTHORIZED;
+        switch (exceptionMessage) {
+            case "RT_EXPIRED":
+                code = UNAUTHORIZED;
+                break;
+            case "RT_NOT_FOUND":
+                code = NOT_FOUND;
+                break;
+            case "RT_REVOKED":
+                code = FORBIDDEN;
+                break;
+            default:
+                code = INTERNAL_SERVER_ERROR;
+                break;
+        }
+        return code;
     }
 }

@@ -45,7 +45,11 @@ public class RefreshTokenServ implements RefreshTokenServInt{
                 .orElseThrow(() -> new RefreshTokenException("RT_NOT_FOUND"));
 
         if (!refreshToken.isValid()) {
-            throw new RefreshTokenException("RT_REVOKED_OR_EXPIRED");
+            if (refreshToken.isRevoked()) {
+                throw new RefreshTokenException("RT_REVOKED");
+            } else {
+                throw new RefreshTokenException("RT_EXPIRED");
+            }
         }
         // 발견된 사용가능한 RT 사용되었다고 표시함
         refreshToken.setRevoked(true);
