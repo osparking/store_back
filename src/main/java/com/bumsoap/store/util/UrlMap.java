@@ -15,6 +15,7 @@ public class UrlMap {
     /*== USER / 유저 시작 ====================================================*/
     public static final String USER = API + "/user";
     public static final String GET_USER_DTO_BY_ID = "/{id}/get_dto";
+    public static final String GET_USER_INFO = "/{id}/info";
     public static final String SOAPS_MONTH = "/soaps_month";
     public static final String CHANGE_DEPT = "/{id}/change_dept";
     public static final String GET_RECIPIENT = "/{id}/get_recipient";
@@ -27,6 +28,7 @@ public class UrlMap {
     public static final String EMPLOYEE_NAME_PAGE = "/employee_name_page";
     public static final String ENABLE = "/enable";
     public static final String ME = "/me";
+    public static final String UPDATE_DTO = "/update_dto";
     /*== USER / 유저 끝 ==================================*/
 
     /*== ADMIN / 관리자 시작 ====================================================*/
@@ -37,7 +39,7 @@ public class UrlMap {
     public static final String USER_COUNT_STAT = "/user/count_stat";
     public static final String GET_ALL_WORKERS = "/worker/get_all";
     public static final String GET_ALL_CUSTOMERS = "/customer/get_all";
-    public static final String TOGGLE_ENABLED = "/worker/{id}/toggle" ;
+    public static final String TOGGLE_ENABLED = "/worker/{id}/toggle";
     public static final String ADD_PRICE = "/add_price";
     public static final String ADD_FEE_DELIVERY = "/add_fee_delivery";
     public static final String ADD_FEE_OTHER = "/add_fee_other";
@@ -126,7 +128,7 @@ public class UrlMap {
     public static final String ADD_CART_ITEM = "/item/add";
     public static final String GET_BY_USERID = "/{uid}/get";
     public static final String CART_ITEM_COUNT =
-        "/{itemId}/{count}/fix";
+            "/{itemId}/{count}/fix";
 
     /*== 배송비 등 관련 항목 ======== */
     public static final String FEE_ETC = API + "/fee_etc";

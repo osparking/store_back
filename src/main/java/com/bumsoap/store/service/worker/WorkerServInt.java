@@ -8,6 +8,8 @@ import com.bumsoap.store.model.Worker;
 import java.util.List;
 
 public interface WorkerServInt {
+    Worker findById(Long id);
+
     List<UserDto> findAllWorkers();
 
     List<String> findAllDept();

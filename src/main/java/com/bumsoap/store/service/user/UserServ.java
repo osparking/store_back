@@ -3,11 +3,13 @@ package com.bumsoap.store.service.user;
 import com.bumsoap.store.dto.ObjMapper;
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
+import com.bumsoap.store.dto.UserUpdateDto;
 import com.bumsoap.store.exception.DataNotFoundException;
 import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.exception.SocialLoginRequiredException;
 import com.bumsoap.store.exception.UserTypeNotFouncEx;
 import com.bumsoap.store.model.BsUser;
+import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.request.LoginRequest;
 import com.bumsoap.store.service.TotpService;
@@ -30,6 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import static com.bumsoap.store.util.BsUtils.getShortTimeStr;
 
 @Service
 @RequiredArgsConstructor
@@ -65,7 +69,7 @@ public class UserServ implements UserServInt {
     @Override
     public void enable2FA(Long id) {
         BsUser user = userRepo.findById(id).orElseThrow(
-            () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+                () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
         user.setTwoFaEnabled(true);
         userRepo.save(user);
     }
@@ -73,7 +77,7 @@ public class UserServ implements UserServInt {
     @Override
     public void disable2FA(Long id) {
         BsUser user = userRepo.findById(id).orElseThrow(
-            () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+                () -> new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
         user.setTwoFaEnabled(false);
         userRepo.save(user);
     }
@@ -81,20 +85,21 @@ public class UserServ implements UserServInt {
     @Override
     public boolean verifyCode(Long id, int code) {
         BsUser user = userRepo.findById(id).orElseThrow(() ->
-            new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+                new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
         return totpService.verifyCode(user.getTwoFaSecret(), code);
     }
 
     /**
      * 2FA 체계에서 유저를 위해 사용할 비밀을 생성하고, 유저 테이블에
      * 저장하는 작업도 병행한다.
+     *
      * @param id
      * @return
      */
     @Override
     public GoogleAuthenticatorKey generateSecret(Long id) {
         BsUser user = userRepo.findById(id).orElseThrow(() ->
-            new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
+                new IdNotFoundEx(Feedback.USER_ID_NOT_FOUND + id));
         var secret = totpService.generateSecret();
         user.setTwoFaSecret(secret.getKey());
         userRepo.save(user);
@@ -157,6 +162,28 @@ public class UserServ implements UserServInt {
         }
     }
 
+    @Transactional
+    @Override
+    public UserUpdateDto getUserUpdateDto(Long id) {
+        BsUser bsUser = userRepo.findById(id).orElseThrow(
+                () -> new IdNotFoundEx("없는 유저 ID:" + id));
+
+        var userUpdateDto = new UserUpdateDto(
+                bsUser.getId(), bsUser.getUserType().label,
+                bsUser.getFullName(), bsUser.getMbPhone(),
+                bsUser.getEmail(), null,
+                bsUser.isEnabled(), getShortTimeStr(bsUser.getAddDate()),
+                null
+        );
+
+        if (bsUser.getUserType() == UserType.WORKER) {
+            Worker worker = workerServ.findById(id);
+            userUpdateDto.setDept(worker.getDept());
+        }
+
+        return userUpdateDto;
+    }
+
     @Override
     public UserDto getUserDtoById(Long id) {
         Optional<UserDto> userOptional = userRepo.findUserDtoById(id);
@@ -177,7 +204,7 @@ public class UserServ implements UserServInt {
     public Authentication authenticate(LoginRequest request) {
         BsUser user = getByEmail(request.getEmail());
 
-        if (user==null) {
+        if (user == null) {
             throw new DataNotFoundException(Feedback.NOT_FOUND_EMAIL);
         } else {
             var signUpMethod = user.getSignUpMethod();

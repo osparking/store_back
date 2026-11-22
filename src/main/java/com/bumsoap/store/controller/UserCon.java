@@ -41,10 +41,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZoneId;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -69,6 +66,29 @@ public class UserCon {
     private final BsUserDetailsService bsUserDetailsService;
     private final BsParameters provider;
     private final EmployeeServInt employeeServ;
+
+    @GetMapping(UrlMap.GET_USER_INFO)
+    public ResponseEntity<ApiResp> getUserInfo(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id) {
+        try {
+            var adminEmail = userServ.getAdminEmail();
+            var bsUD = (BsUserDetails) userDetails;
+
+            if (!adminEmail.equals(bsUD.getEmail())
+                    && !Objects.equals(bsUD.getId(), id)) {
+                return ResponseEntity.status(UNAUTHORIZED).body(
+                        new ApiResp(Feedback.NOT_QUALIFIED_FOR + id, null));
+            }
+            var userUpdateDto = userServ.getUserUpdateDto(id);
+
+            return ResponseEntity.ok(
+                    new ApiResp(Feedback.USER_INFO_FOUND, userUpdateDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResp(e.getMessage(), null));
+        }
+    }
 
     @GetMapping(UrlMap.ME)
     public ResponseEntity<ApiResp> getME(
@@ -116,11 +136,11 @@ public class UserCon {
         try {
             String email = userServ.findDummyEmailWithMaxNum();
             String suffix = null;
-            if (email!=null) {
+            if (email != null) {
                 suffix = email.substring(5, 9);
             }
-            return ResponseEntity.ok(new ApiResp(email==null ?
-                    Feedback.NOT_FOUND_EMAIL + "dummy email":Feedback.FOUND,
+            return ResponseEntity.ok(new ApiResp(email == null ?
+                    Feedback.NOT_FOUND_EMAIL + "dummy email" : Feedback.FOUND,
                     suffix));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND)
@@ -170,8 +190,8 @@ public class UserCon {
         try {
             RecipientDto recipient = userServ.getRecipientById(id);
 
-            return ResponseEntity.ok(new ApiResp(recipient==null ?
-                    Feedback.NO_DEFAULT_RECIPIENT:
+            return ResponseEntity.ok(new ApiResp(recipient == null ?
+                    Feedback.NO_DEFAULT_RECIPIENT :
                     Feedback.DEFAULT_RECIPIENT,
                     recipient));
         } catch (Exception e) {
@@ -270,7 +290,7 @@ public class UserCon {
     public ResponseEntity<ApiResp> getSoapsMonth(
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            Long userId = ((BsUserDetails)userDetails).getId();
+            Long userId = ((BsUserDetails) userDetails).getId();
             var results = userServ.getSoapsMonthOfUser(userId);
 
             return ResponseEntity.ok(new ApiResp("월별 구매량 읽음", results));
@@ -284,7 +304,7 @@ public class UserCon {
     public ResponseEntity<ApiResp> getUser(@PathVariable("id") Long id) {
         try {
             BsUser user = userServ.getUserById(id);
-            if (user==null) {
+            if (user == null) {
                 String msg = "존재하지 않는 아이디: " + id;
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
                         .body(new ApiResp(msg, null));
@@ -311,9 +331,11 @@ public class UserCon {
     }
 
     @PutMapping(UrlMap.UPDATE)
-    public ResponseEntity<ApiResp> update(@PathVariable("id") Long id,
-                                          @RequestBody UserUpdateReq request) {
+    public ResponseEntity<ApiResp> update(
+            @RequestBody UserUpdateReq request,
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
+            Long id = ((BsUserDetails) userDetails).getId();
             BsUser user = userServ.getUserById(id);
             boolean removeTokens = user.isEnabled() && !request.isEnabled();
 

@@ -48,7 +48,7 @@ public class BsUtils {
 
     public static String getShortTimeStr(LocalDateTime ldTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-                "yyyy-MM-dd HH:mm:ss", Locale.KOREAN);
+                "yy-MM-dd HH:mm:ss", Locale.KOREAN);
 
         return ldTime.format(formatter);
     }

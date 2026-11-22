@@ -2,6 +2,7 @@ package com.bumsoap.store.service.worker;
 
 import com.bumsoap.store.dto.*;
 import com.bumsoap.store.email.EmailManager;
+import com.bumsoap.store.exception.IdNotFoundEx;
 import com.bumsoap.store.model.Worker;
 import com.bumsoap.store.repository.UserRepoI;
 import com.bumsoap.store.repository.WorkerRepoI;
@@ -33,6 +34,12 @@ public class WorkerServ implements WorkerServInt {
     private final UserRepoI userRepoI;
 
     @Override
+    public Worker findById(Long id) {
+        return workerRepo.findById(id).orElseThrow(
+                () -> new IdNotFoundEx("없는 직원 ID:" + id));
+    }
+
+    @Override
     public List<UserDto> findAllWorkers() {
         var workers = workerRepo.findAllByOrderByFullNameAsc();
         return workers.stream().map(this::mapWorkerToDtoUser).toList();
@@ -42,7 +49,7 @@ public class WorkerServ implements WorkerServInt {
         UserDto dtoUser = entityConverter.mapEntityToDto(worker, UserDto.class);
 
         dtoUser.setAddDate(BsUtils.getLocalDateTimeStr(worker.getAddDate()));
-        if (worker.getPhoto()!=null) {
+        if (worker.getPhoto() != null) {
             try {
                 byte[] photoBytes = photoServ.getImageData(worker.getPhoto().getId());
                 dtoUser.setPhotoBytes(photoBytes);

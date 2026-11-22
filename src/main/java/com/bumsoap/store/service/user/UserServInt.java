@@ -2,6 +2,7 @@ package com.bumsoap.store.service.user;
 
 import com.bumsoap.store.dto.RecipientDto;
 import com.bumsoap.store.dto.UserDto;
+import com.bumsoap.store.dto.UserUpdateDto;
 import com.bumsoap.store.model.BsUser;
 import com.bumsoap.store.request.LoginRequest;
 import com.bumsoap.store.util.LoginSource;
@@ -37,6 +38,9 @@ public interface UserServInt {
 
     BsUser getUserById(Long id);
 
+    @Transactional
+    UserUpdateDto getUserUpdateDto(Long id);
+
     UserDto getUserDtoById(Long id);
 
     @Transactional
@@ -60,4 +64,5 @@ public interface UserServInt {
     RecipientDto getRecipientById(Long id);
 
     List<Map<String, Object>> getSoapsMonthOfUser(Long id);
+
 }
