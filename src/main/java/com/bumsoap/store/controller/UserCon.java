@@ -98,7 +98,7 @@ public class UserCon {
                     .map(GrantedAuthority::getAuthority).toList();
 
             boolean isAdmin = roles.contains("ROLE_ADMIN");
-            boolean isWorker = roles.contains("ROLE_WROKER");
+            boolean isWorker = roles.contains("ROLE_WORKER");
 
             UserMeDto userMeDto = new UserMeDto(bsUserDetails.getId(),
                     bsUserDetails.getEmail(), bsUserDetails.getMbPhone(),
