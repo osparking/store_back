@@ -12,6 +12,7 @@ import java.util.List;
 public class UserMeDto {
     private Long id;
     private String email;
+    private String fullName;
     private String mbPhone; // Mobile Phone
     private List<String> roles;
     private boolean isAdmin;

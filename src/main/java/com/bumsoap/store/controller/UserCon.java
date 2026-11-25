@@ -96,16 +96,7 @@ public class UserCon {
         try {
             List<String> roles = bsUserDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority).toList();
-
-            boolean isAdmin = roles.contains("ROLE_ADMIN");
-            boolean isWorker = roles.contains("ROLE_WORKER");
-
-            UserMeDto userMeDto = new UserMeDto(bsUserDetails.getId(),
-                    bsUserDetails.getEmail(), bsUserDetails.getMbPhone(),
-                    roles, isAdmin, isWorker,
-                    bsUserDetails.getLoginMethod(),
-                    bsUserDetails.getSignUpMethod(),
-                    bsUserDetails.isTwoFaAEnabled());
+            UserMeDto userMeDto = getUserMeDto(bsUserDetails, roles);
 
             return ResponseEntity.ok(
                     new ApiResp(Feedback.ME_FOUND, userMeDto));
@@ -113,6 +104,16 @@ public class UserCon {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResp(e.getMessage(), null));
         }
+    }
+
+    private static UserMeDto getUserMeDto(BsUserDetails details, List<String> roles) {
+        boolean isAdmin = roles.contains("ROLE_ADMIN");
+        boolean isWorker = roles.contains("ROLE_WORKER");
+
+        return new UserMeDto(details.getId(),
+                details.getEmail(), details.getFullName(), details.getMbPhone(),
+                roles, isAdmin, isWorker, details.getLoginMethod(),
+                details.getSignUpMethod(), details.isTwoFaAEnabled());
     }
 
     @GetMapping(UrlMap.EMPLOYEE_NAME_PAGE)
