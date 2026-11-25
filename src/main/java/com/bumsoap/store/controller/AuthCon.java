@@ -315,7 +315,7 @@ public class AuthCon {
         try {
             // 1. 쿠키에 RT가 없는 경우 (required = false 로 설정하여 직접 예외 처리)
             if (refresh1 == null || refresh1.isEmpty()) {
-                throw new RefreshTokenException("RT_MISSING");
+                throw new RefreshTokenException("RT_NOT_FOUND");
             }
             // 2. DB에서 해시 값으로 조회 (만료일, 폐기 여부 체크)
             RefreshToken refreshToken =
