@@ -44,14 +44,6 @@ public class JwtUtilBean {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
         return Jwts.builder().setSubject(userDetails.getUsername())
-//                .claim("id", userDetails.getId())
-                .claim("email", userDetails.getEmail())
-                .claim("fullName", userDetails.getFullName())
-                .claim("mbPhone", userDetails.getMbPhone())
-                .claim("roles", roles)
-                .claim("signUpMethod", userDetails.getSignUpMethod())
-                .claim("loginMethod", userDetails.getLoginMethod())
-                .claim("twoFaEnabled", userDetails.isTwoFaAEnabled())
                 .issuedAt(new java.util.Date())
                 .expiration(new java.util.Date(expirationMs
                         + System.currentTimeMillis()))
